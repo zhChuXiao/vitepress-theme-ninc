@@ -1,0 +1,34 @@
+@font-face {
+  font-family: "Site Title";
+  font-display: swap;
+  src: url("./fonts/title.ttf");
+}
+
+// @font-face {
+//   font-family: "MantouSans";
+//   src: url("./fonts/MantouSans-Regular.ttf");
+// }
+
+@font-face {
+  font-family: "galv-bold";
+  src: url("./fonts/galvji-bold.ttf");
+}
+@font-face {
+  font-family: "JinBuTi";
+  src: url("./fonts/DingTalk-JinBuTi.woff2");
+}
+
+html,
+body,
+#app {
+  font-family: var(--main-font-family) !important;
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 1rem;
+  font-style: normal;
+  color: var(--main-font-color);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

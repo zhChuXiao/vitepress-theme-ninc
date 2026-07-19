@@ -1,0 +1,21 @@
+/* 外部链接样式 */
+.external-link {
+  position: relative;
+  padding-right: 1.2em;
+}
+
+.external-link .external-icon {
+  font-size: 0.85em;
+  margin-left: 4px;
+  opacity: 0.7;
+}
+
+/* 如果你没有外部链接图标，可以使用这个简单的样式 */
+.external-link::after {
+  content: "↗";
+  position: absolute;
+  right: 0;
+  top: 0;
+  font-size: 0.85em;
+  opacity: 0.7;
+} 

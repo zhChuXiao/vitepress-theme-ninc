@@ -1,0 +1,568 @@
+@use "./font.scss";
+@use "./animation.scss";
+
+// 全局颜色变量
+:root {
+  --main-color: #425aef;
+  --main-color-bg: #4259ef0d;
+  --main-color-bg2: #4259ef40;
+  --main-color-bg3: #4259ef80;
+  --main-bar-bg: rgba(120, 138, 255, 0.8);
+  --main-color-bg4: rgba(120, 138, 255, 0.8);
+  // 跟dark主题相反的color
+  --main-color-reverse: #dfac46;
+  --main-color-reverse-bg: #e8be6a3e;
+  --main-color-reverse-bg2: #dfac4640;
+  --main-color-reverse-bg3: #dfac4680;
+  --main-color-reverse-bg4: rgba(223, 172, 70, 0.8);
+  --main-site-background: #f7f9fe;
+  --main-site-background-linear: radial-gradient(
+    circle farthest-corner at center top,
+    #f7f9fe,
+    #f7f9fe
+  );
+  --main-card-background: #fff;
+  --main-card-background2: #fff;
+  --main-card-background-opacity: #ffffff7b;
+  --main-card-background-opacity2: #ffffffdd;
+  --main-card-second-background: #f7f7f9;
+  --main-card-third-background: #ececed;
+  --main-font-color: #363636;
+  --main-font-second-color: #3c3c43cc;
+  --main-card-border: #e3e8f7;
+  --main-border-shadow: #2c2d300c;
+  --main-scrollbar-bar: rgba(60, 60, 67, 0.4);
+  --main-mask-background: rgba(255, 255, 255, 0.95);
+  --main-mask-background2: rgba(255, 255, 255, 0.65);
+  --main-mask-Inverse-background: rgba(0, 0, 0, 0.08);
+  --main-mask-second-background: rgba(255, 255, 255, 0.45);
+  --main-color-opacity: rgba(255, 255, 255, 0.15);
+  --main-dark-opacity: rgba(255, 255, 255, 0.15);
+  --main-dark-shadow: #0000006e;
+  --main-info-color: #50bfff;
+  --main-info-color-gray: #50bfff60;
+  --main-warning-color: #ffa500;
+  --main-warning-color-gray: #f7ba2a60;
+  --main-success-color: #13ce66;
+  --main-success-color-gray: #13ce6660;
+  --main-error-color: #ff3842;
+  --main-error-color-gray: #ff38423b;
+  --main-color-blue: #0084ff;
+  --main-color-white: #ffffff40;
+  --main-color-gray: #999;
+  --main-color-red: #ff3842;
+  --main-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  --main-home-title-bg: url(/images/animated-text-fill-dark.png);
+  --main-home-title-border-color: rgba(0, 0, 0, 0.25);
+  --main-home-title-shadow-color: rgba(0, 0, 0, 0.5);
+  --main-banner-button-color: rgba(0, 0, 0, 0.2);
+
+  // top-home
+  --main-theme-op: rgba(66, 89, 239, 0.137);
+  --main-shadow-blackdeep: 0 2px 16px -3px rgba(0, 0, 0, 0.15);
+  --style-border: 1px solid var(--main-card-border);
+  --main-shadow-border: 0 8px 16px -4px rgba(44, 45, 48, 0.047);
+  --main-shadow-main: 0 8px 12px -3px var(--main-theme-op);
+
+  --main-shadow-blue: 0 8px 12px -3px rgba(40, 109, 234, 0.2);
+  --main-shadow-yellow: 0px 38px 77px -26px rgba(255, 201, 62, 0.12);
+  --main-shadow-red: 0 8px 12px -3px #ee7d7936;
+  --main-shadow-green: 0 8px 12px -3px #87ee7936;
+  --main-filter: brightness(1);
+  --main-color-success: #13ce66;
+  --main-color-success-bg: #11743e5c;
+  --main-color-success-bg2: #13ce6640;
+  --main-color-error: #ff3842;
+  --main-color-error-bg: #a9292f5c;
+  --main-color-error-bg2: #ff384240;
+
+  // 留言板
+  --main-shine-color: rgba(66, 90, 239, 0.25);
+  --main-shine-color-bg: rgba(66, 90, 239, 0);
+  // badge
+  --vp-badge-info-border: #e0e0ff;
+  --vp-badge-info-text: #4b5bd8;
+  --vp-badge-info-bg: rgba(75, 91, 216, 0.1);
+
+  --vp-badge-tip-border: #e0f8e0;
+  --vp-badge-tip-text: #18794e;
+  --vp-badge-tip-bg: rgba(24, 121, 78, 0.1);
+
+  --vp-badge-warning-border: #fff3e0;
+  --vp-badge-warning-text: #c98400;
+  --vp-badge-warning-bg: rgba(201, 132, 0, 0.1);
+
+  --vp-badge-danger-border: #ffe0e0;
+  --vp-badge-danger-text: #d83b3b;
+  --vp-badge-danger-bg: rgba(216, 59, 59, 0.1);
+  --loadingbar-background-color: #2c2b30;
+  --loadingbar-prospect-color: #ece5d8;
+  --top-group-gradient: linear-gradient(
+    to bottom,
+    #CBE0F9,
+    #F0F7FB, 
+    #CBE0F9
+  );
+}
+
+html.dark {
+  // --main-color: #dfac46;
+  --main-color: #dfac46;
+  --main-color-bg: #f2b94b23;
+  --main-color-bg2: #f08a0040;
+  --main-color-bg3: #f08a0080;
+  --main-bar-bg: rgba(184, 158, 132, 0.8);
+  --main-color-bg4: rgba(184, 158, 132, 0.8);
+  --main-color-reverse: #6ba5ed;
+  --main-color-reverse-bg: #476c995c;
+  --main-color-reverse-bg2: #7ea8dd40;
+  --main-color-reverse-bg3: #4259ef80;
+  --main-color-reverse-bg4: rgba(120, 138, 255, 0.8);
+  --main-color-linear: linear-gradient(
+    to right,
+    rgb(127, 127, 213),
+    rgb(134, 168, 231),
+    rgb(145, 234, 228)
+  );
+  --main-site-background: #18171d;
+  // --main-site-background-linear: radial-gradient(circle farthest-corner at center top, rgb(11, 13, 23), #1b1c20);
+  --main-site-background-linear: rgb(11, 13, 23);
+  --main-card-background: #1b1c20;
+  --main-card-background2: #0f1018;
+
+  --main-card-background-opacity: #1b1c2058;
+  --main-card-background-opacity2: #1b1c20dd;
+  --main-card-second-background: #21232a;
+  --main-card-third-background: #2d2f33;
+  --main-font-color: #f7f7fa;
+  --main-font-second-color: #a1a2b8;
+  --main-card-border: #3d3d3f;
+  --main-border-shadow: #00000050;
+  --main-scrollbar-bar: rgba(200, 200, 223, 0.4);
+  --main-mask-background: rgba(0, 0, 0, 0.95);
+  --main-mask-background2: rgba(0, 0, 0, 0.65);
+  --main-mask-Inverse-background: rgba(255, 255, 255, 0.08);
+  --main-mask-second-background: rgba(0, 0, 0, 0.45);
+  --main-color-opacity: rgba(0, 0, 0, 0.15);
+  --main-home-title-bg: url(/images/animated-text-fill.png);
+  --main-home-title-border-color: rgba(255, 255, 255, 0.25);
+  --main-home-title-shadow-color: rgba(255, 255, 255, 0.5);
+  --main-theme-op: rgba(242, 185, 75, 0.137);
+  --main-filter: brightness(0.8);
+  --main-banner-button-color: rgba(255, 255, 255, 0.2);
+  --main-color-success: #13ce66;
+  --main-color-success-bg: #11743e5c;
+  --main-color-success-bg2: #13ce6640;
+  --main-color-error: #ff3842;
+  --main-color-error-bg: #a9292f5c;
+  --main-color-error-bg2: #ff384240;
+  
+  // 留言板
+  --main-shine-color: rgba(251, 194, 81, 0.1);
+  --main-shine-color-bg: rgba(255, 255, 255, 0);
+  /* Badge 暗色模式变量 */
+  --vp-badge-info-border: #363b7c;
+  --vp-badge-info-text: #7c85f5;
+  --vp-badge-info-bg: rgba(124, 133, 245, 0.1);
+
+  --vp-badge-tip-border: #2a4d3e;
+  --vp-badge-tip-text: #3dd68c;
+  --vp-badge-tip-bg: rgba(61, 214, 140, 0.1);
+
+  --vp-badge-warning-border: #4d3c19;
+  --vp-badge-warning-text: #f0b752;
+  --vp-badge-warning-bg: rgba(240, 183, 82, 0.1);
+
+  --vp-badge-danger-border: #4e2729;
+  --vp-badge-danger-text: #f56c6c;
+  --vp-badge-danger-bg: rgba(245, 108, 108, 0.1);
+  // --top-group-gradient: linear-gradient(
+  //   to bottom,
+  //   #2b4365,
+  //   #365175, 
+  //   #2b4365
+  // );
+}
+
+// 字体
+html {
+  &.hmos {
+    --main-font-family: "HarmonyOS_Regular", sans-serif;
+  }
+  &.lxgw {
+    --main-font-family: "LXGW WenKai Screen", sans-serif;
+  }
+  &.JinBuTi {
+    --main-font-family: "JinBuTi", "PingFang SC", "Hiragino Sans GB",
+      "Microsoft YaHei", sans-serif;
+  }
+  .iconfont {
+    font-size: 1rem;
+  }
+  button {
+    font-family: var(--main-font-family);
+  }
+}
+
+// 壁纸背景
+html {
+  &.image {
+    --main-card-border: #3d3d3f63;
+    --main-font-second-color: #c6c6c6;
+    --main-card-background: #1b1c20de;
+    --main-card-second-background: #21232ab5;
+    .main-nav {
+      backdrop-filter: blur(20px);
+      &.top {
+        backdrop-filter: blur(0);
+      }
+      @media (max-width: 768px) {
+        &.down {
+          .nav-center {
+            background-color: #1b1c20 !important;
+          }
+        }
+      }
+    }
+    .loading {
+      backdrop-filter: blur(20px);
+    }
+    .tags-cloud {
+      .all-tags {
+        &::after {
+          display: none;
+        }
+      }
+    }
+  }
+}
+
+// 全局基础样式
+* {
+  -webkit-user-drag: none;
+  box-sizing: border-box;
+}
+
+html {
+  user-select: none;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  pre {
+    code {
+      .line {
+        span {
+          color: var(--shiki-light) !important;
+        }
+      }
+    }
+  }
+  // 特殊情况
+  &.dark {
+    // 代码高亮
+    pre {
+      code {
+        .line {
+          span {
+            color: var(--shiki-dark) !important;
+          }
+        }
+      }
+    }
+  }
+  // 全站置灰
+  &.gray {
+    filter: grayscale(100%);
+  }
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  color: var(--main-font-color);
+  background: var(--main-site-background-linear);
+
+  animation: show forwards 0.5s;
+  overflow-x: hidden;
+  transition: color 0.3s, background-color 0.3s;
+}
+
+a {
+  text-decoration: none;
+  color: var(--main-font-color);
+  transition: all 0.3s;
+  .iconfont {
+    transition: all 0.3s;
+  }
+  &:hover {
+    color: var(--main-color);
+  }
+}
+
+#app {
+  width: 100vw;
+  width: 100dvw;
+  // height: 100vh;
+  transition: filter 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  // 滚动条
+  .simplebar-scrollbar {
+    &::before {
+      right: 0;
+      left: 4px;
+      background: var(--main-scrolling-bar);
+      transition: background 0.3s, left 0.3s;
+      cursor: var(--main-pointer-cursor);
+    }
+    &:hover {
+      &::before {
+        left: 2px;
+        background: var(--main-color);
+      }
+    }
+  }
+  // 全局模糊
+  &.blur {
+    filter: blur(20px);
+  }
+}
+
+// 通用卡片
+.s-card {
+  padding: 0.8rem;
+  border-radius: 16px;
+  background-color: var(--main-card-background-opacity2);
+  border: 1px solid var(--main-card-border);
+  box-shadow: 0 8px 16px -4px var(--main-border-shadow);
+  transition: all 0.3s;
+  cursor: var(--main-pointer-cursor);
+  &:hover {
+    &.hover {
+      border-color: var(--main-color);
+      box-shadow: 0 8px 16px -4px var(--main-color-bg);
+    }
+  }
+}
+
+// 滚动条
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--main-scrollbar-bar);
+  border-radius: 8px;
+  cursor: var(--main-pointer-cursor);
+  &:hover {
+    background-color: var(--main-color);
+  }
+}
+
+// 选中文本
+::selection {
+  background-color: var(--main-color);
+  color: #efefef;
+}
+
+// fancybox
+.fancybox__container {
+  .fancybox__progress {
+    background: var(--main-color) !important;
+  }
+  .fancybox__thumb {
+    &::after {
+      border-width: 2px !important;
+      border-color: var(--main-color) !important;
+    }
+  }
+}
+// 评论区自定义样式
+.tk-content {
+  .text-card-container {
+    display: flex;
+    gap: 1em;
+    .text-card {
+      // padding: 0.1em 1em;
+      font-size: 1em;
+      border-radius: 8px;
+      // background-color: var(--main-success-color-gray);
+      .text-main {
+        font-family: "HarmonyOS_Regular", sans-serif;
+        font-weight: 600;
+        color: var(--main-success-color);
+        .text-link {
+          color: var(--main-color);
+          position: relative;
+          display: inline-block;
+          padding: 0.1em 0.1em;
+          margin: 0 0.1em;
+          hyphens: auto;
+          border-bottom: unset;
+          &::before {
+            content: "";
+            position: absolute;
+            border-radius: 2px;
+            bottom: 0px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            opacity: 0.8;
+            background-color: var(--main-color);
+            border-radius: 4px;
+            transition: all 0.3s;
+          }
+          &:hover {
+            background-color: unset;
+            &::before {
+              height: 100%;
+              opacity: 0.2;
+              bottom: 0;
+              left: -2px;
+              right: -2px;
+            }
+          }
+        }
+      }
+    }
+  }
+  .text-main {
+    font-family: "HarmonyOS_Regular", sans-serif;
+    font-weight: 600;
+    color: var(--main-success-color);
+    .text-link {
+      color: var(--main-color);
+      position: relative;
+      display: inline-block;
+      padding: 0.1em 0.1em;
+      margin: 0 0.1em;
+      hyphens: auto;
+      border-bottom: unset;
+      &::before {
+        content: "";
+        position: absolute;
+        border-radius: 2px;
+        bottom: 0px;
+        left: 0;
+        right: 0;
+        height: 3px;
+        opacity: 0.8;
+        background-color: var(--main-color);
+        border-radius: 4px;
+        transition: all 0.3s;
+      }
+      &:hover {
+        background-color: unset;
+        &::before {
+          height: 100%;
+          opacity: 0.2;
+          bottom: 0;
+          left: -2px;
+          right: -2px;
+        }
+      }
+    }
+  }
+}
+
+.main-link {
+  position: relative;
+  display: inline-flex;
+  color: var(--main-color);
+  word-break: break-word;
+  // overflow-wrap: break-word;
+  max-width: 100%;
+  hyphens: auto;
+  padding: 0.1em 0.1em;
+  &::before {
+    content: "";
+    position: absolute;
+    border-radius: 2px;
+    bottom: 0px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    opacity: 0.8;
+    background-color: var(--main-color);
+    border-radius: 4px;
+    transition: all 0.3s;
+  }
+  &:hover {
+    &::before {
+      height: 100%;
+      opacity: 0.2;
+      bottom: 0;
+      left: -2px;
+      right: -2px;
+    }
+  }
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* 进入dark模式和退出dark模式时，两个图像的位置顺序正好相反 */
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 2147483646;
+}
+
+/* 根据自己选择器修改 */
+.dark::view-transition-old(root) {
+  z-index: 2147483646;
+}
+.dark::view-transition-new(root) {
+  z-index: 1;
+}
+
+/*
+ * 主题切换圆形扩散动画
+ * 用 CSS @keyframes 替代 WAAPI：伪元素创建瞬间立即应用 from 关键帧，
+ * 避免 WAAPI 启动时序窗口导致的 dark→light 闪白问题。
+ * 坐标通过 CSS 变量 --vt-x / --vt-y / --vt-r 由 JS 注入。
+ *
+ * 两种场景互斥：
+ *   dark → light：html 无 .dark，new（light 截图）在最上层，从点击位置扩散
+ *   light → dark：html 有 .dark，old（light 截图）在最上层，向点击位置收缩
+ */
+@keyframes vt-expand {
+  from {
+    clip-path: circle(0 at var(--vt-x, 50%) var(--vt-y, 50%));
+  }
+  to {
+    clip-path: circle(var(--vt-r, 100vmax) at var(--vt-x, 50%) var(--vt-y, 50%));
+  }
+}
+
+@keyframes vt-collapse {
+  from {
+    clip-path: circle(var(--vt-r, 100vmax) at var(--vt-x, 50%) var(--vt-y, 50%));
+  }
+  to {
+    clip-path: circle(0 at var(--vt-x, 50%) var(--vt-y, 50%));
+  }
+}
+
+/* dark → light：new 扩散，old 保持静止（被 new 覆盖） */
+::view-transition-new(root) {
+  animation: vt-expand 0.4s ease-in forwards;
+}
+
+/* light → dark：覆盖上面的 new 扩散动画，改为 old 收缩 */
+.dark::view-transition-new(root) {
+  animation: none;
+}
+.dark::view-transition-old(root) {
+  animation: vt-collapse 0.4s ease-in forwards;
+}
+
+// 滚动预留
+html {
+  scroll-padding-top: 120px !important;
+}

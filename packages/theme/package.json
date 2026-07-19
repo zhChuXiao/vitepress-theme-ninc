@@ -1,0 +1,172 @@
+{
+  "name": "vitepress-theme-ninc",
+  "version": "1.0.22",
+  "description": "A feature-rich VitePress theme by ninc - blog, docs, and utilities out of the box. 功能完整的 VitePress 博客 / 文档主题，开箱即用。",
+  "author": "呢喃Ninc <i@ninc.top>",
+  "license": "MIT",
+  "homepage": "https://blog.ninc.top",
+  "repository": {
+    "type": "git",
+    "url": "github:zhChuXiao/vitepress-theme-ninc"
+  },
+  "bugs": {
+    "url": "https://github.com/zhChuXiao/vitepress-theme-ninc/issues"
+  },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/zhChuXiao"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
+  "keywords": [
+    "vitepress",
+    "vitepress-theme",
+    "blog",
+    "blog-theme",
+    "documentation",
+    "vue",
+    "vue3",
+    "typescript",
+    "markdown",
+    "vite"
+  ],
+  "type": "module",
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=9"
+  },
+  "bin": {
+    "vitepress-theme-ninc": "src/cli/index.mjs"
+  },
+  "files": [
+    "src",
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": [
+    "**/*.css",
+    "**/*.scss",
+    "**/*.vue",
+    "**/store/**"
+  ],
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/client/index.ts"
+    },
+    "./client": {
+      "types": "./src/index.ts",
+      "default": "./src/client/index.ts"
+    },
+    "./node": {
+      "types": "./src/node/index.ts",
+      "default": "./dist/index.js"
+    },
+    "./defineConfig": {
+      "types": "./src/node/defineConfig.ts",
+      "default": "./dist/defineConfig.js"
+    },
+    "./defineThemeConfig": {
+      "types": "./src/node/defineThemeConfig.ts",
+      "default": "./dist/defineThemeConfig.js"
+    },
+    "./utils": {
+      "types": "./src/node/utils/index.ts",
+      "default": "./dist/utils.js"
+    },
+    "./views": {
+      "types": "./src/client/views/index.ts",
+      "default": "./src/client/views/index.ts"
+    },
+    "./components": {
+      "types": "./src/client/components/index.ts",
+      "default": "./src/client/components/index.ts"
+    },
+    "./store": {
+      "types": "./src/client/store/index.ts",
+      "default": "./src/client/store/index.ts"
+    },
+    "./styles": {
+      "default": "./src/client/styles/index.scss"
+    },
+    "./types": "./src/types/index.ts"
+  },
+  "main": "./src/client/index.ts",
+  "module": "./src/client/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "build": "node scripts/build-node.mjs",
+    "prepare": "node scripts/build-node.mjs",
+    "prepublishOnly": "node scripts/build-node.mjs && echo 'Reminder: verify pnpm pack output before publishing'"
+  },
+  "peerDependencies": {
+    "vitepress": "^1.6.4",
+    "vue": "^3.5.0"
+  },
+  "peerDependenciesMeta": {
+    "vitepress": {
+      "optional": false
+    },
+    "vue": {
+      "optional": false
+    }
+  },
+  "dependencies": {
+    "@clack/prompts": "^0.8.2",
+    "@vueuse/core": "^11.3.0",
+    "crypto-js": "^4.2.0",
+    "dayjs": "^1.11.13",
+    "defu": "^6.1.4",
+    "gsap": "^3.12.7",
+    "jiti": "^2.4.2",
+    "lodash-es": "^4.17.21",
+    "nprogress": "^0.2.0",
+    "picocolors": "^1.1.1",
+    "pinia": "^2.3.0",
+    "pinia-plugin-persistedstate": "^3.2.3"
+  },
+  "optionalDependencies": {
+    "@element-plus/icons-vue": "^2.3.1",
+    "@rollup/plugin-alias": "^5.1.1",
+    "@vite-pwa/vitepress": "^0.4.0",
+    "@vitejs/plugin-vue-jsx": "^4.1.1",
+    "@wocwin/t-ui-plus": "^1.5.0",
+    "algoliasearch": "^5.19.0",
+    "aplayer": "^1.10.1",
+    "cheerio": "1.0.0-rc.12",
+    "code-inspector-plugin": "^1.3.4",
+    "element-plus": "2.9.3",
+    "fast-glob": "^3.3.3",
+    "feed": "^4.2.2",
+    "fs-extra": "^11.3.0",
+    "globby": "^14.0.2",
+    "gray-matter": "^4.0.3",
+    "highlightjs-vue": "^1.0.0",
+    "instantsearch.js": "^4.77.0",
+    "jquery": "^3.7.1",
+    "letteringjs": "^0.7.0",
+    "lottie-web": "^5.12.2",
+    "markdown-it-attrs": "^4.3.1",
+    "markdown-it-container": "^4.0.0",
+    "markdown-it-mathjax3": "^4.3.2",
+    "ora": "^8.2.0",
+    "sass": "^1.83.4",
+    "terser": "^5.37.0",
+    "three": "^0.174.0",
+    "twikoo": "1.6.41",
+    "unplugin-auto-import": "^0.18.6",
+    "unplugin-vue-components": "^0.26.0",
+    "vite-plugin-compression": "^0.5.1",
+    "vite-plugin-svg-icons": "^2.0.1",
+    "vite-plugin-vue-mcp": "^0.3.2",
+    "vitepress-demo-plugin": "^1.2.3",
+    "vitepress-plugin-codeblocks-fold": "^1.2.35",
+    "vitepress-plugin-group-icons": "^1.3.5",
+    "vitepress-plugin-tabs": "^0.5.0",
+    "vue-instantsearch": "^4.20.1",
+    "vue-slider-component": "4.1.0-beta.7"
+  }
+}

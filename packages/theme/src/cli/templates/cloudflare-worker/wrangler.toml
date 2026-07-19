@@ -1,0 +1,11 @@
+# Cloudflare Worker 配置 —— 由 vitepress-theme-ninc CLI 生成
+# 文档：https://theme.ninc.top/guide/ai-summary-proxy
+name = "ninc-ai-summary-proxy"
+main = "index.js"
+compatibility_date = "2024-12-01"
+
+# 环境变量请在 Cloudflare Dashboard → Workers & Pages → 你的 Worker → Settings → Variables 中配置：
+#   OPENAI_API_KEY      — 必填，你的大模型 API Key（保密）
+#   OPENAI_BASE_URL     — 可选，默认 https://api.openai.com/v1
+#   OPENAI_MODEL        — 可选，默认 gpt-4o-mini
+#   CORS_ORIGIN         — 可选，允许的跨域来源，默认 *（生产环境建议改成你的博客域名）

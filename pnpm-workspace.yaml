@@ -1,0 +1,6 @@
+packages:
+  - 'packages/*'
+  - 'blog'
+  - 'play'
+  - 'demo3'
+  - 'docs'

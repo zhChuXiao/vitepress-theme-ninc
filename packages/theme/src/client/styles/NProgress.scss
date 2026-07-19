@@ -1,0 +1,44 @@
+#nprogress {
+  pointer-events: none;
+  z-index: 10000;
+  top: 0;
+  right: 0;
+  overflow: hidden;
+}
+
+#nprogress .bar {
+  z-index: 10000;
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(
+    90deg,
+    #ffb7c5 0%,
+    #ffd1dc 25%,
+    #e6e6fa 50%,
+    #b0e0e6 75%,
+    #ffb7c5 100%
+  );
+  background-size: 200% 100%;
+  border-radius: 8px;
+  box-shadow: 0 0 15px rgba(255, 107, 107, 0.5);
+  animation: moveGradient 2s linear infinite;
+}
+
+#nprogress .peg {
+  display: none;
+}
+
+#nprogress .spinner {
+  display: none;
+}
+
+@keyframes moveGradient {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: -200% 0%;
+  }
+}

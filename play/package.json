@@ -1,0 +1,17 @@
+{
+  "name": "play",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Default playground for vitepress-theme-ninc - verifies the theme works with the smallest possible config",
+  "scripts": {
+    "dev": "pnpm -F vitepress-theme-ninc build && vitepress dev --host",
+    "build": "pnpm -F vitepress-theme-ninc build && vitepress build",
+    "preview": "vitepress preview"
+  },
+  "dependencies": {
+    "vitepress-theme-ninc": "workspace:*",
+    "vitepress": "1.6.4",
+    "vue": "^3.5.13"
+  }
+}

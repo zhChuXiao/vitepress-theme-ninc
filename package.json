@@ -1,0 +1,53 @@
+{
+  "name": "vitepress-theme-ninc-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A VitePress theme by ninc - monorepo root",
+  "author": "呢喃Ninc",
+  "home": "https://blog.ninc.top",
+  "github": "https://github.com/zhChuXiao/vitepress-theme-ninc",
+  "blog": "https://blog.ninc.top",
+  "repository": "github:zhChuXiao/vitepress-theme-ninc",
+  "license": "MIT License",
+  "license-file": "LICENSE",
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=9"
+  },
+  "type": "module",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "v-code-diff"
+    ],
+    "overrides": {
+      "blog>vitepress-theme-ninc": "1.0.22"
+    }
+  },
+  "scripts": {
+    "format": "prettier --write .",
+    "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts,.vue --fix",
+    "dev:blog": "pnpm -C blog dev",
+    "dev:play": "pnpm -C play dev",
+    "dev:demo3": "pnpm -C demo3 dev",
+    "dev:docs": "pnpm -C docs dev",
+    "build:blog": "pnpm -C blog build",
+    "build:play": "pnpm -C play build",
+    "build:demo3": "pnpm -C demo3 build",
+    "build:docs": "pnpm -C docs build",
+    "build:theme": "pnpm -F vitepress-theme-ninc build",
+    "preview:blog": "pnpm -C blog preview",
+    "preview:play": "pnpm -C play preview",
+    "preview:demo3": "pnpm -C demo3 preview",
+    "preview:docs": "pnpm -C docs preview"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.1",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-vue": "^9.32.0",
+    "patch-package": "^8.0.0",
+    "postinstall-postinstall": "^2.1.0",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.3"
+  }
+}

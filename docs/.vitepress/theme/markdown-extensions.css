@@ -1,0 +1,315 @@
+/**
+ * 文档站 Markdown 扩展样式
+ * 为主题特有的语法（按键标记、时间线、单选、按钮、卡片、表格包裹）提供渲染样式
+ * 使用 VitePress 默认主题的 CSS 变量，自动适配亮/暗色模式
+ */
+
+/* ===== 按键标记 .keybutton ===== */
+.keybutton {
+  display: inline-block;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-size: 0.875em;
+  color: var(--vp-c-text-2);
+  border-radius: 4px;
+  box-shadow: 0 1px 0 var(--vp-c-border);
+  line-height: 1;
+  padding: 2px 6px;
+  background-color: var(--vp-c-bg-soft);
+  border: 1px solid var(--vp-c-border);
+  outline: 0;
+  margin: 0 2px;
+}
+
+/* ===== 时间线 .timeline ===== */
+.timeline {
+  position: relative;
+  padding: 0 0 1rem 26px;
+  margin: 1rem 0;
+}
+.timeline .timeline-title {
+  display: inline-block;
+  font-size: 14px;
+  opacity: 0.6;
+  transform: translateY(-2px);
+  transition: color 0.3s, opacity 0.3s;
+}
+.timeline .timeline-content {
+  margin-top: 12px;
+  border-radius: 2px 12px 12px 12px;
+  padding: 1rem;
+  border: 1px solid var(--vp-c-border);
+  background-color: var(--vp-c-bg-soft);
+}
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 6px;
+  bottom: 6px;
+  width: 2px;
+  background-color: var(--vp-c-border);
+  border-radius: 2px;
+}
+.timeline::after {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 4px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--vp-c-brand-1);
+  z-index: 1;
+}
+.timeline:hover .timeline-title {
+  opacity: 1;
+  color: var(--vp-c-brand-1);
+}
+
+/* ===== 单选 .radio ===== */
+.radio {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin: 0.75rem 0;
+}
+.radio .radio-point {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid var(--vp-c-brand-1);
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+.radio .radio-point.checked::after {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--vp-c-brand-1);
+}
+.radio .radio-point.unchecked::after {
+  content: '';
+  width: 0;
+  height: 0;
+}
+
+/* ===== 按钮 .md-button ===== */
+.md-button {
+  display: inline-flex;
+  align-items: center;
+  outline: none;
+  border-radius: 8px;
+  padding: 6px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  margin: 4px 0;
+  border: 1px solid var(--vp-c-brand-1);
+  color: var(--vp-c-brand-1);
+  background-color: transparent;
+  transition: all 0.2s;
+}
+.md-button:hover {
+  color: var(--vp-c-bg);
+  background-color: var(--vp-c-brand-1);
+}
+.md-button::after {
+  content: attr(data-text);
+}
+.md-button a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ===== 卡片 .md-card ===== */
+.md-card {
+  padding: 1rem 1.2rem;
+  border-radius: 8px;
+  border: 1px solid var(--vp-c-border);
+  margin: 1rem 0;
+  background-color: var(--vp-c-bg-soft);
+  transition: border-color 0.3s;
+}
+.md-card:hover {
+  border-color: var(--vp-c-brand-1);
+}
+
+/* ===== 表格包裹 .table-container ===== */
+.table-container {
+  width: 100%;
+  margin: 1rem 0;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 8px;
+  overflow-x: auto;
+}
+.table-container table {
+  margin: 0;
+  border: none;
+}
+
+/* ===== tabs 标签页（vitepress-plugin-tabs）===== */
+.vp-tabs {
+  margin: 1rem 0;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.vp-tabs-nav {
+  display: flex;
+  border-bottom: 1px solid var(--vp-c-border);
+  background-color: var(--vp-c-bg-soft);
+}
+.vp-tabs-nav-item {
+  padding: 8px 16px;
+  font-size: 14px;
+  color: var(--vp-c-text-2);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color 0.25s, border-color 0.25s;
+}
+.vp-tabs-nav-item.active {
+  color: var(--vp-c-brand-1);
+  border-bottom-color: var(--vp-c-brand-1);
+}
+.vp-tabs-content {
+  padding: 1rem;
+}
+
+/* ===== Iconify 图标通用样式 ===== */
+/* 行内图标垂直对齐 */
+.iconify {
+  display: inline-block;
+  vertical-align: -0.15em;
+}
+
+/* 状态图标（:done: :fail: :wip: :wait: :warn:） */
+.status-icon {
+  vertical-align: -0.15em;
+  font-size: 1em;
+  width: 1.1em;
+  height: 1.1em;
+}
+.status-done {
+  color: var(--vp-c-green-1);
+}
+.status-fail {
+  color: var(--vp-c-red-1);
+}
+.status-wip {
+  color: var(--vp-c-yellow-1);
+}
+.status-wait {
+  color: var(--vp-c-text-3);
+}
+.status-warn {
+  color: var(--vp-c-yellow-1);
+}
+
+/* 表格中的状态图标对齐 */
+td .status-icon,
+th .status-icon {
+  font-size: 14px;
+}
+
+/* VitePress Features 卡片中的图标 */
+.VPFeature .feature-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.VPFeature .iconify {
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+}
+
+/* 暗色模式下 Features SVG 图标提亮 */
+.dark .VPFeature .VPImage {
+  filter: brightness(2.2);
+}
+
+/* ===== 迁移引导卡片 .migration-banner ===== */
+.migration-banner {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 28px 32px;
+  background: var(--vp-c-bg-soft);
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 20px;
+  margin: 48px 0;
+}
+.migration-banner .migration-icon {
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--vp-c-brand-soft);
+  color: var(--vp-c-brand-1);
+}
+.migration-banner .migration-icon .iconify {
+  font-size: 24px;
+}
+.migration-banner .migration-body {
+  flex: 1;
+  min-width: 0;
+}
+.migration-banner .migration-label {
+  display: block;
+  font-size: 13px;
+  color: var(--vp-c-brand-1);
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+.migration-banner .migration-body h2 {
+  margin: 0 0 8px;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--vp-c-text-1);
+  line-height: 1.3;
+  border-top: none !important;
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+.migration-banner .migration-body p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--vp-c-text-2);
+  line-height: 1.7;
+}
+.migration-banner .migration-body strong {
+  color: var(--vp-c-text-1);
+  font-weight: 600;
+}
+.migration-banner code {
+  font-size: 0.9em;
+  background: var(--vp-c-bg);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* 列表项中的 Iconify 图标对齐 */
+li .iconify {
+  vertical-align: -0.18em;
+  margin-right: 4px;
+}
+
+/* 响应式 */
+@media (max-width: 640px) {
+  .migration-banner {
+    flex-direction: column;
+    text-align: center;
+    padding: 24px 20px;
+    gap: 16px;
+  }
+  .migration-banner .migration-body h2 {
+    font-size: 17px;
+  }
+}

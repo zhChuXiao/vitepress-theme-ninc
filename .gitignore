@@ -1,0 +1,52 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules/
+.DS_Store
+coverage
+dist
+dist-ssr
+*.local
+test.html
+.env
+.vitepress/dist
+.vitepress/cache
+deploy.js
+
+# Editor directories and files
+.vscode/*
+.vscode
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+.vercel
+
+# Monorepo
+*.tsbuildinfo
+**/.vitepress/dist
+**/.vitepress/cache
+packages/theme/dist
+.turbo
+
+# IDE planning workspace
+.trae/
+.codegraph/
+.claude/
+.omc/
+
+# 站点加密密钥文件（每个站点私有，不应提交到仓库）
+secret.key
+*.secret.key
+crypto-secret.txt
+
