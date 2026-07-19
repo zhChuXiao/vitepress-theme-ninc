@@ -2,5 +2,5 @@ packages:
   - 'packages/*'
   - 'blog'
   - 'play'
-  - 'demo3'
   - 'docs'
+minimumReleaseAge: 0
