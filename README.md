@@ -43,12 +43,11 @@
 
 ---
 
-<p align="center">
   <img src="docs/public/images/image-light.webp" alt="首页 - 浅色" />
   <span>浅色模式</span>
+  <hr />
   <img src="docs/public/images/image-dark.webp" alt="首页 - 深色" />
   <span>深色模式</span>
-</p>
 
 ## 为什么造这个轮子
 
