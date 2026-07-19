@@ -138,14 +138,15 @@ onUnmounted(() => {
     </div>
 
     <!-- 左右标签 -->
-    <div class="ninc-compare-tag ninc-compare-tag-left">
+    <!-- 暂时注释 -->
+    <!-- <div class="ninc-compare-tag ninc-compare-tag-left">
       <Icon icon="lucide:sun" />
       <span>{{ props.firstLabel }}</span>
     </div>
     <div class="ninc-compare-tag ninc-compare-tag-right">
       <Icon icon="lucide:moon" />
       <span>{{ props.secondLabel }}</span>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -156,7 +157,7 @@ onUnmounted(() => {
   /* 16:10 比例，与博客首页截图接近 */
   aspect-ratio: 16 / 10;
   border-radius: 16px;
-  overflow: hidden;
+  /* overflow: hidden; */
   /* border: 1px solid var(--vp-c-border); */
   /* background: var(--vp-c-bg-soft); */
   cursor: col-resize;
@@ -177,7 +178,6 @@ onUnmounted(() => {
   position: absolute;
   inset: 0;
   width: 100%;
-  height: 100%;
   object-fit: cover;
   object-position: top center;
   pointer-events: none;
@@ -311,14 +311,14 @@ onUnmounted(() => {
 }
 
 .ninc-compare-tag-left {
-  left: 16px;
+  left: 0;
   background: rgba(255, 255, 255, 0.85);
   color: #92400e;
   border: 1px solid rgba(251, 191, 36, 0.3);
 }
 
 .ninc-compare-tag-right {
-  right: 16px;
+  right: 0;
   background: rgba(30, 30, 46, 0.85);
   color: #c4b5fd;
   border: 1px solid rgba(139, 92, 246, 0.4);

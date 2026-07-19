@@ -317,15 +317,17 @@ onUnmounted(() => {
   <div class="ninc-home">
     <!-- ===== Hero ===== -->
     <section class="ninc-hero">
-      <ParticlesBg class="ninc-hero-particles" :count="40" color="#6366f1" :speed="0.3" :size="2" :connect-distance="100" />
+      <ParticlesBg class="ninc-hero-particles" :count="40" color="#6366f1" :speed="0.3" :size="2"
+        :connect-distance="100" />
       <div class="ninc-hero-bg" aria-hidden="true"></div>
       <div class="ninc-hero-content">
-         <!-- <img src="/logo.svg" alt="vitepress-theme-ninc" class="ninc-hero-logo" width="80" height="80" /> -->
+        <!-- <img src="/logo.svg" alt="vitepress-theme-ninc" class="ninc-hero-logo" width="80" height="80" /> -->
         <div class="ninc-badge">
           <Icon icon="lucide:sparkles" />
           <span>基于 VitePress 构建</span>
         </div>
-        <SparklesText text="VitePress Theme Ninc" class="ninc-hero-sparkles" :sparkles-count="12" :colors="{ first: '#9E7AFF', second: '#FE8BBB' }" />
+        <SparklesText text="VitePress Theme Ninc" class="ninc-hero-sparkles" :sparkles-count="12"
+          :colors="{ first: '#9E7AFF', second: '#FE8BBB' }" />
         <p class="ninc-hero-tagline">
           一个功能丰富的 VitePress 主题 — 开箱即用的博客、文档与工具站
         </p>
@@ -334,27 +336,35 @@ onUnmounted(() => {
             <Icon icon="lucide:rocket" />
             <span>快速开始</span>
           </a>
-          <a
-            class="ninc-btn ninc-btn-alt"
-            href="https://blog.ninc.top"
-            target="_blank"
-            rel="noopener"
-          >
+          <a class="ninc-btn ninc-btn-alt" href="https://blog.ninc.top" target="_blank" rel="noopener">
             <Icon icon="lucide:external-link" />
             <span>预览博客</span>
           </a>
-          <a
-            class="ninc-btn ninc-btn-alt"
-            href="https://github.com/zhChuXiao/vitepress-theme-ninc"
-            target="_blank"
-            rel="noopener"
-          >
+          <a class="ninc-btn ninc-btn-alt" href="https://github.com/zhChuXiao/vitepress-theme-ninc" target="_blank"
+            rel="noopener">
             <Icon icon="mdi:github" />
             <span>GitHub</span>
           </a>
         </div>
+      </div>
 
-        <!-- 终端 mockup -->
+      <!-- Preview（Compare 滑动对比）- 放在 hero-content 外面，不受 max-width 限制 -->
+      <div class="ninc-hero-compare">
+        <!-- <p class="ninc-section-desc">滑动鼠标对比亮色与暗色模式下的博客首页效果</p> -->
+        <div class="ninc-compare-wrap">
+          <Compare first-image="/images/image-light.webp" second-image="/images/image-dark.webp" first-alt="亮色模式博客首页"
+            second-alt="暗色模式博客首页" first-label="亮色" second-label="暗色" :initial="50" />
+        </div>
+        <p class="ninc-compare-tip">
+          <Icon icon="lucide:mouse-pointer-click" />
+          <span>移动鼠标或拖拽中间手柄切换对比</span>
+        </p>
+      </div>
+    </section>
+
+    <!-- ===== Terminal（终端 mockup） ===== -->
+    <section class="ninc-section ninc-terminal-section ninc-reveal">
+      <div class="ninc-container">
         <div class="ninc-terminal">
           <div class="ninc-terminal-bar">
             <span class="ninc-dot ninc-dot-red"></span>
@@ -375,29 +385,6 @@ onUnmounted(() => {
       </div>
     </section>
 
-    <!-- ===== Preview（Compare 滑动对比） ===== -->
-    <section class="ninc-section ninc-preview ninc-reveal">
-      <div class="ninc-container">
-        <!-- <h2 class="ninc-section-title">实际效果</h2> -->
-        <p class="ninc-section-desc">滑动鼠标对比亮色与暗色模式下的博客首页效果</p>
-        <div class="ninc-compare-wrap">
-          <Compare
-            first-image="/images/image-light.webp"
-            second-image="/images/image-dark.webp"
-            first-alt="亮色模式博客首页"
-            second-alt="暗色模式博客首页"
-            first-label="亮色"
-            second-label="暗色"
-            :initial="50"
-          />
-        </div>
-        <p class="ninc-compare-tip">
-          <Icon icon="lucide:mouse-pointer-click" />
-          <span>移动鼠标或拖拽中间手柄切换对比</span>
-        </p>
-      </div>
-    </section>
-
     <!-- ===== Tech Stack (Animated Beam) ===== -->
     <section class="ninc-section ninc-tech-stack ninc-reveal">
       <div class="ninc-container">
@@ -405,17 +392,9 @@ onUnmounted(() => {
         <p class="ninc-section-desc">直接在 Markdown 中使用 Vue 语法和组件，将 Markdown 变成优雅的博客，只需几分钟。</p>
         <div ref="techContainerRef" class="ninc-tech-wrap">
           <!-- AnimatedBeam 连接 -->
-          <AnimatedBeam
-            v-for="(tech, i) in techStack"
-            :key="`beam-${i}`"
-            :container-ref="techContainerRef"
-            :from-ref="centerNodeRef"
-            :to-ref="techRefs[i] || null"
-            :curvature="30"
-            :duration="3 + i * 0.7"
-            :gradient-start-color="tech.beamStart"
-            :gradient-stop-color="tech.beamStop"
-          />
+          <AnimatedBeam v-for="(tech, i) in techStack" :key="`beam-${i}`" :container-ref="techContainerRef"
+            :from-ref="centerNodeRef" :to-ref="techRefs[i] || null" :curvature="30" :duration="3 + i * 0.7"
+            :gradient-start-color="tech.beamStart" :gradient-stop-color="tech.beamStop" />
 
           <!-- 中心节点 -->
           <div class="ninc-tech-center">
@@ -426,23 +405,10 @@ onUnmounted(() => {
           </div>
 
           <!-- 周围技术栈节点 -->
-          <div
-            v-for="(tech, i) in techStack"
-            :key="tech.name"
-            class="ninc-tech-node"
-            :class="`ninc-tech-node-${i}`"
-          >
-            <div
-              :ref="(el) => setTechRef(el, i)"
-              class="ninc-tech-node-inner"
-              :style="{ '--node-color': tech.color }"
-            >
-              <img
-                v-if="tech.icon.startsWith('/')"
-                :src="tech.icon"
-                :alt="tech.name"
-                class="ninc-tech-node-icon ninc-tech-node-img"
-              />
+          <div v-for="(tech, i) in techStack" :key="tech.name" class="ninc-tech-node" :class="`ninc-tech-node-${i}`">
+            <div :ref="(el) => setTechRef(el, i)" class="ninc-tech-node-inner" :style="{ '--node-color': tech.color }">
+              <img v-if="tech.icon.startsWith('/')" :src="tech.icon" :alt="tech.name"
+                class="ninc-tech-node-icon ninc-tech-node-img" />
               <Icon v-else :icon="tech.icon" class="ninc-tech-node-icon" />
             </div>
             <span class="ninc-tech-node-label">{{ tech.name }}</span>
@@ -531,12 +497,8 @@ onUnmounted(() => {
         <h2 class="ninc-section-title">核心功能</h2>
         <p class="ninc-section-desc">12 个内置功能模块，覆盖博客、工具站、数据可视化等多种场景</p>
         <div class="ninc-feature-grid">
-          <div
-            v-for="(f, i) in features"
-            :key="f.title"
-            class="ninc-feature-card"
-            :style="{ transitionDelay: `${i * 45}ms` }"
-          >
+          <div v-for="(f, i) in features" :key="f.title" class="ninc-feature-card"
+            :style="{ transitionDelay: `${i * 45}ms` }">
             <div class="ninc-feature-icon-wrap">
               <Icon :icon="f.icon" class="ninc-feature-icon" />
             </div>
@@ -562,7 +524,8 @@ onUnmounted(() => {
               </div>
               <div class="ninc-perf-label">{{ p.label }}</div>
               <div class="ninc-perf-bar">
-                <div class="ninc-perf-bar-fill" :style="{ '--bar-color': p.color, width: p.value <= 100 ? p.value + '%' : '95%' }" />
+                <div class="ninc-perf-bar-fill"
+                  :style="{ '--bar-color': p.color, width: p.value <= 100 ? p.value + '%' : '95%' }" />
               </div>
             </div>
           </ScrollReveal>
@@ -612,10 +575,12 @@ onUnmounted(() => {
                 <tr v-for="row in comparisonData" :key="row.feature">
                   <td>{{ row.feature }}</td>
                   <td class="ninc-col-ninc">
-                    <Icon :icon="row.ninc ? 'lucide:check-circle-2' : 'lucide:x-circle'" :class="row.ninc ? 'ninc-yes' : 'ninc-no'" />
+                    <Icon :icon="row.ninc ? 'lucide:check-circle-2' : 'lucide:x-circle'"
+                      :class="row.ninc ? 'ninc-yes' : 'ninc-no'" />
                   </td>
                   <td class="ninc-col-ninc">
-                    <Icon :icon="row.others ? 'lucide:check-circle-2' : 'lucide:x-circle'" :class="row.others ? 'ninc-yes' : 'ninc-no'" />
+                    <Icon :icon="row.others ? 'lucide:check-circle-2' : 'lucide:x-circle'"
+                      :class="row.others ? 'ninc-yes' : 'ninc-no'" />
                   </td>
                 </tr>
               </tbody>
@@ -680,12 +645,7 @@ onUnmounted(() => {
               <span>立即开始</span>
             </a>
           </MagneticButton>
-          <a
-            class="ninc-btn ninc-btn-alt ninc-btn-lg"
-            href="https://blog.ninc.top"
-            target="_blank"
-            rel="noopener"
-          >
+          <a class="ninc-btn ninc-btn-alt ninc-btn-lg" href="https://blog.ninc.top" target="_blank" rel="noopener">
             <Icon icon="lucide:external-link" />
             <span>预览博客</span>
           </a>
@@ -707,7 +667,7 @@ onUnmounted(() => {
 .ninc-hero {
   position: relative;
   overflow: hidden;
-  padding: 80px 24px 60px;
+  padding: 80px 24px 30px;
 }
 
 .ninc-hero-bg {
@@ -745,8 +705,17 @@ onUnmounted(() => {
 }
 
 @keyframes ninc-glow {
-  0%, 100% { opacity: 0.55; transform: translateX(-50%) scale(1); }
-  50% { opacity: 0.8; transform: translateX(-50%) scale(1.08); }
+
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: translateX(-50%) scale(1);
+  }
+
+  50% {
+    opacity: 0.8;
+    transform: translateX(-50%) scale(1.08);
+  }
 }
 
 .ninc-hero-content {
@@ -766,8 +735,15 @@ onUnmounted(() => {
 }
 
 @keyframes ninc-float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
 }
 
 .ninc-badge {
@@ -877,16 +853,36 @@ onUnmounted(() => {
   border-radius: 24px;
 }
 
+/* ===== Hero Compare 区域 ===== */
+.ninc-hero-compare {
+  margin-top: 48px;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 24px;
+}
+
+.ninc-hero-compare .ninc-section-desc {
+  margin-bottom: 24px;
+  font-size: clamp(0.875rem, 2vw, 1rem);
+  text-align: center;
+}
+
 /* ===== 终端 mockup ===== */
 .ninc-terminal {
   max-width: 520px;
-  margin: 40px auto 0;
+  margin: 0 auto;
   border: 1px solid #313244;
   border-radius: 12px;
   overflow: hidden;
   background: #1e1e2e;
   text-align: left;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+/* ===== Terminal Section ===== */
+.ninc-terminal-section {
+  background: var(--vp-c-bg);
 }
 
 .ninc-terminal-bar {
@@ -905,9 +901,17 @@ onUnmounted(() => {
   flex-shrink: 0;
 }
 
-.ninc-dot-red { background: #ff5f57; }
-.ninc-dot-yellow { background: #febc2e; }
-.ninc-dot-green { background: #28c840; }
+.ninc-dot-red {
+  background: #ff5f57;
+}
+
+.ninc-dot-yellow {
+  background: #febc2e;
+}
+
+.ninc-dot-green {
+  background: #28c840;
+}
 
 .ninc-terminal-title {
   margin-left: auto;
@@ -949,8 +953,14 @@ onUnmounted(() => {
   overflow-x: auto;
 }
 
-.ninc-terminal-body .c-comment { color: #6c7086; }
-.ninc-terminal-body .c-cmd { color: #89b4fa; font-weight: 600; }
+.ninc-terminal-body .c-comment {
+  color: #6c7086;
+}
+
+.ninc-terminal-body .c-cmd {
+  color: #89b4fa;
+  font-weight: 600;
+}
 
 /* 终端光标闪烁 */
 .ninc-cursor {
@@ -964,8 +974,16 @@ onUnmounted(() => {
 }
 
 @keyframes ninc-blink {
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0; }
+
+  0%,
+  50% {
+    opacity: 1;
+  }
+
+  51%,
+  100% {
+    opacity: 0;
+  }
 }
 
 /* ===== Section 通用 ===== */
@@ -1105,12 +1123,37 @@ onUnmounted(() => {
 }
 
 /* 6 个节点的环绕位置（六边形布局） */
-.ninc-tech-node-0 { top: 8%; left: 12%; }
-.ninc-tech-node-1 { top: 8%; right: 12%; }
-.ninc-tech-node-2 { top: 50%; left: 0; transform: translateY(-50%); }
-.ninc-tech-node-3 { top: 50%; right: 0; transform: translateY(-50%); }
-.ninc-tech-node-4 { bottom: 8%; left: 12%; }
-.ninc-tech-node-5 { bottom: 8%; right: 12%; }
+.ninc-tech-node-0 {
+  top: 8%;
+  left: 12%;
+}
+
+.ninc-tech-node-1 {
+  top: 8%;
+  right: 12%;
+}
+
+.ninc-tech-node-2 {
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+}
+
+.ninc-tech-node-3 {
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+}
+
+.ninc-tech-node-4 {
+  bottom: 8%;
+  left: 12%;
+}
+
+.ninc-tech-node-5 {
+  bottom: 8%;
+  right: 12%;
+}
 
 /* ===== Tech Stack 响应式 ===== */
 @media (max-width: 768px) {
@@ -1143,10 +1186,25 @@ onUnmounted(() => {
     height: 340px;
   }
 
-  .ninc-tech-node-0 { top: 4%; left: 4%; }
-  .ninc-tech-node-1 { top: 4%; right: 4%; }
-  .ninc-tech-node-4 { bottom: 4%; left: 4%; }
-  .ninc-tech-node-5 { bottom: 4%; right: 4%; }
+  .ninc-tech-node-0 {
+    top: 4%;
+    left: 4%;
+  }
+
+  .ninc-tech-node-1 {
+    top: 4%;
+    right: 4%;
+  }
+
+  .ninc-tech-node-4 {
+    bottom: 4%;
+    left: 4%;
+  }
+
+  .ninc-tech-node-5 {
+    bottom: 4%;
+    right: 4%;
+  }
 
   .ninc-tech-center-inner {
     width: 64px;
@@ -1224,11 +1282,7 @@ onUnmounted(() => {
   margin: 0;
 }
 
-/* ===== Preview（Compare 滑动对比） ===== */
-.ninc-preview {
-  background: var(--vp-c-bg);
-}
-
+/* ===== Compare（滑动对比） ===== */
 .ninc-compare-wrap {
   max-width: 1200px;
   margin: 0 auto;
@@ -1239,9 +1293,8 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  margin-top: 20px;
-  font-size: 13px;
-  color: var(--vp-c-text-2);
+  font-size: 16px;
+  color: var(--vp-c-text);
 }
 
 .ninc-compare-tip .iconify {
@@ -1290,10 +1343,22 @@ onUnmounted(() => {
   color: var(--vp-c-text-1);
 }
 
-.ninc-code-block .c-comment { color: var(--vp-c-text-3); }
-.ninc-code-block .c-cmd { color: var(--vp-c-brand-1); font-weight: 600; }
-.ninc-code-block .c-kw { color: var(--vp-c-brand-1); }
-.ninc-code-block .c-str { color: var(--vp-c-green-1); }
+.ninc-code-block .c-comment {
+  color: var(--vp-c-text-3);
+}
+
+.ninc-code-block .c-cmd {
+  color: var(--vp-c-brand-1);
+  font-weight: 600;
+}
+
+.ninc-code-block .c-kw {
+  color: var(--vp-c-brand-1);
+}
+
+.ninc-code-block .c-str {
+  color: var(--vp-c-green-1);
+}
 
 /* ===== Stats ===== */
 .ninc-stats {
@@ -1359,11 +1424,12 @@ onUnmounted(() => {
   }
 
   .ninc-section {
-    padding: 60px 0;
+    /* padding: 60px 0; */
   }
 
-  .ninc-terminal {
+  .ninc-hero-compare {
     margin-top: 32px;
+    padding: 0 20px;
   }
 }
 
@@ -1380,19 +1446,23 @@ onUnmounted(() => {
 .ninc-use-cases {
   background: var(--vp-c-bg);
 }
+
 .ninc-usecase-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 20px;
   margin-top: 40px;
 }
+
 .ninc-usecase-card {
   height: 100%;
 }
+
 .ninc-usecase-inner {
   padding: 28px 24px;
   height: 100%;
 }
+
 .ninc-usecase-icon {
   width: 56px;
   height: 56px;
@@ -1405,17 +1475,20 @@ onUnmounted(() => {
   font-size: 28px;
   margin-bottom: 16px;
 }
+
 .ninc-usecase-inner h3 {
   font-size: 18px;
   margin: 0 0 8px;
   color: var(--vp-c-text-1);
 }
+
 .ninc-usecase-inner p {
   font-size: 14px;
   color: var(--vp-c-text-2);
   margin: 0 0 16px;
   line-height: 1.6;
 }
+
 .ninc-usecase-features {
   list-style: none;
   padding: 0;
@@ -1424,6 +1497,7 @@ onUnmounted(() => {
   flex-wrap: wrap;
   gap: 8px;
 }
+
 .ninc-usecase-features li {
   display: inline-flex;
   align-items: center;
@@ -1435,6 +1509,7 @@ onUnmounted(() => {
   border-radius: 12px;
   border: 1px solid var(--vp-c-divider);
 }
+
 .ninc-usecase-features li :deep(svg),
 .ninc-usecase-features li .iconify {
   font-size: 12px;
@@ -1445,24 +1520,29 @@ onUnmounted(() => {
 .ninc-highlights {
   background: var(--vp-c-bg);
 }
+
 .ninc-highlights-list {
   display: flex;
   flex-direction: column;
   gap: 80px;
   margin-top: 60px;
 }
+
 .ninc-highlight-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 60px;
   align-items: center;
 }
+
 .ninc-highlight-reverse {
   direction: rtl;
 }
-.ninc-highlight-reverse > * {
+
+.ninc-highlight-reverse>* {
   direction: ltr;
 }
+
 .ninc-highlight-icon {
   width: 56px;
   height: 56px;
@@ -1475,17 +1555,20 @@ onUnmounted(() => {
   font-size: 28px;
   margin-bottom: 20px;
 }
+
 .ninc-highlight-content h3 {
   font-size: 26px;
   margin: 0 0 12px;
   color: var(--vp-c-text-1);
 }
+
 .ninc-highlight-content p {
   font-size: 15px;
   color: var(--vp-c-text-2);
   line-height: 1.7;
   margin: 0 0 20px;
 }
+
 .ninc-highlight-points {
   list-style: none;
   padding: 0;
@@ -1494,6 +1577,7 @@ onUnmounted(() => {
   grid-template-columns: 1fr 1fr;
   gap: 10px;
 }
+
 .ninc-highlight-points li {
   display: flex;
   align-items: center;
@@ -1501,9 +1585,11 @@ onUnmounted(() => {
   font-size: 14px;
   color: var(--vp-c-text-1);
 }
+
 .ninc-highlight-points li .iconify {
   color: var(--vp-c-brand-1);
 }
+
 .ninc-highlight-visual {
   border-radius: 16px;
   overflow: hidden;
@@ -1511,12 +1597,14 @@ onUnmounted(() => {
   background: var(--vp-c-bg-soft);
   display: flex;
 }
+
 .ninc-highlight-window {
   flex: 1;
   display: flex;
   flex-direction: column;
   background: var(--vp-code-block-bg);
 }
+
 .ninc-highlight-dots {
   display: flex;
   align-items: center;
@@ -1524,14 +1612,25 @@ onUnmounted(() => {
   padding: 12px 16px;
   border-bottom: 1px solid var(--vp-c-divider);
 }
+
 .ninc-dot {
   width: 12px;
   height: 12px;
   border-radius: 50%;
 }
-.ninc-dot-r { background: #ff5f56; }
-.ninc-dot-y { background: #ffbd2e; }
-.ninc-dot-g { background: #27c93f; }
+
+.ninc-dot-r {
+  background: #ff5f56;
+}
+
+.ninc-dot-y {
+  background: #ffbd2e;
+}
+
+.ninc-dot-g {
+  background: #27c93f;
+}
+
 .ninc-highlight-lang {
   margin-left: auto;
   font-family: var(--vp-font-family-mono);
@@ -1540,6 +1639,7 @@ onUnmounted(() => {
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
+
 .ninc-highlight-code {
   flex: 1;
   margin: 0;
@@ -1549,6 +1649,7 @@ onUnmounted(() => {
   font-size: 13px;
   line-height: 1.7;
 }
+
 .ninc-highlight-code code {
   font-family: inherit;
   white-space: pre;
@@ -1558,12 +1659,14 @@ onUnmounted(() => {
 .ninc-performance {
   background: var(--vp-c-bg);
 }
+
 .ninc-perf-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 20px;
   margin-top: 40px;
 }
+
 .ninc-perf-card {
   padding: 24px;
   border: 1px solid var(--vp-c-divider);
@@ -1571,6 +1674,7 @@ onUnmounted(() => {
   background: var(--vp-c-bg-soft);
   text-align: center;
 }
+
 .ninc-perf-number {
   font-size: 36px;
   font-weight: 700;
@@ -1578,17 +1682,20 @@ onUnmounted(() => {
   line-height: 1;
   margin-bottom: 8px;
 }
+
 .ninc-perf-label {
   font-size: 13px;
   color: var(--vp-c-text-2);
   margin-bottom: 16px;
 }
+
 .ninc-perf-bar {
   height: 4px;
   background: var(--vp-c-divider);
   border-radius: 2px;
   overflow: hidden;
 }
+
 .ninc-perf-bar-fill {
   height: 100%;
   background: var(--bar-color, var(--vp-c-brand-1));
@@ -1600,15 +1707,18 @@ onUnmounted(() => {
 .ninc-markdown-show {
   background: var(--vp-c-bg);
 }
+
 .ninc-md-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 16px;
   margin-top: 40px;
 }
+
 .ninc-md-card {
   height: 100%;
 }
+
 .ninc-md-inner {
   padding: 24px 20px;
   text-align: center;
@@ -1617,10 +1727,12 @@ onUnmounted(() => {
   align-items: center;
   gap: 8px;
 }
+
 .ninc-md-icon {
   font-size: 28px;
   color: var(--vp-c-brand-1);
 }
+
 .ninc-md-name {
   font-family: var(--vp-font-family-mono);
   font-size: 14px;
@@ -1630,6 +1742,7 @@ onUnmounted(() => {
   border-radius: 6px;
   border: 1px solid var(--vp-c-divider);
 }
+
 .ninc-md-desc {
   font-size: 12px;
   color: var(--vp-c-text-2);
@@ -1639,39 +1752,47 @@ onUnmounted(() => {
 .ninc-comparison {
   background: var(--vp-c-bg);
 }
+
 .ninc-compare-table {
   margin-top: 40px;
   border: 1px solid var(--vp-c-divider);
   border-radius: 16px;
   overflow: hidden;
 }
+
 .ninc-compare-table table {
   width: 100%;
   border-collapse: collapse;
   margin: 0;
 }
+
 .ninc-compare-table th,
 .ninc-compare-table td {
   padding: 14px 20px;
   text-align: left;
   border-bottom: 1px solid var(--vp-c-divider);
 }
+
 .ninc-compare-table th {
   background: var(--vp-c-bg-soft);
   font-weight: 600;
   font-size: 14px;
 }
+
 .ninc-compare-table td {
   font-size: 14px;
 }
+
 .ninc-col-ninc {
   text-align: center !important;
   width: 140px;
 }
+
 .ninc-yes {
   color: var(--vp-c-green-1);
   font-size: 20px;
 }
+
 .ninc-no {
   color: var(--vp-c-text-3);
   font-size: 20px;
@@ -1684,34 +1805,66 @@ onUnmounted(() => {
   border: none;
   padding: 0;
 }
+
 .ninc-cta-btn {
   display: inline-flex;
 }
 
 /* ===== 新增 section 响应式 ===== */
 @media (max-width: 1024px) {
-  .ninc-usecase-grid { grid-template-columns: repeat(2, 1fr); }
-  .ninc-perf-grid { grid-template-columns: repeat(2, 1fr); }
-  .ninc-md-grid { grid-template-columns: repeat(2, 1fr); }
-  .ninc-highlight-row { grid-template-columns: 1fr; gap: 30px; }
-  .ninc-highlight-reverse { direction: ltr; }
+  .ninc-usecase-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .ninc-perf-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .ninc-md-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .ninc-highlight-row {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .ninc-highlight-reverse {
+    direction: ltr;
+  }
 }
 
 @media (max-width: 640px) {
-  .ninc-usecase-grid { grid-template-columns: 1fr; }
-  .ninc-perf-grid { grid-template-columns: 1fr; }
-  .ninc-md-grid { grid-template-columns: 1fr; }
-  .ninc-highlight-points { grid-template-columns: 1fr; }
-  .ninc-highlights-list { gap: 50px; }
+  .ninc-usecase-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ninc-perf-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ninc-md-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ninc-highlight-points {
+    grid-template-columns: 1fr;
+  }
+
+  .ninc-highlights-list {
+    gap: 50px;
+  }
 }
 
 /* ===== Reduced Motion ===== */
 @media (prefers-reduced-motion: reduce) {
+
   .ninc-hero-logo,
   .ninc-hero-bg::after,
   .ninc-cursor {
     animation: none;
   }
+
   .ninc-perf-bar-fill {
     transition: none;
   }
@@ -1720,23 +1873,60 @@ onUnmounted(() => {
 
 <!-- 全局样式：隐藏 VitePress 默认的 Hero 和 Features（仅在 home 布局时渲染） -->
 <style>
-.ninc-home ~ .VPHero,
-.ninc-home ~ .VPFeatures {
+.ninc-home~.VPHero,
+.ninc-home~.VPFeatures {
   display: none !important;
 }
+
 /* 语法高亮 token 颜色（全局样式，确保 v-html 注入的 span 生效） */
-.tok-comment { color: #6a737d; font-style: italic; }
-.tok-string { color: #0a7d28; }
-.tok-keyword { color: #7c4dff; }
-.tok-function { color: #1565c0; }
-.tok-number { color: #c2185b; }
-.tok-boolean { color: #c2185b; }
-.dark .tok-comment { color: #8b949e; }
-.dark .tok-string { color: #7ee787; }
-.dark .tok-keyword { color: #bc9cff; }
-.dark .tok-function { color: #79c0ff; }
-.dark .tok-number { color: #f0883e; }
-.dark .tok-boolean { color: #f0883e; }
+.tok-comment {
+  color: #6a737d;
+  font-style: italic;
+}
+
+.tok-string {
+  color: #0a7d28;
+}
+
+.tok-keyword {
+  color: #7c4dff;
+}
+
+.tok-function {
+  color: #1565c0;
+}
+
+.tok-number {
+  color: #c2185b;
+}
+
+.tok-boolean {
+  color: #c2185b;
+}
+
+.dark .tok-comment {
+  color: #8b949e;
+}
+
+.dark .tok-string {
+  color: #7ee787;
+}
+
+.dark .tok-keyword {
+  color: #bc9cff;
+}
+
+.dark .tok-function {
+  color: #79c0ff;
+}
+
+.dark .tok-number {
+  color: #f0883e;
+}
+
+.dark .tok-boolean {
+  color: #f0883e;
+}
 
 /* ===== Scroll Reveal（全局样式，避免 scoped 在 SSR hydration 下优先级问题） ===== */
 .ninc-home .ninc-reveal {
@@ -1768,6 +1958,7 @@ onUnmounted(() => {
 
 /* Reduced Motion：禁用所有动画 */
 @media (prefers-reduced-motion: reduce) {
+
   .ninc-home .ninc-reveal,
   .ninc-home .ninc-features .ninc-feature-card {
     opacity: 1 !important;
