@@ -15,14 +15,6 @@
     "pnpm": ">=9"
   },
   "type": "module",
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "v-code-diff"
-    ],
-    "overrides": {
-      "blog>vitepress-theme-ninc": "1.0.28"
-    }
-  },
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts,.vue --fix",

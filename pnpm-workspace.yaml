@@ -3,4 +3,11 @@ packages:
   - 'blog'
   - 'play'
   - 'docs'
+
+onlyBuiltDependencies:
+  - v-code-diff
+
+overrides:
+  'blog>vitepress-theme-ninc': 1.0.28
+
 minimumReleaseAge: 0
