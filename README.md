@@ -42,11 +42,10 @@
 
 ---
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/public/images/scrollShowcase/home-hero-dark.png" />
-  <source media="(prefers-color-scheme: light)" srcset="docs/public/images/scrollShowcase/home-hero-light.png" />
-  <img src="docs/public/images/scrollShowcase/home-hero-light.png" alt="vitepress-theme-ninc 首页预览" width="100%" />
-</picture>
+<p align="center">
+  <img src="docs/public/images/image-light.webp" width="49%" alt="首页 - 浅色" />
+  <img src="docs/public/images/image-dark.webp" width="49%" alt="首页 - 深色" />
+</p>
 
 ## 为什么造这个轮子
 
@@ -109,13 +108,6 @@ cd your-blog && pnpm install && pnpm dev
 </details>
 
 ## 界面预览
-
-### 首页
-
-<p align="center">
-  <img src="docs/public/images/scrollShowcase/home-hero-light.png" width="49%" alt="首页 - 浅色" />
-  <img src="docs/public/images/scrollShowcase/home-hero-dark.png" width="49%" alt="首页 - 深色" />
-</p>
 
 ### 文章页 & 关于页
 
