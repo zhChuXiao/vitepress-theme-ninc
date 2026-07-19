@@ -13,6 +13,13 @@
 </p>
 
 <p align="center">
+  <a href="https://theme.ninc.top" target="_blank">使用文档</a> ·
+  <a href="https://blog.ninc.top" target="_blank">在线演示</a> ·
+  <a href="https://github.com/zhChuXiao/vitepress-theme-ninc/issues" target="_blank">问题反馈</a> ·
+  <a href="CHANGELOG.md" target="_blank">更新日志</a>
+</p>
+
+<p align="center">
   <img src="https://img.shields.io/badge/Version-1.0.26-CB3837?style=flat-square&logo=npm&logoColor=white" alt="version" />
   <img src="https://img.shields.io/badge/License-MIT-blue?style=flat-square&logo=opensource&logoColor=white" alt="license" />
   <img src="https://img.shields.io/badge/Status-Active-brightgreen?style=flat-square" alt="status" />
@@ -21,12 +28,6 @@
   <img src="https://img.shields.io/badge/Code%20Style-Prettier-f7b93e?style=flat-square&logo=prettier&logoColor=white" alt="code style" />
 </p>
 
-<p align="center">
-  <a href="https://theme.ninc.top">使用文档</a> ·
-  <a href="https://blog.ninc.top">在线演示</a> ·
-  <a href="https://github.com/zhChuXiao/vitepress-theme-ninc/issues">问题反馈</a> ·
-  <a href="CHANGELOG.md">更新日志</a>
-</p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Vue-3.5-42b883?style=flat-square&logo=vuedotjs&logoColor=white" alt="Vue" />
