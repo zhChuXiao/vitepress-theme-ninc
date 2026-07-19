@@ -63,7 +63,7 @@ import { defineThemeConfig } from 'vitepress-theme-ninc/defineThemeConfig'
 
 下图展示了配置合并后实际渲染的博客首页：
 
-![配置合并后渲染效果](/images/scrollShowcase/home-hero-light.png)
+![配置合并后渲染效果](/images/image-light.webp)
 
 ## defineConfig 详解
 

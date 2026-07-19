@@ -55,6 +55,8 @@ my-blog/
 └─ package.json           ← 含 dev/build/preview 脚本与全部依赖
 ```
 
+![command-line](/images/ninc-init.png)
+
 ### 3. 安装依赖并启动
 
 ```bash

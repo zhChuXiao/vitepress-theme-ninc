@@ -336,5 +336,18 @@ export const defaultThemeConfig: ThemeConfig = {
   travellings: {
     enable: false,
     url: 'https://www.travellings.cn/go.html'
+  },
+  // NES 模拟器（/pages/nes 页面）
+  // 默认内置超级马里奥，ROM 文件由 init 命令复制到 public/nes-rom/
+  nes: {
+    roms: [
+      {
+        id: 'mario',
+        url: '/nes-rom/超级马里奥.nes',
+        name: '超级玛丽-原版',
+        savePrefix: 'mario'
+      }
+    ],
+    defaultRomId: 'mario'
   }
 }

@@ -45,6 +45,7 @@ declare module 'vue' {
     MobileMenu: typeof import('./../../packages/theme/src/client/components/MobileMenu.vue')['default']
     Modal: typeof import('./../../packages/theme/src/client/components/Modal.vue')['default']
     Nav: typeof import('./../../packages/theme/src/client/components/Nav.vue')['default']
+    NesGame: typeof import('./../../packages/theme/src/client/views/NesGame.vue')['default']
     NextPost: typeof import('./../../packages/theme/src/client/components/NextPost.vue')['default']
     NotFound: typeof import('./../../packages/theme/src/client/views/NotFoundPage/NotFound.vue')['default']
     NotFoundNum: typeof import('./../../packages/theme/src/client/views/NotFoundPage/NotFoundNum.vue')['default']

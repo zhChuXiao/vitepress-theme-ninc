@@ -157,16 +157,16 @@ onUnmounted(() => {
   aspect-ratio: 16 / 10;
   border-radius: 16px;
   overflow: hidden;
-  border: 1px solid var(--vp-c-border);
-  background: var(--vp-c-bg-soft);
+  /* border: 1px solid var(--vp-c-border); */
+  /* background: var(--vp-c-bg-soft); */
   cursor: col-resize;
   user-select: none;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+  /* box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04); */
   transition: box-shadow 0.3s ease;
 }
 
 .ninc-compare:hover {
-  box-shadow: 0 14px 48px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+  /* box-shadow: 0 14px 48px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06); */
 }
 
 .ninc-compare.is-dragging {

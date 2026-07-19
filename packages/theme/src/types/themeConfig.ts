@@ -560,6 +560,28 @@ export interface AboutConfig {
   info?: AboutInfo
 }
 
+/** NES 游戏 ROM 配置项 */
+export interface NesRomItem {
+  /** 游戏唯一 ID（用于存档前缀和切换游戏） */
+  id: string
+  /** ROM 文件路径，放在 public/nes-rom/ 下，如 '/nes-rom/超级马里奥.nes' */
+  url: string
+  /** 游戏显示名称 */
+  name: string
+  /** 存档前缀（用于 IndexedDB 存档隔离，不同游戏不要重复） */
+  savePrefix: string
+  /** TAS 录像文件路径（可选，放在 public/nes-fm2/ 下，如 '/nes-fm2/happylee-supermariobros,warped.fm2'） */
+  fm2?: string
+}
+
+/** NES 模拟器配置 */
+export interface NesConfig {
+  /** ROM 文件列表（至少包含一项） */
+  roms: NesRomItem[]
+  /** 默认选中的游戏 ID（不配置时取 roms[0].id） */
+  defaultRomId?: string
+}
+
 /** 完整的主题配置 */
 export interface ThemeConfig {
   siteMeta: SiteMeta
@@ -587,6 +609,8 @@ export interface ThemeConfig {
   tongji: TongjiConfig
   /** 开往-友链接力按钮（导航栏右侧，默认关闭） */
   travellings: TravellingsConfig
+  /** NES 模拟器配置（/pages/nes 页面） */
+  nes: NesConfig
 }
 
 /** 用户传入的主题配置（所有字段可选，会与默认值深合并） */

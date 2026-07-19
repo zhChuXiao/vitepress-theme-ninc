@@ -27,7 +27,7 @@ const features = [
   { icon: 'lucide:link', title: '外链中转', desc: '自动将外链转换为中转页跳转，保护用户隐私，提升 SEO。' },
   { icon: 'lucide:moon', title: '暗色模式', desc: '完整的明暗主题适配，支持跟随系统、手动切换、记忆偏好。' },
   { icon: 'lucide:zap', title: '丰富动画', desc: '基于 GSAP、CSS 动画，页面切换丝滑流畅，视觉体验出众。' },
-  { icon: 'lucide:bar-chart-3', title: '数据可视化', desc: '内置 ECharts 支持，轻松实现装备编年史、数据统计等可视化页面。' },
+  { icon: 'lucide:gamepad-2', title: 'NES 模拟器', desc: '内置 NES 模拟器，init 自带超级马里奥，支持存档读档、TAS 录像、双人键盘与手柄控制。' },
   { icon: 'lucide:puzzle', title: '自动导入', desc: 'unplugin-auto-import + unplugin-vue-components，API 与组件全自动导入。' }
 ]
 
@@ -382,8 +382,8 @@ onUnmounted(() => {
         <p class="ninc-section-desc">滑动鼠标对比亮色与暗色模式下的博客首页效果</p>
         <div class="ninc-compare-wrap">
           <Compare
-            first-image="/images/image-light.png"
-            second-image="/images/home-dark.png"
+            first-image="/images/image-light.webp"
+            second-image="/images/image-dark.webp"
             first-alt="亮色模式博客首页"
             second-alt="暗色模式博客首页"
             first-label="亮色"

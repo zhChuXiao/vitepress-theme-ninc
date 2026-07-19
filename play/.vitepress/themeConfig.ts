@@ -90,6 +90,12 @@ export const themeConfig = defineThemeConfig({
       ]
     },
     {
+      text: '工具',
+      items: [
+        { text: 'NES 模拟器', link: '/pages/nes', icon: 'game' }
+      ]
+    },
+    {
       text: '我的',
       items: [
         { text: '留言板', link: '/pages/comments', icon: 'chat' },

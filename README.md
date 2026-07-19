@@ -2,23 +2,23 @@
   <img src="docs/public/images/avatar.jpg" width="110" height="110" alt="vitepress-theme-ninc" style="border-radius: 24px; box-shadow: 0 8px 24px rgba(0,0,0,0.12)" />
 </p>
 
-<h1 align="center">vitepress-theme-ninc</h1>
+<h1 align="center">VitePress Theme Ninc</h1>
 
 <p align="center">
-  一个不想当博客的主题不是好 VitePress 主题
+  <a href="https://git.io/typing-svg"><img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=18&pause=1000&color=646cff&center=true&vCenter=true&random=false&width=440&lines=%E5%BC%80%E7%AE%B1%E5%8D%B3%E7%94%A8%E7%9A%84+VitePress+%E4%B8%BB%E9%A2%98;Made+with+%E2%9D%A4+by+%E5%91%A2%E5%96%83Ninc" alt="Typing SVG" /></a>
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/vitepress-theme-ninc" target="_blank"><img src="https://img.shields.io/npm/v/vitepress-theme-ninc.svg?style=flat-square&logo=npm&logoColor=white&label=npm&color=CB3837" alt="npm version" /></a>
-  <a href="https://www.npmjs.com/package/vitepress-theme-ninc" target="_blank"><img src="https://img.shields.io/npm/dt/vitepress-theme-ninc.svg?style=flat-square&logo=npm&logoColor=white&label=downloads&color=339933" alt="npm downloads" /></a>
-  <a href="https://github.com/zhChuXiao/vitepress-theme-ninc/blob/master/LICENSE" target="_blank"><img src="https://img.shields.io/npm/l/vitepress-theme-ninc.svg?style=flat-square&logo=mit&logoColor=white&color=blue" alt="license" /></a>
-  <a href="https://github.com/zhChuXiao/vitepress-theme-ninc/stargazers" target="_blank"><img src="https://img.shields.io/github/stars/zhChuXiao/vitepress-theme-ninc.svg?style=flat-square&logo=github&logoColor=white&color=yellow" alt="stars" /></a>
-  <a href="https://github.com/zhChuXiao/vitepress-theme-ninc/network/members" target="_blank"><img src="https://img.shields.io/github/forks/zhChuXiao/vitepress-theme-ninc.svg?style=flat-square&logo=github&logoColor=white&color=orange" alt="forks" /></a>
-  <a href="https://github.com/zhChuXiao/vitepress-theme-ninc/issues" target="_blank"><img src="https://img.shields.io/github/issues/zhChuXiao/vitepress-theme-ninc.svg?style=flat-square&logo=github&logoColor=white&color=red" alt="issues" /></a>
-  <a href="https://github.com/zhChuXiao/vitepress-theme-ninc/pulls" target="_blank"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square&logo=github" alt="PRs welcome" /></a>
-  <a href="https://github.com/zhChuXiao/vitepress-theme-ninc/commits/master" target="_blank"><img src="https://img.shields.io/github/last-commit/zhChuXiao/vitepress-theme-ninc.svg?style=flat-square&logo=git&logoColor=white&label=last%20commit" alt="last commit" /></a>
-  <a href="https://github.com/zhChuXiao/vitepress-theme-ninc/releases" target="_blank"><img src="https://img.shields.io/github/release-date/zhChuXiao/vitepress-theme-ninc.svg?style=flat-square&logo=github&logoColor=white&label=release" alt="release date" /></a>
-  <a href="https://github.com/zhChuXiao/vitepress-theme-ninc/blob/master/package.json" target="_blank"><img src="https://img.shields.io/github/repo-size/zhChuXiao/vitepress-theme-ninc.svg?style=flat-square&logo=github&logoColor=white&label=repo%20size" alt="repo size" /></a>
+  一个功能丰富的 VitePress 主题 — 开箱即用的博客、文档与工具站。本仓库为 monorepo，包含主题包、示例站点与文档站。
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Version-1.0.26-CB3837?style=flat-square&logo=npm&logoColor=white" alt="version" />
+  <img src="https://img.shields.io/badge/License-MIT-blue?style=flat-square&logo=opensource&logoColor=white" alt="license" />
+  <img src="https://img.shields.io/badge/Status-Active-brightgreen?style=flat-square" alt="status" />
+  <img src="https://img.shields.io/badge/PRs-Welcome-brightgreen?style=flat-square&logo=github&logoColor=white" alt="PRs welcome" />
+  <img src="https://img.shields.io/badge/Made%20with-Vue-42b883?style=flat-square&logo=vuedotjs&logoColor=white" alt="made with vue" />
+  <img src="https://img.shields.io/badge/Code%20Style-Prettier-f7b93e?style=flat-square&logo=prettier&logoColor=white" alt="code style" />
 </p>
 
 <p align="center">
@@ -29,15 +29,15 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Vue-3.5-42b883?style=flat-square&logo=vue.js&logoColor=white" alt="Vue" />
+  <img src="https://img.shields.io/badge/Vue-3.5-42b883?style=flat-square&logo=vuedotjs&logoColor=white" alt="Vue" />
   <img src="https://img.shields.io/badge/TypeScript-5.x-3178c6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript" />
   <img src="https://img.shields.io/badge/VitePress-1.6.4-646cff?style=flat-square&logo=vitepress&logoColor=white" alt="VitePress" />
   <img src="https://img.shields.io/badge/Vite-5+-646cff?style=flat-square&logo=vite&logoColor=white" alt="Vite" />
   <img src="https://img.shields.io/badge/pnpm-9+-f69220?style=flat-square&logo=pnpm&logoColor=white" alt="pnpm" />
   <img src="https://img.shields.io/badge/ESLint-9-4b32c3?style=flat-square&logo=eslint&logoColor=white" alt="ESLint" />
   <img src="https://img.shields.io/badge/Prettier-3-f7b93e?style=flat-square&logo=prettier&logoColor=white" alt="Prettier" />
-  <img src="https://img.shields.io/badge/Node.js-%3E%3D20-5fa04e?style=flat-square&logo=node.js&logoColor=white" alt="Node.js" />
-  <img src="https://img.shields.io/badge/License-MIT-blue?style=flat-square&logo=open-source-initiative&logoColor=white" alt="License" />
+  <img src="https://img.shields.io/badge/Node.js-%3E%3D20-5fa04e?style=flat-square&logo=nodedotjs&logoColor=white" alt="Node.js" />
+  <img src="https://img.shields.io/badge/License-MIT-blue?style=flat-square&logo=opensource&logoColor=white" alt="License" />
 </p>
 
 ---
@@ -49,9 +49,9 @@
 
 ## 为什么造这个轮子
 
-用 VitePress 搭博客的人不少，但默认主题太素了。市面上的主题要么功能残缺，要么改起来费劲。我想要的是一个**装上就能用、不用折腾插件**的主题——评论、搜索、音乐、PWA、灯箱、RSS，该有的都有，不该有的不塞。
+用 VitePress 搭文档的人不少，但是搭建博客的人却寥寥无几，毕竟默认主题太素了。市面上的主题要么功能略有残缺，要么改起来费劲。我想要的是一个零基础可配置**装上就能用、不用折腾插件**的主题。
 
-这个主题基于 [imsyy/vitepress-theme-curve](https://github.com/imsyy/vitepress-theme-curve) 二次开发。curve 的底子很好，我在此基础上做了大量重构和扩展：抽成 npm 包、重写配置系统、补齐文档、加了 AI 摘要、文章加密等几十个功能，让它真正能开箱即用。
+这个主题基于 [imsyy/vitepress-theme-curve](https://github.com/imsyy/vitepress-theme-curve) 二次开发。curve 的底子很好，我在此基础上做了大量重构和扩展：抽成 npm 包、重写配置系统、梳理使用文档、以及加了大量功能和样式，让它真正能开箱即用。
 
 ## 三分钟上手
 
@@ -80,30 +80,13 @@ cd your-blog && pnpm install && pnpm dev
 | **RSS 订阅** | 构建时自动生成 rss.xml |
 | **暗色模式** | 跟随系统 + 手动切换，View Transitions 动画 |
 | **NES 模拟器** | 内置红白机模拟器页面（对，真的能玩） |
-| **外链中转** | 外部链接自动跳中转确认页 |
 | **代码组图标** | 按语言自动配图标 |
+| **等等等...** | 更多功能请看 [使用文档](https://theme.ninc.top) |
 
 <details>
 <summary>还有这些</summary>
 
-- Lottie 动画组件
-- GSAP 滚动动画
-- 倒计时、公告、倒计时小组件
-- 友链页面
-- 留言板
-- 装备清单页
-- 关于页（技能、生涯、性格、偏好卡片）
-- 文章归档、分类、标签页
-- 字数统计、阅读时长
-- 上一篇/下一篇导航
-- 文章参考来源
-- 转载声明
-- 赞赏码
-- 备案号页脚
-- 51la / Umami / 百度统计
-- 自定义 CSS / JS 注入
-- 打字机效果
-- 自定义鼠标样式
+更多功能请看 [使用文档](https://theme.ninc.top)
 
 </details>
 
@@ -133,6 +116,8 @@ cd your-blog && pnpm install && pnpm dev
 ## 手动安装
 
 不想用脚手架也行：
+
+> 在现有的VitePress项目中安装：
 
 ```bash
 pnpm add vitepress-theme-ninc
@@ -170,29 +155,13 @@ export default defineConfig(
 ├── docs/               使用文档站点
 ├── play/               开发调试用的示例站点
 ├── blog/               我自己的博客（submodule，私有仓库）
-└── demo3/              另一个示例
+└── demo/              另一个示例
 ```
-
-## 数据统计
-
-<p align="center">
-  <a href="https://github.com/zhChuXiao/vitepress-theme-ninc" target="_blank"><img src="https://github-readme-stats.vercel.app/api?username=zhChuXiao&repo=vitepress-theme-ninc&show_icons=true&theme=default&count_private=true&hide_border=true&bg_color=ffffff" alt="GitHub Stats" /></a>
-  <a href="https://github.com/zhChuXiao/vitepress-theme-ninc" target="_blank"><img src="https://github-readme-stats.vercel.app/api/top-langs/?username=zhChuXiao&repo=vitepress-theme-ninc&layout=compact&theme=default&hide_border=true&bg_color=ffffff" alt="Top Languages" /></a>
-</p>
-
-<p align="center">
-  <a href="https://github.com/zhChuXiao/vitepress-theme-ninc" target="_blank"><img src="https://github-readme-activity-graph.vercel.app/graph?username=zhChuXiao&theme=default&hide_border=true&bg_color=ffffff" alt="Activity Graph" /></a>
-</p>
 
 ## 贡献
 
 有想法？有 bug？欢迎提 [Issue](https://github.com/zhChuXiao/vitepress-theme-ninc/issues) 或 PR。
 
-提交信息请遵循 [Conventional Commits](https://www.conventionalcommits.org/)，比如 `feat: 加个新功能`、`fix: 修个 bug`。
-
-<blockquote>
-  <p><strong>Tip</strong>：如果你觉得这个主题好用，<a href="https://github.com/sponsors/zhChuXiao">请作者喝杯咖啡 ☕</a>，或者点个 ⭐ 让更多人看到。</p>
-</blockquote>
 
 ## 致谢
 
@@ -203,4 +172,4 @@ export default defineConfig(
 
 ## License
 
-[MIT](LICENSE) © 2023-present [呢喃Ninc](https://blog.ninc.top)
+[MIT](LICENSE) © 2025-present [呢喃Ninc](https://blog.ninc.top)

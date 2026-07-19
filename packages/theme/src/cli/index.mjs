@@ -170,6 +170,16 @@ function tplThemeConfig(cfg) {
     }
   },`
 
+  // NES 模拟器导航项（仅当用户启用 NES 页面时插入"工具"分组）
+  const navNesBlock = cfg.nes
+    ? `    {
+      text: '工具',
+      items: [
+        { text: 'NES 模拟器', link: '/pages/nes', icon: 'game' }
+      ]
+    },`
+    : ''
+
   return `// 主题配置 —— 由 vitepress-theme-ninc init 生成
 // 文档：https://theme.ninc.top/guide/configuration
 // 所有字段会与主题内置默认值深合并（defu），只需写想改的字段
@@ -261,6 +271,7 @@ export const themeConfig = defineThemeConfig({
         { text: '技术教程', link: '/pages/categories/技术教程', icon: 'code' }
       ]
     },
+${navNesBlock}
     {
       text: '我的',
       items: [
@@ -1699,6 +1710,25 @@ import { CatOrTag } from 'vitepress-theme-ninc/views'
 `
 }
 
+function tplNesMd() {
+  return `---
+title: NES 模拟器
+fullWidth: true
+comment: true
+description: 在线NES(任天堂红白机)模拟器，小霸王模拟器，支持上传游戏ROM文件和Ms2录像文件。无需下载，直接在浏览器中运行经典NES游戏，并支持TAS录像的播放功能。支持存档/读档、按键配置等实用功能。兼容超级马里奥、魂斗罗、冒险岛、恶魔城、洛克人等经典红白机游戏。
+card: false
+---
+
+<script setup>
+import { NesGame } from 'vitepress-theme-ninc/views'
+</script>
+
+<ClientOnly>
+    <NesGame />
+</ClientOnly>
+`
+}
+
 function tplCategoryDynamicMd() {
   return `---
 title: 分类
@@ -1846,7 +1876,7 @@ function tplPackageJson(cfg) {
 
   const pkg = {
     name: slug,
-    version: '1.0.22',
+    version: '1.0.26',
     description: cfg.description,
     type: 'module',
     scripts: {
@@ -1860,7 +1890,7 @@ function tplPackageJson(cfg) {
     dependencies: {
       vitepress: '^1.6.4',
       vue: '^3.5.0',
-      'vitepress-theme-ninc': '^1.0.22'
+      'vitepress-theme-ninc': '^1.0.23'
     }
   }
 
@@ -1961,7 +1991,7 @@ async function main() {
       '提醒'
     )
 
-    const cfg = { title, description, site, author, email, pwa: false, comment: false, twikooEnvId: '' }
+    const cfg = { title, description, site, author, email, pwa: false, comment: false, twikooEnvId: '', nes: false }
 
     clack.log.step('生成文件')
 
@@ -2016,6 +2046,7 @@ async function main() {
   let enableCategoriesPage = true
   let enableTagsPage = true
   let enableThanksPage = true
+  let enableNesPage = true
 
   if (configMode === 'custom') {
     // 功能开关
@@ -2032,6 +2063,7 @@ async function main() {
       { value: 'archives', label: '全部文章', desc: '/pages/archives' },
       { value: 'tags', label: '全部标签', desc: '/pages/tags（含动态路由）' },
       { value: 'thanks', label: '赞赏名单', desc: '/pages/thanks' },
+      { value: 'nes', label: 'NES 模拟器', desc: '/pages/nes（自带超级马里奥）' },
     ])
     enableAboutPage = pages.includes('about')
     enableCommentsPage = pages.includes('comments')
@@ -2039,6 +2071,7 @@ async function main() {
     enableCategoriesPage = true  // 分类页面始终生成（专栏菜单依赖此页面）
     enableTagsPage = pages.includes('tags')
     enableThanksPage = pages.includes('thanks')
+    enableNesPage = pages.includes('nes')
 
     // 示例文章
     createSample = await confirm('创建示例文章（含 Markdown 语法完全指南）？', true)
@@ -2046,7 +2079,7 @@ async function main() {
     clack.log.info('采用默认配置：PWA=否，评论=否，生成所有页面与示例文章')
   }
 
-  const cfg = { title, description, site, author, email, pwa, comment, twikooEnvId }
+  const cfg = { title, description, site, author, email, pwa, comment, twikooEnvId, nes: enableNesPage }
 
   // 2. 生成文件
   clack.log.step('生成文件')
@@ -2084,6 +2117,23 @@ async function main() {
     await writeFile('pages/tags.md', tplTagsMd())
     await writeFile('pages/tags/[name].md', tplTagDynamicMd())
     await writeFile('pages/tags/[name].paths.mjs', tplTagPathsMjs())
+  }
+
+  // NES 模拟器页面 + 自带超级马里奥 ROM（按用户选择生成）
+  if (enableNesPage) {
+    clack.log.message(pc.dim('NES 模拟器'))
+    await writeFile('pages/nes.md', tplNesMd())
+    // 复制自带超级马里奥 ROM 到用户项目的 public/nes-rom/
+    const romDir = path.join(__dirname, 'templates', 'nes-rom')
+    if (fs.existsSync(romDir)) {
+      fs.mkdirSync('public/nes-rom', { recursive: true })
+      for (const file of fs.readdirSync(romDir)) {
+        if (file.endsWith('.nes')) {
+          fs.copyFileSync(path.join(romDir, file), path.join('public', 'nes-rom', file))
+          console.log(pc.green('  ✓') + pc.dim(` public/nes-rom/${file}`))
+        }
+      }
+    }
   }
 
   // 文章分页（始终生成，分页是首页文章列表所必需的）

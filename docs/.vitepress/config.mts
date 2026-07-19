@@ -112,6 +112,7 @@ export default defineConfig({
             { text: 'AI 文章摘要', link: '/guide/ai-summary' },
             { text: 'AI 摘要代理部署', link: '/guide/ai-summary-proxy' },
             { text: 'CLI 命令行工具', link: '/guide/cli' },
+            { text: 'NES 模拟器', link: '/guide/nes' },
             { text: '部署', link: '/guide/deployment' }
           ]
         }
@@ -149,6 +150,7 @@ export default defineConfig({
             { text: 'equipment 装备', link: '/config/equipment' },
             { text: 'tongji 统计', link: '/config/tongji' },
             { text: 'travellings 开往', link: '/config/travellings' },
+            { text: 'nes NES 模拟器', link: '/config/nes' },
             { text: 'inject 注入', link: '/config/inject' }
           ]
         }
