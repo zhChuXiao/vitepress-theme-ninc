@@ -19,8 +19,10 @@
   <a href="CHANGELOG.md" target="_blank">更新日志</a>
 </p>
 
+---
+
 <p align="center">
-  <img src="https://img.shields.io/badge/Version-1.0.26-CB3837?style=flat-square&logo=npm&logoColor=white" alt="version" />
+  <img src="https://img.shields.io/badge/Version-1.0.27-CB3837?style=flat-square&logo=npm&logoColor=white" alt="version" />
   <img src="https://img.shields.io/badge/License-MIT-blue?style=flat-square&logo=opensource&logoColor=white" alt="license" />
   <img src="https://img.shields.io/badge/Status-Active-brightgreen?style=flat-square" alt="status" />
   <img src="https://img.shields.io/badge/PRs-Welcome-brightgreen?style=flat-square&logo=github&logoColor=white" alt="PRs welcome" />
@@ -35,8 +37,6 @@
   <img src="https://img.shields.io/badge/VitePress-1.6.4-646cff?style=flat-square&logo=vitepress&logoColor=white" alt="VitePress" />
   <img src="https://img.shields.io/badge/Vite-5+-646cff?style=flat-square&logo=vite&logoColor=white" alt="Vite" />
   <img src="https://img.shields.io/badge/pnpm-9+-f69220?style=flat-square&logo=pnpm&logoColor=white" alt="pnpm" />
-  <img src="https://img.shields.io/badge/ESLint-9-4b32c3?style=flat-square&logo=eslint&logoColor=white" alt="ESLint" />
-  <img src="https://img.shields.io/badge/Prettier-3-f7b93e?style=flat-square&logo=prettier&logoColor=white" alt="Prettier" />
   <img src="https://img.shields.io/badge/Node.js-%3E%3D20-5fa04e?style=flat-square&logo=nodedotjs&logoColor=white" alt="Node.js" />
   <img src="https://img.shields.io/badge/License-MIT-blue?style=flat-square&logo=opensource&logoColor=white" alt="License" />
 </p>
@@ -44,8 +44,8 @@
 ---
 
 <p align="center">
-  <img src="docs/public/images/image-light.webp" width="49%" alt="首页 - 浅色" />
-  <img src="docs/public/images/image-dark.webp" width="49%" alt="首页 - 深色" />
+  <img src="docs/public/images/image-light.webp" alt="首页 - 浅色" />
+  <img src="docs/public/images/image-dark.webp" alt="首页 - 深色" />
 </p>
 
 ## 为什么造这个轮子

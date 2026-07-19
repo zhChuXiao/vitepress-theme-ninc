@@ -1,6 +1,6 @@
 {
   "name": "vitepress-theme-ninc",
-  "version": "1.0.26",
+  "version": "1.0.27",
   "description": "A feature-rich VitePress theme by ninc - blog, docs, and utilities out of the box. 功能完整的 VitePress 博客 / 文档主题，开箱即用。",
   "author": "呢喃Ninc <i@ninc.top>",
   "license": "MIT",
@@ -101,7 +101,7 @@
   "scripts": {
     "build": "node scripts/build-node.mjs",
     "prepare": "node scripts/build-node.mjs",
-    "postinstall": "patch-package",
+    "postinstall": "patch-package || node -e \"console.log('[vitepress-theme-ninc] patch-package skipped (devDependencies not installed)')\"",
     "prepublishOnly": "node scripts/build-node.mjs && echo 'Reminder: verify pnpm pack output before publishing'"
   },
   "peerDependencies": {
@@ -127,12 +127,12 @@
     "lodash-es": "^4.17.21",
     "nes-vue": "1.8.2",
     "nprogress": "^0.2.0",
+    "patch-package": "^8.0.0",
     "picocolors": "^1.1.1",
     "pinia": "^2.3.0",
     "pinia-plugin-persistedstate": "^3.2.3"
   },
   "devDependencies": {
-    "patch-package": "^8.0.0",
     "postinstall-postinstall": "^2.1.0"
   },
   "optionalDependencies": {
