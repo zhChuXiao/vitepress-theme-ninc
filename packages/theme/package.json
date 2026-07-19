@@ -133,6 +133,7 @@
     "pinia-plugin-persistedstate": "^3.2.3"
   },
   "devDependencies": {
+    "esbuild": "^0.21.0",
     "postinstall-postinstall": "^2.1.0"
   },
   "optionalDependencies": {

@@ -4,8 +4,13 @@ packages:
   - 'play'
   - 'docs'
 
-onlyBuiltDependencies:
-  - v-code-diff
+allowBuilds:
+  '@parcel/watcher': true
+  esbuild: true
+  postinstall-postinstall: true
+  v-code-diff: true
+  vitepress-theme-ninc: true
+  vue-demi: true
 
 overrides:
   'blog>vitepress-theme-ninc': 1.0.28
