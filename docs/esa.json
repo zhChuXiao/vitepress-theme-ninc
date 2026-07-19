@@ -1,0 +1,8 @@
+{
+  "name": "docs",
+  "buildCommand": "pnpm run build",
+  "installCommand": "pnpm install",
+  "assets": {
+    "directory": "./.vitepress/dist"
+  }
+}
