@@ -57,9 +57,12 @@ export default defineConfig({
     // ── 安全策略：自动升级 http → https ──
     ['meta', { httpEquiv: 'Content-Security-Policy', content: 'upgrade-insecure-requests' }],
 
-    // ── 51la 网站统计 ──
-    ['script', { charset: 'UTF-8', id: 'LA_COLLECT', src: 'https://sdk.51.la/js-sdk-pro.min.js' }],
-    ['script', {}, `LA.init({id:"3QcVpJx63jNB0VwV",ck:"3QcVpJx63jNB0VwV",hashMode:true})`]
+    // ── 51la 网站统计（异步引入，避免阻塞页面首屏渲染）──
+    [
+      'script',
+      {},
+      `!function(p){"use strict";!function(t){var s=window,e=document,i=p,c="".concat("https:"===e.location.protocol?"https:":"http://","sdk.51.la/js-sdk-pro.min.js"),n=e.createElement("script"),r=e.getElementsByTagName("script")[0];n.type="text/javascript",n.setAttribute("charset","UTF-8"),n.async=!0,n.src=c,n.id="LA_COLLECT",i.d=n;var o=function(){s.LA.ids.push(i)};s.LA?s.LA.ids&&o():(s.LA=p,s.LA.ids=[],o()),r.parentNode.insertBefore(n,r)}()}({id:"3QcVpJx63jNB0VwV",ck:"3QcVpJx63jNB0VwV"});`
+    ]
   ],
   vite: {
     plugins: [
