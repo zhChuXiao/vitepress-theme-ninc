@@ -337,6 +337,8 @@ export const defaultThemeConfig: ThemeConfig = {
     enable: false,
     url: 'https://www.travellings.cn/go.html'
   },
+  // 导航栏右侧自定义按钮（默认为空，可在 themeConfig.navButtons 中新增）
+  navButtons: [],
   // NES 模拟器（/pages/nes 页面）
   // 默认内置超级马里奥，ROM 文件由 init 命令复制到 public/nes-rom/
   nes: {

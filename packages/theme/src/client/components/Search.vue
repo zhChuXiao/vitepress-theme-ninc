@@ -15,7 +15,7 @@
       :index-name="indexName"
       @state-change="searchChange"
     >
-      <ais-configure :hits-per-page.camel="8" />
+      <CleanConfigure :hits-per-page.camel="8" />
       <ais-search-box
         placeholder="想要搜点什么"
         reset-title="重置"
@@ -70,7 +70,23 @@
 <script setup>
 import { mainStore } from '../store';
 import { liteClient } from "algoliasearch/lite";
-import { onActivated, onDeactivated, onMounted } from "vue";
+import { onActivated, onDeactivated, onMounted, h, defineComponent } from "vue";
+import { AisConfigure } from "vue-instantsearch/vue3/es";
+
+// 包装 AisConfigure：阻止 code-inspector-plugin 注入的 data-insp-path 通过 $attrs
+// fallthrough 到 ais-configure（ais-configure 会把 $attrs 当作 Algolia 搜索参数，
+// 导致 Unknown parameter: data-insp-path 错误）
+const CleanConfigure = defineComponent({
+  name: 'CleanConfigure',
+  inheritAttrs: false,
+  props: {
+    hitsPerPage: { type: Number, default: undefined }
+  },
+  setup(props) {
+    return () => h(AisConfigure, { hitsPerPage: props.hitsPerPage })
+  }
+})
+
 const store = mainStore();
 const router = useRouter();
 

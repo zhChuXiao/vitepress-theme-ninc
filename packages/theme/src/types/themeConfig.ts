@@ -332,6 +332,24 @@ export interface TravellingsConfig {
   url?: string
 }
 
+/** 导航栏右侧自定义按钮 */
+export interface NavButtonConfig {
+  /** 按钮名称（hover 时在站点标题位显示，同时作为 title 提示） */
+  name: string
+  /** 图标类型：iconfont 字体图标 或 图片 URL（默认 iconfont） */
+  iconType?: 'iconfont' | 'img'
+  /**
+   * 图标：
+   * - iconType=iconfont（默认）：iconfont 图标名，不含 `icon-` 前缀（例如 `github`、`list`）
+   * - iconType=img：图片 URL（例如 `/images/xxx.png`）
+   */
+  icon: string
+  /** 跳转链接 */
+  url: string
+  /** 链接打开方式，默认 `_blank` 新窗口 */
+  target?: '_blank' | '_self'
+}
+
 /** 外链中转配置 */
 export interface JumpRedirectConfig {
   /** 是否启用外链中转 */
@@ -644,6 +662,8 @@ export interface ThemeConfig {
   tongji: TongjiConfig
   /** 开往-友链接力按钮（导航栏右侧，默认关闭） */
   travellings: TravellingsConfig
+  /** 导航栏右侧自定义按钮（在搜索按钮之后、中控台按钮之前渲染） */
+  navButtons: NavButtonConfig[]
   /** NES 模拟器配置（/pages/nes 页面） */
   nes: NesConfig
 }

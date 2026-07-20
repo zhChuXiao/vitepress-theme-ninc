@@ -98,6 +98,27 @@
           >
             <i class="iconfont icon-search"></i>
           </div>
+          <!-- 自定义按钮（来自 themeConfig.navButtons） -->
+          <div
+            v-for="(btn, idx) in navButtons"
+            :key="'nav-btn-' + idx"
+            class="menu-btn nav-btn custom-btn"
+            :title="btn.name"
+            @click="handleNavButtonClick(btn)"
+            @mouseenter="menuBtnEnter('custom', btn)"
+            @mouseleave="menuBtnLeave('custom')"
+          >
+            <i
+              v-if="btn.iconType !== 'img'"
+              :class="`iconfont icon-${btn.icon}`"
+            />
+            <img
+              v-else
+              class="nav-btn-img"
+              :src="btn.icon"
+              :alt="btn.name"
+            />
+          </div>
           <!-- 中控台 -->
           <div
             id="open-control"
@@ -144,8 +165,14 @@
 
 <script setup>
 import { storeToRefs } from 'pinia'
+import { defineAsyncComponent, onMounted, onUnmounted } from 'vue'
 import { mainStore } from '../store'
 import { smoothScrolling, shufflePost } from '../utils/helper'
+
+// 异步加载 Search 组件：避免 algoliasearch / vue-instantsearch 拖慢首屏
+// 同时通过 prefetchSearch 在浏览器空闲时和 hover 搜索按钮时主动预加载，
+// 这样点击搜索按钮时组件通常已就绪，避免弹窗出现后几秒钟空白
+const Search = defineAsyncComponent(() => import('./Search.vue'))
 
 const router = useRouter()
 const store = mainStore()
@@ -159,15 +186,34 @@ const props = defineProps({
 })
 let direction
 
+// 导航栏右侧自定义按钮
+const navButtons = theme.value.navButtons || []
+
 // 检查是否为移动端
 const checkIsMobile = () => {
   store.isMobile = window.innerWidth <= 768
+}
+
+// 预加载 Search 组件（仅触发模块解析，不渲染）
+// 触发时机：浏览器空闲 / hover 搜索按钮 / 首次打开搜索弹窗前
+let searchPrefetched = false
+const prefetchSearch = () => {
+  if (searchPrefetched || !theme.value.search.enable) return
+  searchPrefetched = true
+  // 触发 defineAsyncComponent 的动态 import
+  import('./Search.vue').catch(() => {})
 }
 
 // 组件挂载时初始化
 onMounted(() => {
   checkIsMobile()
   window.addEventListener('resize', checkIsMobile)
+  // 首屏渲染完成后，在浏览器空闲时预加载搜索组件
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(prefetchSearch, { timeout: 4000 })
+  } else {
+    setTimeout(prefetchSearch, 2500)
+  }
 })
 
 // 组件卸载时清理
@@ -188,8 +234,20 @@ const handleClick = ($event, link) => {
   }
 }
 
-const menuBtnEnter = name => {
+// 自定义按钮点击：根据 target 决定打开方式（默认 _blank）
+const handleNavButtonClick = (btn) => {
+  const target = btn.target || '_blank'
+  if (target === '_blank') {
+    window.open(btn.url, '_blank')
+  } else {
+    router.go(btn.url)
+  }
+}
+
+const menuBtnEnter = (name, btn) => {
   if (store.isMobile) return
+  // hover 搜索按钮时立即预加载 Search 组件
+  if (name === 'search') prefetchSearch()
   store.showNavSiteTitle = true
   direction = store.scrollData.direction
   store.scrollData.direction = 'down'
@@ -211,6 +269,11 @@ const menuBtnEnter = name => {
       break
     case 'to-top':
       store.navSiteTitle = '返回顶部'
+      break
+    case 'custom':
+      // 自定义按钮：使用按钮的 name 作为提示
+      store.navSiteTitle = btn?.name || ''
+      break
   }
 }
 
@@ -331,7 +394,7 @@ const menuBtnLeave = name => {
                 .link-icon {
                   width: 24px;
                   height: 24px;
-                  border-radius: 50%;
+                  border-radius: 5px;
                   margin-right: 8px;
                 }
                 .iconfont {
@@ -722,11 +785,20 @@ const menuBtnLeave = name => {
       line-height: 1;
       transition: color 0.3s, opacity 0.3s, transform 0.3s;
     }
+    .nav-btn-img {
+      width: 20px;
+      height: 20px;
+      object-fit: contain;
+      transition: transform 0.3s;
+    }
     &:hover {
       background-color: var(--main-color);
       transform: scale(1.1);
       .iconfont {
         color: var(--main-card-background);
+        transform: scale(1.1);
+      }
+      .nav-btn-img {
         transform: scale(1.1);
       }
     }
