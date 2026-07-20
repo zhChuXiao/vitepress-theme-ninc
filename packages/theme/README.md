@@ -165,7 +165,7 @@ import { defineThemeConfig } from 'vitepress-theme-ninc/defineThemeConfig'
 export const themeConfig = defineThemeConfig({
   siteMeta: {
     title: 'My Blog',
-    description: 'A blog powered by vitepress-theme-ninc',
+    description: 'powered by ninc',
     site: 'https://example.com',
     avatar: '/images/avatar.png',
     lang: 'zh-CN',

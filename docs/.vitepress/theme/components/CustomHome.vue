@@ -336,6 +336,10 @@ onUnmounted(() => {
             <Icon icon="lucide:rocket" />
             <span>快速开始</span>
           </a>
+          <a class="ninc-btn ninc-btn-alt" href="/config/site-meta">
+            <Icon icon="lucide:sliders-horizontal" />
+            <span>配置参考</span>
+          </a>
           <a class="ninc-btn ninc-btn-alt" href="https://blog.ninc.top" target="_blank" rel="noopener">
             <Icon icon="lucide:external-link" />
             <span>预览博客</span>

@@ -10,6 +10,12 @@
     "preview": "vitepress preview"
   },
   "devDependencies": {
+    "@iconify-json/logos": "^1.2.0",
+    "@iconify-json/lucide": "^1.2.0",
+    "@iconify-json/mdi": "^1.2.0",
+    "@iconify-json/simple-icons": "^1.2.0",
+    "@iconify-json/vscode-icons": "^1.2.0",
+    "@iconify/utils": "^2.3.0",
     "code-inspector-plugin": "^1.6.6",
     "vitepress": "1.6.4",
     "vitepress-plugin-group-icons": "^1.7.5",

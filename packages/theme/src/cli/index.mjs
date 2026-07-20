@@ -12,6 +12,17 @@ import pc from 'picocolors'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
+// 读取主题包自身版本号，用于 init 生成的 package.json 里 vitepress-theme-ninc 的依赖版本
+// 这样用 beta 版 CLI init 会生成 beta 版依赖，用正式版 CLI init 会生成正式版依赖
+const themePkg = JSON.parse(
+  fs.readFileSync(path.join(__dirname, '..', '..', 'package.json'), 'utf-8')
+)
+const themeVersion = themePkg.version
+// 预发布版（beta/rc/alpha）用精确版本号，确保用户装到的是对应测试版；
+// 正式版用 ^ 范围，用户能装到最新补丁
+const isPrerelease = /-(beta|rc|alpha)\./.test(themeVersion)
+const themeVersionRange = isPrerelease ? themeVersion : `^${themeVersion}`
+
 // ============== 交互工具（基于 @clack/prompts）==============
 
 /** 检查用户是否取消（Ctrl+C），取消则优雅退出 */
@@ -1876,7 +1887,7 @@ function tplPackageJson(cfg) {
 
   const pkg = {
     name: slug,
-    version: '1.0.28',
+    version: '1.0.34',
     description: cfg.description,
     type: 'module',
     scripts: {
@@ -1890,11 +1901,67 @@ function tplPackageJson(cfg) {
     dependencies: {
       vitepress: '^1.6.4',
       vue: '^3.5.0',
-      'vitepress-theme-ninc': '^1.0.23'
+      // 版本号跟随 CLI 自身版本：
+      //   正式版 → ^1.0.32（范围，用户装最新补丁）
+      //   预发布版 → 1.0.32-beta.1（精确，确保装到对应测试版）
+      'vitepress-theme-ninc': themeVersionRange
     }
   }
 
+  // NES 模拟器页面：把 nes-vue 提升为用户项目的直接依赖，
+  // 并配套 patch-package + postinstall 钩子，确保 nes-vue+1.8.2.patch 能在用户项目根目录正确应用。
+  // 原因：主题包自身的 postinstall 在 node_modules/vitepress-theme-ninc/ 内运行，
+  //       pnpm 严格隔离下 nes-vue 是指向全局 store 的软链，无法在主题包内部完成 patch。
+  if (cfg.nes) {
+    pkg.dependencies['nes-vue'] = '1.8.2'
+    pkg.devDependencies = {
+      'patch-package': '^8.0.0',
+      'postinstall-postinstall': '^2.1.0'
+    }
+    pkg.scripts.postinstall = 'patch-package'
+  }
+
   return JSON.stringify(pkg, null, 2) + '\n'
+}
+
+// ============== pnpm-workspace.yaml 模板 ==============
+
+function tplPnpmWorkspaceYaml() {
+  // pnpm v10+ 不再读 package.json 的 pnpm 字段，项目级配置必须放在 pnpm-workspace.yaml
+  // pnpm v10 起默认拦截所有依赖的构建脚本（postinstall/preinstall/install，防供应链攻击），
+  // 必须显式放行以下包：
+  //   esbuild / @parcel/watcher —— VitePress dev/build 必需的原生二进制
+  //   vue-demi                  —— Vue 2/3 兼容层，需 postinstall 切换版本
+  //   postinstall-postinstall   —— npm 下 postinstall 兜底（NES 启用时才装，放行无副作用）
+  //
+  // 同时显式排除主题包自身的 postinstall：
+  //   vitepress-theme-ninc 的 postinstall 是给主题包自身开发用的（patch nes-vue），
+  //   在用户项目里 patch 已由用户项目自己的 postinstall + patches/ 处理，
+  //   主题包内部那个 postinstall 无需运行，设为 false 避免无谓执行和红色报错。
+  //
+  // 字段版本兼容性：
+  //   allowBuilds（map 格式）   —— pnpm v10.26+ / v11+ 推荐，旧版忽略此字段
+  //   onlyBuiltDependencies（数组）—— pnpm v10.0+ 支持，v11 已废弃但仍兼容
+  // 同时写两个，覆盖 pnpm v10.0 ~ v11+ 全系列
+  return `# pnpm 项目级配置 —— 由 vitepress-theme-ninc init 生成
+# 文档：https://pnpm.io/settings
+
+# pnpm v10.26+ / v11+ 读取此字段（推荐写法）
+allowBuilds:
+  esbuild: true
+  '@parcel/watcher': true
+  vue-demi: true
+  postinstall-postinstall: true
+  # 主题包自身的 postinstall 在用户项目里无需运行（patch 已由用户项目处理）
+  vitepress-theme-ninc: false
+
+# pnpm v10.0+ 读取此字段（v11 已废弃但仍兼容，为旧版 pnpm 保留）
+onlyBuiltDependencies:
+  - esbuild
+  - '@parcel/watcher'
+  - vue-demi
+  - postinstall-postinstall
+`
 }
 
 // ============== SVG 占位图模板 ==============
@@ -1997,6 +2064,7 @@ async function main() {
 
     clack.log.message(pc.dim('核心配置'))
     await writeFile('package.json', tplPackageJson(cfg))
+    await writeFile('pnpm-workspace.yaml', tplPnpmWorkspaceYaml())
     await writeFile('index.md', tplIndexMd(cfg))
     await writeFile('.vitepress/config.mts', tplConfigMts(cfg))
     await writeFile('.vitepress/theme/index.ts', tplThemeIndex())
@@ -2087,6 +2155,7 @@ async function main() {
   // 核心配置文件（始终生成）
   clack.log.message(pc.dim('核心配置'))
   await writeFile('package.json', tplPackageJson(cfg))
+  await writeFile('pnpm-workspace.yaml', tplPnpmWorkspaceYaml())
   await writeFile('index.md', tplIndexMd(cfg))
   await writeFile('.vitepress/config.mts', tplConfigMts(cfg))
   await writeFile('.vitepress/theme/index.ts', tplThemeIndex())
@@ -2133,6 +2202,17 @@ async function main() {
           console.log(pc.green('  ✓') + pc.dim(` public/nes-rom/${file}`))
         }
       }
+    }
+    // 复制 nes-vue 补丁文件到用户项目的 patches/ 目录
+    // 用户项目的 package.json 已配置 postinstall: patch-package，
+    // pnpm install 时会自动读取 patches/nes-vue+1.8.2.patch 并应用到 node_modules/nes-vue
+    const patchSrc = path.join(__dirname, '..', '..', 'patches', 'nes-vue+1.8.2.patch')
+    if (fs.existsSync(patchSrc)) {
+      fs.mkdirSync('patches', { recursive: true })
+      fs.copyFileSync(patchSrc, path.join('patches', 'nes-vue+1.8.2.patch'))
+      console.log(pc.green('  ✓') + pc.dim(' patches/nes-vue+1.8.2.patch'))
+    } else {
+      clack.log.warn(pc.yellow(`未找到 nes-vue 补丁文件：${patchSrc}，NES 模拟器可能无法正常工作，请到 GitHub 提交 issue`))
     }
   }
 

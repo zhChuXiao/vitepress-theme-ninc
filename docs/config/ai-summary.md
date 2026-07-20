@@ -1,5 +1,7 @@
 # aiSummary AI 摘要
 
+![AI 摘要](/images/article/ai.png)
+
 构建时调用大模型，为没有手动填写 `articleGPT` 的文章自动生成摘要。本页是配置字段参考，从零接入的完整教程（申请 Key、环境变量、部署）见 [指南 - AI 文章摘要](/guide/ai-summary)。
 
 ::: info 默认关闭

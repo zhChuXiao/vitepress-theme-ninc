@@ -15,7 +15,11 @@
 | 字段 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | `enable` | `boolean` | `true` | 是否启用不蒜子统计。关闭后侧边栏不显示访问量/访客数，文章页不显示阅读量 |
-| `scriptUrl` | `string` | `'https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js'` | 不蒜子脚本地址。官方服务不可时可换自建镜像 |
+| `scriptUrl` | `string` | 见下方 | 不蒜子脚本地址。官方服务不可时可换自建镜像 |
+
+::: tip scriptUrl 默认值
+`https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js`，更换方法见「[更换脚本地址](#更换脚本地址)」。
+:::
 
 ## 不蒜子
 

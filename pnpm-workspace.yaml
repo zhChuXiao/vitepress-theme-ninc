@@ -13,6 +13,6 @@ allowBuilds:
   vue-demi: true
 
 overrides:
-  'blog>vitepress-theme-ninc': 1.0.28
+  'blog>vitepress-theme-ninc': 1.0.34
 
 minimumReleaseAge: 0

@@ -11,7 +11,7 @@
 | 字段 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | `title` | `string` | `'Hello, World'` | 顶部主标题 |
-| `subtitle` | `string` | `'A blog powered by vitepress-theme-ninc'` | 副标题描述 |
+| `subtitle` | `string` | `'powered by ninc'` | 副标题描述 |
 | `link` | `string` | `'example.com'` | 主标题旁显示的链接文本 |
 | `banner` | `HomeTopBanner` | 见下方子表 | 推荐站点横幅配置 |
 | `category` | `HomeTopCategoryItem[]` | 见下方子表 | 快捷分类入口数组 |

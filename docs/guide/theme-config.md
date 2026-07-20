@@ -147,16 +147,20 @@ defineThemeConfig({
 | `icp` | `string` | ICP 备案号，显示在页脚 |
 | `since` | `string` | 建站日期（如 `2023-11-28`），用于页脚版权年份计算 |
 | `postSize` | `number` | 文章列表每页文章数，控制分页大小 |
+| `aiSummary` | `object` | AI 文章摘要：构建时调用大模型为文章自动生成摘要 |
 | `settingButton` | `boolean` | 是否显示左下角个性化设置按钮 |
 | `inject` | `object` | 全局注入内容，`header` 为 VitePress head 标签数组 |
 | `nav` | `array` | 顶部导航栏菜单项 |
 | `navMore` | `array` | 折叠的「更多」导航项（侧边展开的链接列表） |
+| `travellings` | `object` | 开往友链接力：导航栏「开往」按钮，点击随机跳转至参与计划的博客 |
+| `about` | `object` | 关于本站页面内容：头像技能标签、介绍、追求、技能、项目、座右铭 |
 | `cover` | `object` | 文章封面配置：双栏布局、封面布局方式、默认封面图列表 |
 | `footer` | `object` | 页脚配置：社交链接、徽标、站点地图 |
 | `comment` | `object` | 评论系统配置（Twikoo） |
 | `aside` | `object` | 侧边栏模块：站点简介、微信二维码、欢迎语、目录、标签、倒计时、站点数据 |
 | `friends` | `object` | 友链相关：朋友圈、动态友链、留言板 |
 | `equipment` | `object` | 「我的装备」页面数据 |
+| `nes` | `object` | NES 模拟器：内置红白机模拟器页面，支持游戏选择、存档、TAS 录像 |
 | `music` | `object` | 音乐播放器配置：API 地址、歌单 ID、服务商 |
 | `search` | `object` | Algolia 站内搜索配置：appId / apiKey / indexName |
 | `rewardData` | `object` | 打赏二维码：微信、支付宝图片地址 |
@@ -223,7 +227,7 @@ export const themeConfig = defineThemeConfig({
 - 字体大小
 - 其他个性化选项
 
-设置项持久化存储在 `localStorage`，用户下次访问时自动恢复。
+设置项持久化存储在浏览器的 `localStorage`，下次访问时自动恢复。
 
 ![个性化设置按钮](/images/article/settingButton.png)
 

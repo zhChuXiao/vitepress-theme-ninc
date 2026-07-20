@@ -2,6 +2,13 @@
 
 > 不要被「配置主题」吓到 —— 本教程会逐步带你完成每一步。即使你从未接触过代码，只要跟着操作，也能拥有一个功能完整的博客。
 
+::: tip 两条路径，二选一即可
+- <span style="display: inline-block; padding: 2px 10px; border-radius: 4px; background: #3c8772; color: #fff; font-size: 13px; font-weight: 600;">推荐</span> **快速初始化** — 一行命令生成全部文件，适合绝大多数人
+- <span style="display: inline-block; padding: 2px 10px; border-radius: 4px; background: #d97706; color: #fff; font-size: 13px; font-weight: 600;">手动</span> **逐步搭建** — 第一步 ~ 第六步，适合喜欢折腾、想了解每个文件作用的人
+
+只想装好就用？看上方绿色路径就够了。下面的琥珀色步骤是给喜欢手动搭建的人准备的。
+:::
+
 ## 你将获得什么
 
 完成本教程后，你将拥有：
@@ -18,6 +25,8 @@
 ---
 
 ## 快速初始化（推荐）
+
+<span style="display: inline-block; padding: 2px 10px; border-radius: 4px; background: #3c8772; color: #fff; font-size: 13px; font-weight: 600;">推荐路径</span> 绝大多数用户从这里开始，无需执行下方的第一步 ~ 第六步
 
 只需安装 [Node.js](https://nodejs.org/)（≥ 20），无需提前手动创建 `package.json` 或安装任何依赖 —— 主题内置的交互式初始化命令会一键生成全部文件（含 `package.json`、配置文件、示例文章、占位图）。
 
@@ -76,6 +85,39 @@ pnpm dev
 
 ---
 
+## 初始化完成后，下一步做什么？
+
+快速初始化帮你生成了一个能直接 `pnpm dev` 跑起来的博客，但真正的定制才刚开始。下面是推荐的配置顺序，每一项都对应一份详细文档，按需查阅即可。
+
+### 1. 修改站点信息
+
+打开 `.vitepress/themeConfig.ts`，把 `siteMeta` 里的标题、描述、域名、头像、Logo 改成你自己的。完整字段说明见 [主题配置详解](./theme-config.md)。
+
+### 2. 补齐自定义页面
+
+init 只生成了首页和示例文章，**分类、标签、归档、分页**等页面还需要你按 [自定义页面](./pages.md) 补齐对应的 `.md` 和 `.paths.mjs`，否则点击导航中的这些链接会 404。
+
+### 3. 开始写文章
+
+按 [文章管理](./posts.md) 的目录约定组织 `posts/`，文章顶部 frontmatter 字段参考 [Frontmatter 字段](./frontmatter.md)。需要进阶玩法（加密、置顶、转载、组件 Demo）看 [写作工作流](./writing/index.md)。
+
+### 4. 美化与扩展
+
+- 静态资源（图片、字体、SVG、CDN）：[静态资源管理](./assets/index.md)
+- Markdown 扩展（容器、属性、代码组图标）：[Markdown 扩展](./markdown/index.md)
+- 自定义样式覆盖：[自定义样式](./custom-styles.md)
+- 覆盖主题组件：[覆盖组件](./override-components.md)
+
+### 5. 部署上线
+
+博客跑通后，按 [部署](./deployment.md) 选择适合你的托管平台（Vercel / Netlify / GitHub Pages / 阿里云 ESA 等）。
+
+::: tip 不确定改哪里？
+本主题配置分两层：`config.mts` 管「怎么构建」（Vite 插件、PWA、RSS），`themeConfig.ts` 管「长什么样」（导航、评论、搜索、外观）。先看 [配置详解](./configuration.md) 建立整体认知。
+:::
+
+---
+
 <div class="migration-banner">
   <div class="migration-icon"><Icon icon="lucide:route" /></div>
   <div class="migration-body">
@@ -88,6 +130,8 @@ pnpm dev
 ---
 
 ## 第一步：准备工具（只需做一次）
+
+<span style="display: inline-block; padding: 2px 10px; border-radius: 4px; background: #d97706; color: #fff; font-size: 13px; font-weight: 600;">手动路径</span> 使用快速初始化的用户请跳过第一步 ~ 第六步
 
 就像做饭需要锅碗瓢盆，写博客也需要一些基础工具。下面的工具只需安装一次，以后就不用再装了。
 
@@ -137,6 +181,8 @@ pnpm -v
 ---
 
 ## 第二步：创建博客项目
+
+<span style="display: inline-block; padding: 2px 10px; border-radius: 4px; background: #d97706; color: #fff; font-size: 13px; font-weight: 600;">手动路径</span> 使用快速初始化的用户请跳过
 
 ### 2.1 创建项目
 
@@ -189,9 +235,101 @@ my-blog/
 - `index.md` 是「首页内容」
 :::
 
+### 2.3 关于 `ERR_PNPM_IGNORED_BUILDS` 红字提示
+
+<span style="display: inline-block; padding: 2px 10px; border-radius: 4px; background: #d97706; color: #fff; font-size: 13px; font-weight: 600;">手动路径</span> 快速初始化用户不会遇到，可跳过本节
+
+执行 `pnpm install` 后，终端可能会输出一段醒目的红字：
+
+<div class="ninc-terminal-out"><pre><span class="nto-err"><b> ERR_PNPM_IGNORED_BUILDS</b></span>  Ignored build scripts: <span class="nto-pkg">esbuild</span>, <span class="nto-pkg">@parcel/watcher</span>, <span class="nto-pkg">vue-demi</span>
+<span class="nto-hint">Run "pnpm approve-builds" to pick which dependencies should be run build scripts.</span></pre></div>
+
+<style>
+.ninc-terminal-out {
+  margin: 16px 0;
+  border-radius: 6px;
+  background: var(--vp-code-block-bg, #f6f6f7);
+  border: 1px solid var(--vp-c-divider, #e2e2e3);
+  overflow-x: auto;
+  transition: border-color 0.25s;
+}
+.ninc-terminal-out pre {
+  margin: 0;
+  padding: 12px 16px;
+  font-family: var(--vp-font-family-mono, ui-monospace, monospace);
+  font-size: 13px;
+  line-height: 1.6;
+  white-space: pre;
+  color: var(--vp-c-text-1, #1f1f1f);
+}
+.ninc-terminal-out .nto-err {
+  color: #ef4444;
+  font-weight: 600;
+}
+.ninc-terminal-out .nto-pkg {
+  color: #06b6d4;
+}
+.ninc-terminal-out .nto-hint {
+  color: #06b6d4;
+}
+html.dark .ninc-terminal-out .nto-err {
+  color: #ff6b6b;
+}
+html.dark .ninc-terminal-out .nto-pkg,
+html.dark .ninc-terminal-out .nto-hint {
+  color: #22d3ee;
+}
+</style>
+
+**这不是错误，博客仍可正常启动**。它是 pnpm v10+（2025 年 1 月起）的供应链安全策略：默认拦截所有依赖包的 `postinstall` 脚本，必须由你显式放行信任的包才能执行。该策略用于防范"依赖包在安装时偷偷执行恶意脚本"的供应链攻击。
+
+::: warning 强烈建议：放行构建脚本
+虽然红字不影响博客启动，但未放行时 `esbuild`、`@parcel/watcher` 等包的原生二进制不会被下载/编译，后续 `pnpm dev` 或 `pnpm build` 时可能出现「找不到原生模块」「watcher 启动失败」等奇怪的报错。
+
+请在项目根目录运行：
+
+```bash
+pnpm approve-builds
+```
+
+命令会列出所有被拦截的包，操作方式：
+
+- <kbd>↑</kbd> <kbd>↓</kbd> 移动光标
+- <kbd>空格</kbd> 勾选 / 取消勾选
+- <kbd>回车</kbd> 确认
+
+**全部勾选即可**（这些都是 VitePress 生态的核心依赖，可信任）。确认后 pnpm 会在项目根目录自动生成 `pnpm-workspace.yaml` 文件，再次运行 `pnpm install` 红字即消失。
+:::
+
+::: details 不想每次都确认？一劳永逸的写法
+在项目根目录手动创建（或编辑）`pnpm-workspace.yaml`，写入以下内容：
+
+```yaml
+# pnpm v10.26+ / v11+ 推荐写法
+allowBuilds:
+  esbuild: true
+  '@parcel/watcher': true
+  vue-demi: true
+
+# pnpm v10.0+ 兼容写法（v11 已废弃但仍兼容）
+onlyBuiltDependencies:
+  - esbuild
+  - '@parcel/watcher'
+  - vue-demi
+```
+
+保存后所有 `pnpm install` 都不会再拦截这些包。两种写法同时存在是为了兼容不同版本的 pnpm —— 你不需要关心区别，照抄即可。
+:::
+
+::: tip 用的是 npm 或 yarn？
+npm 和 yarn 不会拦截构建脚本，不会出现这段红字，可跳过本节。
+:::
+
 ---
 
 ## 第三步：安装本主题
+
+<span style="display: inline-block; padding: 2px 10px; border-radius: 4px; background: #d97706; color: #fff; font-size: 13px; font-weight: 600;">手动路径</span> 使用快速初始化的用户请跳过
 
 现在你的项目使用的是 VitePress 默认主题。我们来换成 `vitepress-theme-ninc`。
 
@@ -245,6 +383,8 @@ export default defineConfig(
 ---
 
 ## 第四步：配置博客信息
+
+<span style="display: inline-block; padding: 2px 10px; border-radius: 4px; background: #d97706; color: #fff; font-size: 13px; font-weight: 600;">手动路径</span> 快速初始化已自动生成 themeConfig.ts，本节仅在手动搭建时需要
 
 ### 4.1 创建主题配置文件
 
@@ -320,6 +460,8 @@ layout: home
 ---
 
 ## 第五步：写第一篇文章
+
+<span style="display: inline-block; padding: 2px 10px; border-radius: 4px; background: #d97706; color: #fff; font-size: 13px; font-weight: 600;">手动路径</span> 快速初始化已自带示例文章，本节仅在手动搭建时需要
 
 ### 5.1 创建文章目录
 
@@ -403,6 +545,8 @@ Markdown 是一种简单的排版语法，用符号来表示格式：
 
 ## 第六步：启动博客
 
+<span style="display: inline-block; padding: 2px 10px; border-radius: 4px; background: #d97706; color: #fff; font-size: 13px; font-weight: 600;">手动路径</span> 快速初始化的用户执行 `pnpm dev` 即可，本节用于手动搭建后验证
+
 在终端运行：
 
 ```bash
@@ -426,6 +570,22 @@ pnpm dev
 ---
 
 ## 常见问题
+
+### Q: 终端出现 `ERR_PNPM_IGNORED_BUILDS` 红字
+
+**这是 pnpm v10+ 的安全策略**，不是错误，博客仍可正常启动。详见 [2.3 关于 `ERR_PNPM_IGNORED_BUILDS` 红字提示](#关于-err-pnpm-ignored-builds-红字提示)。
+
+快速解决：
+
+```bash
+pnpm approve-builds
+```
+
+按提示用 <kbd>空格</kbd> 全部勾选、<kbd>回车</kbd> 确认，再次 `pnpm install` 红字消失。
+
+::: tip 用的是 npm 或 yarn？
+npm / yarn 不会拦截构建脚本，不会出现这段红字，可跳过。
+:::
 
 ### Q: 启动后页面空白
 

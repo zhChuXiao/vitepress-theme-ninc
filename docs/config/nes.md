@@ -1,8 +1,12 @@
 # nes NES 模拟器
 
-内置 NES（任天堂红白机）模拟器页面，支持在浏览器中直接运行经典 NES 游戏。基于 [nes-vue](https://github.com/taiyuuki/nes-vue) 实现，支持游戏选择、存档/读档、TAS 录像播放、键盘控制、手柄输入等功能。
+内置 NES（任天堂红白机）模拟器页面，支持在浏览器中直接运行经典 NES 游戏。支持游戏选择、存档/读档、TAS 录像播放、键盘控制、手柄输入等功能。
 
 `npx vitepress-theme-ninc init` 生成的项目默认自带超级马里奥 ROM，开箱即用。
+
+![NES 模拟器](/images/article/nes.png)
+
+
 
 ## 字段说明
 

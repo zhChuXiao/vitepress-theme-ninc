@@ -5,6 +5,7 @@ import { groupIconVitePlugin, groupIconMdPlugin } from 'vitepress-plugin-group-i
 import { codeInspectorPlugin } from 'code-inspector-plugin'
 import groupIconConfig from './groupIconConfig.json'
 import markdownExtensions from './markdownExtensions.mjs'
+import { localIconsPlugin, getLocalIconSVG } from './local-icons'
 
 export default defineConfig({
   title: 'vitepress-theme-ninc',
@@ -18,6 +19,8 @@ export default defineConfig({
   ],
   vite: {
     plugins: [
+      // 本地图标插件：构建时从 @iconify-json/* 提取用到的图标，避免运行时在线请求
+      localIconsPlugin(),
       groupIconVitePlugin({ customIcon: groupIconConfig }),
       // 代码定位插件：开发环境下按住 alt+shift 点击页面元素即可在 IDE 中打开对应源码
       codeInspectorPlugin({
@@ -55,8 +58,8 @@ export default defineConfig({
         {
           text: '核心概念',
           items: [
-            { text: '配置体系', link: '/guide/configuration' },
-            { text: '主题配置', link: '/guide/theme-config' },
+            { text: '双配置体系', link: '/guide/configuration' },
+            { text: '主题配置讲解', link: '/guide/theme-config' },
             { text: '配置导览', link: '/guide/config-tour' },
             { text: 'Frontmatter', link: '/guide/frontmatter' }
           ]
@@ -162,7 +165,10 @@ export default defineConfig({
         }
       ],
     },
-    socialLinks: [{ icon: 'github', link: 'https://github.com/zhChuXiao/vitepress-theme-ninc' }],
+    socialLinks: [
+      // 使用本地 simple-icons 集合中的 GitHub SVG，避免 VitePress 默认主题对 api.iconify.design 的在线请求
+      { icon: { svg: getLocalIconSVG('simple-icons', 'github') }, link: 'https://github.com/zhChuXiao/vitepress-theme-ninc' }
+    ],
     search: {
       provider: 'local',
       options: {

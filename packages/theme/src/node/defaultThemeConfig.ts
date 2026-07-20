@@ -6,7 +6,7 @@ export const defaultThemeConfig: ThemeConfig = {
   // 站点信息
   siteMeta: {
     title: 'My Blog',
-    description: 'A blog powered by vitepress-theme-ninc',
+    description: 'powered by ninc',
     // 站点头像默认使用主题作者提供的网络图片，开箱即用
     // 替换为自己的头像：把图片放到 public/images/ 下，改为 '/images/your-avatar.jpg'
     avatar: 'http://blog.ninc.top/images/cxLogo/avatar2.jpg',
@@ -26,7 +26,7 @@ export const defaultThemeConfig: ThemeConfig = {
   // 首页顶部信息
   homeTop: {
     title: 'Hello, World',
-    subtitle: 'A blog powered by vitepress-theme-ninc',
+    subtitle: 'powered by ninc',
     link: 'example.com',
     banner: {
       tip: '推荐站点：',

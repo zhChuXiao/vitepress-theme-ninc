@@ -63,8 +63,17 @@ hello 卡片中的 Clock 动画中心头像通过 [`siteMeta.author.cover`](./si
 
 | 字段 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
-| `ipApi` | `string?` | `'https://www.mxnzp.com/api/ip/self?app_id=r9iwwighsmbtewxr&app_secret=yQ9jlmboL7sA57pzNvGZQNmSEoP3JtVd'` | 访客 IP 查询接口（GET，返回 JSON，需含 `data.ip` 字段） |
-| `locationApi` | `string?` | `'https://v1.nsuuu.com/api/ipip?ip=${ip}&key=bf7164e3a2e82a6c'` | IP 归属地查询接口模板，`${ip}` 为占位符会被自动替换（GET，返回 JSON，需含 `data` 字段） |
+| `ipApi` | `string?` | 见下方 | 访客 IP 查询接口（GET，返回 JSON，需含 `data.ip` 字段） |
+| `locationApi` | `string?` | 见下方 | IP 归属地查询接口模板，`${ip}` 为占位符会被自动替换（GET，返回 JSON，需含 `data` 字段） |
+
+:::: tip 默认值
+
+```ts
+ipApi: 'https://www.mxnzp.com/api/ip/self?app_id=r9iwwighsmbtewxr&app_secret=yQ9jlmboL7sA57pzNvGZQNmSEoP3JtVd'
+locationApi: 'https://v1.nsuuu.com/api/ipip?ip=${ip}&key=bf7164e3a2e82a6c'
+```
+
+::::
 
 ::: warning 默认接口为共享资源
 内置的两条接口来源于第三方公共服务，主题使用者共享同一份 `app_id`、`app_secret` 与 `key`，遇到调用高峰期可能超限。建议自行申请接口或部署代理后通过 `ipLocation` 覆盖，避免因共享限额导致访客位置展示失败。

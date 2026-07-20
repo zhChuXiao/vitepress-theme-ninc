@@ -9,25 +9,29 @@
 | 字段 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | `title` | `string` | `'My Blog'` | 站点标题，显示在浏览器标签页与站点头部 |
-| `description` | `string` | `'A blog powered by vitepress-theme-ninc'` | 站点描述，用于 SEO meta 与 RSS |
-| `avatar` | `string` | `'http://blog.ninc.top/images/cxLogo/avatar2.jpg'` | 站点头像路径，指向 `public` 目录下的文件或任意可访问的网络图片；**侧边栏 Clock 中心头像、关于页头像等共用此字段**；替换方法：把图片放到 `public/images/` 下，改为 `'/images/your-avatar.jpg'` |
+| `description` | `string` | `'powered by ninc'` | 站点描述，用于 SEO meta 与 RSS |
+| `avatar` | `string` | 见下方 | 站点头像路径，指向 `public` 目录下的文件或任意可访问的网络图片；侧边栏 Clock 中心头像、关于页头像等共用此字段 |
 | `logo` | `string` | `''` | 站点 Logo 路径，指向 `public` 目录下的文件；留空则不显示 Logo |
 | `site` | `string` | `'https://example.com'` | 站点完整地址，用于 SEO、RSS 与社交分享卡片 |
 | `base` | `string` | `'/'` | VitePress `base` 路径，需与 VitePress 配置保持一致 |
 | `lang` | `string` | `'zh-CN'` | 站点语言，影响 `<html lang>` 属性 |
 | `author` | `AuthorInfo` | 见下方子表 | 作者信息对象 |
 
+::: tip avatar 默认值
+`http://blog.ninc.top/images/cxLogo/avatar2.jpg`（作者自己的头像，替换方法见说明列）
+:::
+
 ### author 子表
 
 | 字段 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | `name` | `string` | `'Your Name'` | 作者名称 |
-| `cover` | `string?` | `'http://blog.ninc.top/images/cxLogo/avatar2.jpg'` | 作者头像，**侧边栏 Clock 中心头像优先使用此字段**，未配置时回退到 `siteMeta.avatar`；默认使用主题作者提供的网络图片，开箱即用；替换方法：把图片放到 `public/images/` 下，改为 `'/images/your-avatar.jpg'` |
+| `cover` | `string?` | 同 `avatar` | 作者头像，**侧边栏 Clock 中心头像优先使用此字段**，未配置时回退到 `siteMeta.avatar`；替换方法：把图片放到 `public/images/` 下，改为 `'/images/your-avatar.jpg'` |
 | `email` | `string?` | `'you@example.com'` | 作者邮箱，用于联系与 RSS；同时作为侧边栏 `hello` 卡片邮箱图标的链接 |
 | `link` | `string?` | `''` | 作者主页链接（如 GitHub 个人主页），同时作为侧边栏 `hello` 卡片 GitHub 图标与页脚作者名的链接；未配置时为空链接 |
 
 ::: tip 📌 Clock 中心头像配置
-侧边栏 `hello` 卡片中的 Clock 动画中心头像通过 `siteMeta.author.cover` 配置，未配置时回退到 `siteMeta.avatar`。这两个字段都默认使用主题作者提供的网络图片 `http://blog.ninc.top/images/cxLogo/avatar2.jpg`，让新项目开箱即用。**这不是写死的**，请按上面表格中的说明替换为自己的头像。
+侧边栏 `hello` 卡片中的 Clock 动画中心头像通过 `siteMeta.author.cover` 配置，未配置时回退到 `siteMeta.avatar`。这两个字段都默认使用主题作者自己的头像，让新项目开箱即用。**这不是写死的**，请按上面表格中的说明替换为自己的头像。
 :::
 
 ## 示例
