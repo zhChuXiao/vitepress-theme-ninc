@@ -15,19 +15,51 @@ export default defineConfig({
   cleanUrls: true,
   sitemap: { hostname: 'https://theme.ninc.top' },
   head: [
+    // favicon
+    ['link', { rel: 'icon', href: '/favicon.ico', type: 'image/x-icon' }],
+    // 防盗链
+    ['meta', { name: 'referrer', content: 'no-referrer' }],
+
+    // ── 网站验证（保持已验证状态，请勿移除）──
     ['meta', { name: 'theme-color', content: '#3c8772' }],
-    // Bing 网站验证
-    ['meta', { name: 'msvalidate.01', content: 'B5E748CCE4066C5BC620DF47B8B7CFD0' }],
-    // Google Search Console 网站验证
-    ['meta', { name: 'google-site-verification', content: 'j5zzxqII7Tz7FHIGA57uuNbAcjls-rbtYAXwAjS0i6g' }],
-    // 百度搜索资源平台网站验证
-    ['meta', { name: 'baidu-site-verification', content: 'codeva-M50ML3mOpG' }],
-    // 搜狗站长平台网站验证
-    ['meta', { name: 'sogou_site_verification', content: '2NhJVhps8H' }],
-    // 360 搜索站长平台网站验证
-    ['meta', { name: '360-site-verification', content: '808df229eb8394536e63072fabaebb03' }],
-    // 字节跳动站长平台网站验证
-    ['meta', { name: 'bytedance-verification-code', content: 'BmHHws52YyxhB8FYI4E3' }]
+    ['meta', { name: 'msvalidate.01', content: 'B5E748CCE4066C5BC620DF47B8B7CFD0' }],             // Bing
+    ['meta', { name: 'google-site-verification', content: 'j5zzxqII7Tz7FHIGA57uuNbAcjls-rbtYAXwAjS0i6g' }], // Google
+    ['meta', { name: 'baidu-site-verification', content: 'codeva-M50ML3mOpG' }],                  // 百度
+    ['meta', { name: 'sogou_site_verification', content: '2NhJVhps8H' }],                         // 搜狗
+    ['meta', { name: '360-site-verification', content: '808df229eb8394536e63072fabaebb03' }],     // 360
+    ['meta', { name: 'bytedance-verification-code', content: 'BmHHws52YyxhB8FYI4E3' }],            // 字节跳动
+
+    // ── SEO 基础标签 ──
+    ['meta', { name: 'author', content: '呢喃Ninc' }],
+    ['meta', { name: 'description', content: '一个功能丰富的 VitePress 主题 - 开箱即用的博客、文档与工具站' }],
+    ['meta', { name: 'keywords', content: 'VitePress,VitePress 主题,博客主题,博客框架,文档主题,vitepress-theme-ninc,ninc,呢喃' }],
+
+    // ── Open Graph 协议标签（微信/QQ/Facebook/Twitter 分享卡片）──
+    ['meta', { property: 'og:type', content: 'website' }],
+    ['meta', { property: 'og:title', content: 'vitepress-theme-ninc' }],
+    ['meta', { property: 'og:description', content: '一个功能丰富的 VitePress 主题 - 开箱即用的博客、文档与工具站' }],
+    ['meta', { property: 'og:url', content: 'https://theme.ninc.top' }],
+    ['meta', { property: 'og:image', content: 'https://theme.ninc.top/images/avatar.jpg' }],
+    ['meta', { property: 'og:site_name', content: 'vitepress-theme-ninc' }],
+    ['meta', { property: 'og:locale', content: 'zh_CN' }],
+
+    // ── Twitter 卡片标签 ──
+    ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
+    ['meta', { name: 'twitter:title', content: 'vitepress-theme-ninc' }],
+    ['meta', { name: 'twitter:description', content: '一个功能丰富的 VitePress 主题 - 开箱即用的博客、文档与工具站' }],
+    ['meta', { name: 'twitter:image', content: 'https://theme.ninc.top/images/avatar.jpg' }],
+
+    // ── 移动设备优化 ──
+    ['meta', { name: 'mobile-web-app-capable', content: 'yes' }],
+    ['meta', { name: 'apple-mobile-web-app-status-bar-style', content: 'default' }],
+    ['meta', { name: 'apple-mobile-web-app-title', content: 'vitepress-theme-ninc' }],
+
+    // ── 安全策略：自动升级 http → https ──
+    ['meta', { httpEquiv: 'Content-Security-Policy', content: 'upgrade-insecure-requests' }],
+
+    // ── 51la 网站统计 ──
+    ['script', { charset: 'UTF-8', id: 'LA_COLLECT', src: 'https://sdk.51.la/js-sdk-pro.min.js' }],
+    ['script', {}, `LA.init({id:"3QcVpJx63jNB0VwV",ck:"3QcVpJx63jNB0VwV",hashMode:true})`]
   ],
   vite: {
     plugins: [
