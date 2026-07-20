@@ -15,7 +15,19 @@ export default defineConfig({
   cleanUrls: true,
   sitemap: { hostname: 'https://example.com' },
   head: [
-    ['meta', { name: 'theme-color', content: '#3c8772' }]
+    ['meta', { name: 'theme-color', content: '#3c8772' }],
+    // Bing 网站验证
+    ['meta', { name: 'msvalidate.01', content: 'B5E748CCE4066C5BC620DF47B8B7CFD0' }],
+    // Google Search Console 网站验证
+    ['meta', { name: 'google-site-verification', content: 'j5zzxqII7Tz7FHIGA57uuNbAcjls-rbtYAXwAjS0i6g' }],
+    // 百度搜索资源平台网站验证
+    ['meta', { name: 'baidu-site-verification', content: 'codeva-M50ML3mOpG' }],
+    // 搜狗站长平台网站验证
+    ['meta', { name: 'sogou_site_verification', content: '2NhJVhps8H' }],
+    // 360 搜索站长平台网站验证
+    ['meta', { name: '360-site-verification', content: '808df229eb8394536e63072fabaebb03' }],
+    // 字节跳动站长平台网站验证
+    ['meta', { name: 'bytedance-verification-code', content: 'BmHHws52YyxhB8FYI4E3' }]
   ],
   vite: {
     plugins: [

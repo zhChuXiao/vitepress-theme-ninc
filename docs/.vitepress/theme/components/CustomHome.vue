@@ -786,14 +786,19 @@ onUnmounted(() => {
   line-height: 1.15;
   letter-spacing: -0.02em;
   margin: 0 0 16px;
+}
+
+/* 渐变文字必须作用在「直接包含文字的元素」上，否则 Safari 会因 -webkit-text-fill-color
+   继承到子 span 而让文字透明（外层 div 没有直接文本，background-clip: text 切割不到任何东西，
+   Chrome 的「穿透」行为是非标准实现）。这里用 :deep() 穿透 scoped 到 SparklesText 内层 span。 */
+.ninc-hero-sparkles :deep(> span) {
   background: linear-gradient(135deg, var(--vp-c-brand-1) 0%, #6366f1 50%, #8b5cf6 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-}
-
-.ninc-hero-sparkles span {
-  position: relative;
+  /* Safari 多行渐变文字断裂修复 */
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
 }
 
 .ninc-hero-tagline {
