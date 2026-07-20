@@ -13,7 +13,7 @@ export default defineConfig({
   lang: 'zh-CN',
   lastUpdated: true,
   cleanUrls: true,
-  sitemap: { hostname: 'https://example.com' },
+  sitemap: { hostname: 'https://theme.ninc.top' },
   head: [
     ['meta', { name: 'theme-color', content: '#3c8772' }],
     // Bing 网站验证
