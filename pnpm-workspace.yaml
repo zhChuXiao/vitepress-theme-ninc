@@ -12,4 +12,6 @@ allowBuilds:
   vitepress-theme-ninc: true
   vue-demi: true
 
+shamefullyHoist: true
+
 minimumReleaseAge: 0

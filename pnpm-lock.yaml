@@ -50,6 +50,9 @@ importers:
       highlight.js:
         specifier: ^11.11.1
         version: 11.11.1
+      is-windows:
+        specifier: ^1.0.2
+        version: 1.0.2
       nes-vue:
         specifier: 1.8.2
         version: 1.8.2
@@ -8624,8 +8627,7 @@ snapshots:
 
   is-what@5.5.0: {}
 
-  is-windows@1.0.2:
-    optional: true
+  is-windows@1.0.2: {}
 
   is-wsl@2.2.0:
     dependencies:
