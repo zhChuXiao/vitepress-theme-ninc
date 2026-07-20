@@ -1,2 +1,2 @@
 only-built-dependencies[]=v-code-diff
-overrides[blog>vitepress-theme-ninc]=1.0.34
+overrides[blog>vitepress-theme-ninc]=1.0.36

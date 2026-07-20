@@ -151,7 +151,7 @@ export const mainStore = defineStore('main', () => {
     const ipApiUrl = ipLocationConfig?.ipApi || ''
     const locationApiTemplate = ipLocationConfig?.locationApi || ''
     if (!ipApiUrl || !locationApiTemplate) {
-      throw new Error('未配置 IP 归属地接口，请在 themeConfig.aside.welcome.ipLocation 中设置 ipApi 和 locationApi')
+      throw new Error('[VitePress Theme Ninc] 未配置 IP 归属地接口，请在 themeConfig.aside.welcome.ipLocation 中设置 ipApi 和 locationApi')
     }
     let response = await fetch(ipApiUrl)
     if (!response.ok) {

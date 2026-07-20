@@ -572,6 +572,32 @@ export interface NesRomItem {
   savePrefix: string
   /** TAS 录像文件路径（可选，放在 public/nes-fm2/ 下，如 '/nes-fm2/happylee-supermariobros,warped.fm2'） */
   fm2?: string
+  /** 预设金手指列表（可选，玩家可在 NES 页面一键启用） */
+  cheats?: NesCheatPreset[]
+}
+
+/** NES 金手指预设 */
+export interface NesCheatPreset {
+  /** 金手指代码，格式 XXXX-YY-ZZ（兼容 VirtuaNES），如 '079F-01-01' */
+  code: string
+  /** 显示名称，如「无敌」「无限命」 */
+  name: string
+  /** 可选描述，作为悬浮提示展示 */
+  desc?: string
+}
+
+/** NES 玩家按键映射（值是 KeyboardEvent.code） */
+export interface NesKeymap {
+  UP: string
+  DOWN: string
+  LEFT: string
+  RIGHT: string
+  A: string
+  B: string
+  C?: string
+  D?: string
+  SELECT?: string
+  START?: string
 }
 
 /** NES 模拟器配置 */
@@ -580,6 +606,15 @@ export interface NesConfig {
   roms: NesRomItem[]
   /** 默认选中的游戏 ID（不配置时取 roms[0].id） */
   defaultRomId?: string
+  /**
+   * 自定义默认按键映射（值是 KeyboardEvent.code）
+   * 用户在运行时通过 UI 改键会覆盖此值，并持久化到 localStorage
+   * 优先级：localStorage > keymap > 内置默认
+   */
+  keymap?: {
+    p1?: Partial<NesKeymap>
+    p2?: Partial<NesKeymap>
+  }
 }
 
 /** 完整的主题配置 */

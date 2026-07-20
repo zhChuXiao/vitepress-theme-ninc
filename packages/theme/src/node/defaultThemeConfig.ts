@@ -345,7 +345,17 @@ export const defaultThemeConfig: ThemeConfig = {
         id: 'mario',
         url: '/nes-rom/超级马里奥.nes',
         name: '超级玛丽-原版',
-        savePrefix: 'mario'
+        savePrefix: 'mario',
+        // 主题内置金手指预设（兼容 VirtuaNES 格式 XXXX-YY-ZZ）
+        cheats: [
+          { code: '079F-01-09', name: '金身无敌', desc: '碰到敌人不掉血，但掉坑仍然会死' },
+          { code: '075A-01-09', name: '9 条命', desc: '生命数锁定为 9' },
+          { code: '0756-01-02', name: '能发子弹', desc: '吃蘑菇后可发射火球' },
+          { code: '0706-01-FF', name: '跳跃轻松', desc: '跳跃高度大幅提升' },
+          { code: '0039-01-03', name: '顶出红蘑菇', desc: '撞砖块固定掉落红蘑菇（变大）' },
+          { code: '07FA-01-09', name: '时间不变', desc: '关卡时间锁定' },
+          { code: '0791-01-10', name: '刀枪不入', desc: '受伤不掉血' }
+        ]
       }
     ],
     defaultRomId: 'mario'

@@ -347,4 +347,34 @@ export const themeConfig = defineThemeConfig({
 
   // 开往-友链接力按钮（默认关闭，开启后导航栏右侧显示“开往”图标）
   // travellings: { enable: true }
+
+  // ━━━ NES 模拟器 ━━━
+  // play 项目只内置「超级玛丽-原版」一款 ROM，金手指代码来自权威来源
+  // （5fun.com / mamecn.com / bubera.com / wikiwiki.jp），兼容 VirtuaNES 格式 XXXX-YY-ZZ
+  nes: {
+    defaultRomId: 'mario',
+    roms: [
+      {
+        id: 'mario',
+        url: '/nes-rom/超级马里奥.nes',
+        name: '超级玛丽-原版',
+        savePrefix: 'mario',
+        cheats: [
+          { code: '079F-01-09', name: '金身无敌', desc: '碰到敌人不掉血，掉坑仍会死（スター状态）' },
+          { code: '079E-01-03', name: '透明无敌', desc: '闪烁状态免疫伤害，与金身无敌机制不同' },
+          { code: '075A-01-09', name: '9 条命', desc: '生命数锁定为 9' },
+          { code: '0756-01-02', name: '直接变火马里奥', desc: '吃蘑菇后直接变火球马里奥' },
+          { code: '0754-01-02', name: '可穿墙', desc: '人物状态改为可穿墙模式' },
+          { code: '07FA-01-09', name: '时间不变', desc: '关卡时间锁定（不推荐，可能影响判定）' },
+          { code: '0704-01-01', name: '飘浮（月球漫步）', desc: '如在水中的浮力效果' },
+          { code: '0709-01-00', name: '跳跃力增强', desc: '按住跳跃键可持续上升' },
+          { code: '0039-01-02', name: '顶出无敌星', desc: '撞砖块固定掉落无敌星' },
+          { code: '0039-01-03', name: '顶出 1UP 蘑菇', desc: '撞砖块固定掉落 1UP 加命蘑菇' },
+          { code: '07FC-01-01', name: '标题画面选关', desc: '在标题画面按方向键即可选关' },
+          { code: '075F-01-07', name: '跳到第 8 大关', desc: '出生即在第 8 大关（最后一关）' },
+          { code: '0484-01-0A', name: '踩怪 1UP', desc: '踩敌人固定触发 1UP 加命' }
+        ]
+      }
+    ]
+  }
 })
