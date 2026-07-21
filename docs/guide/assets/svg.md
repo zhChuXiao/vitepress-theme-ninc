@@ -2,6 +2,10 @@
 
 本页讲解 SVG 图标的使用方式，包括 SvgIcon 组件、雪碧图的配置与多目录扫描，以及在 Markdown 和 Vue 组件中的引用示例。主题通过 [vite-plugin-svg-icons](https://github.com/vbenjs/vite-plugin-svg-icons) 实现 SVG 雪碧图，构建时扫描指定目录下的所有 `.svg` 文件，合并为单个 SVG symbol sprite，运行时通过 `<use>` 引用，避免重复请求与 DOM 膨胀。
 
+::: tip 快速上手
+如果你只是想在 `themeConfig` 的 `icon` 字段里用自定义 SVG 图标（如页脚社交链接、导航栏按钮），无需手写 `<SvgIcon>` 组件，直接用 `'svg:文件名'` 写法即可。详见 [图标使用指南](../icons.md)。
+:::
+
 
 
 ## 工作原理
@@ -91,5 +95,10 @@ export default defineConfig(
   }
 )
 ```
+
+## 相关文档
+
+- [图标使用指南](../icons.md) — 在 `themeConfig` 的 `icon` 字段里用 `'svg:文件名'` 写法引用 SVG 图标（无需手写 `<SvgIcon>`）
+- [`icon` 图标字段](../../config/icons.md) — `IconField` 类型定义与所有支持三种写法的字段列表
 
 

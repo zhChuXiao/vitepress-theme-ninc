@@ -100,6 +100,111 @@ async function writeFile(filePath, content, force = false) {
   return true
 }
 
+/**
+ * 写 package.json：已存在且用户选择不覆盖时，仍强制更新主题版本并补充缺失依赖/脚本。
+ *
+ * 设计理由：
+ *   - 用户项目可能已有 package.json（自定义了 name / scripts / 其他依赖），
+ *     全量覆盖会丢失用户改动；
+ *   - 但 vitepress-theme-ninc 的版本必须与用户刚安装的 CLI 版本齐平，
+ *     否则 init 完成后用户跑 pnpm install 会拉到旧版主题，特性对不上；
+ *   - 同时主题运行所需的依赖（vitepress / vue / nes-vue / patch-package 等）
+ *     缺失则补充，已有则保留用户版本（尊重用户选择）。
+ *
+ * @param {object} cfg - init 配置（用于决定是否补充 NES 相关依赖）
+ * @returns {Promise<boolean>} true=新建或全量覆盖，false=合并更新
+ */
+async function writePackageJson(cfg) {
+  const targetPath = 'package.json'
+  const newPkgJson = tplPackageJson(cfg)
+  const newPkg = JSON.parse(newPkgJson)
+
+  // 文件不存在：直接创建
+  if (!fs.existsSync(targetPath)) {
+    fs.writeFileSync(targetPath, newPkgJson, 'utf-8')
+    console.log(pc.green('  ✓') + pc.dim(` ${targetPath}`))
+    return true
+  }
+
+  // 文件已存在：询问是否覆盖
+  const overwrite = await confirm(`${targetPath} 已存在，是否覆盖？`, false)
+  if (overwrite) {
+    fs.writeFileSync(targetPath, newPkgJson, 'utf-8')
+    console.log(pc.green('  ✓') + pc.dim(` ${targetPath}`))
+    return true
+  }
+
+  // 用户选择不覆盖：合并更新（强制主题版本 + 补充缺失依赖/脚本）
+  let existingPkg
+  try {
+    existingPkg = JSON.parse(fs.readFileSync(targetPath, 'utf-8'))
+  } catch (e) {
+    // 现有 package.json 解析失败：直接覆盖，避免破坏用户项目
+    fs.writeFileSync(targetPath, newPkgJson, 'utf-8')
+    console.log(pc.yellow('  ⚠') + pc.dim(` ${targetPath} 解析失败，已覆盖`))
+    return true
+  }
+
+  const changes = []
+
+  // 1. 强制更新 vitepress-theme-ninc 版本（与 CLI 当前版本齐平）
+  existingPkg.dependencies = existingPkg.dependencies || {}
+  const newThemeVer = newPkg.dependencies['vitepress-theme-ninc']
+  const oldThemeVer = existingPkg.dependencies['vitepress-theme-ninc']
+  if (oldThemeVer !== newThemeVer) {
+    existingPkg.dependencies['vitepress-theme-ninc'] = newThemeVer
+    changes.push(`vitepress-theme-ninc: ${oldThemeVer || '(缺失)'} → ${newThemeVer}`)
+  }
+
+  // 2. 补充缺失的核心依赖（vitepress / vue）：已有则保留用户版本，缺失则补充
+  for (const dep of Object.keys(newPkg.dependencies)) {
+    if (dep === 'vitepress-theme-ninc') continue
+    if (!existingPkg.dependencies[dep]) {
+      existingPkg.dependencies[dep] = newPkg.dependencies[dep]
+      changes.push(`${dep}: (缺失) → ${newPkg.dependencies[dep]}`)
+    }
+  }
+
+  // 3. NES 配置：补充缺失的 devDependencies 和 postinstall 脚本
+  if (cfg.nes && newPkg.devDependencies) {
+    existingPkg.devDependencies = existingPkg.devDependencies || {}
+    for (const dep of Object.keys(newPkg.devDependencies)) {
+      if (!existingPkg.devDependencies[dep]) {
+        existingPkg.devDependencies[dep] = newPkg.devDependencies[dep]
+        changes.push(`${dep}: (缺失) → ${newPkg.devDependencies[dep]}`)
+      }
+    }
+    existingPkg.scripts = existingPkg.scripts || {}
+    if (!existingPkg.scripts.postinstall && newPkg.scripts.postinstall) {
+      existingPkg.scripts.postinstall = newPkg.scripts.postinstall
+      changes.push(`scripts.postinstall: (缺失) → ${newPkg.scripts.postinstall}`)
+    }
+  }
+
+  // 4. 补充缺失的主题脚本（summary / init-proxy）：已有则保留
+  existingPkg.scripts = existingPkg.scripts || {}
+  for (const script of ['summary', 'init-proxy']) {
+    if (!existingPkg.scripts[script] && newPkg.scripts[script]) {
+      existingPkg.scripts[script] = newPkg.scripts[script]
+      changes.push(`scripts.${script}: (缺失) → ${newPkg.scripts[script]}`)
+    }
+  }
+
+  // 写回（保持 2 空格缩进 + 末尾换行）
+  fs.writeFileSync(targetPath, JSON.stringify(existingPkg, null, 2) + '\n', 'utf-8')
+
+  if (changes.length > 0) {
+    console.log(pc.green('  ✓') + pc.dim(` ${targetPath}（合并更新：）`))
+    for (const change of changes) {
+      console.log(pc.dim(`      • ${change}`))
+    }
+  } else {
+    console.log(pc.dim(`  跳过 ${targetPath}（已是最新）`))
+  }
+
+  return false
+}
+
 /** 检测当前目录是否为 VitePress 项目根目录 */
 function detectVitePressRoot() {
   return fs.existsSync('.vitepress') || fs.existsSync('index.md')
@@ -701,7 +806,8 @@ description: 文章描述（显示在列表和搜索引擎中）
 
 1. 替换 \`public/images/\` 下的占位图片为自己的头像、Logo、封面
 2. 在 \`posts/articles/\` 目录下创建更多文章
-3. 参考[官方文档](https://theme.ninc.top)了解更多配置项
+3. 把自己的 SVG 图标文件放进 \`public/svg/\` 即可在 themeConfig 里用 \`'svg:文件名'\` 引用，详见[图标使用指南](https://theme.ninc.top/guide/icons)
+4. 参考[官方文档](https://theme.ninc.top)了解更多配置项
 
 ---
 
@@ -1887,7 +1993,7 @@ function tplPackageJson(cfg) {
 
   const pkg = {
     name: slug,
-    version: '1.0.37',
+    version: '1.0.40',
     description: cfg.description,
     type: 'module',
     scripts: {
@@ -1996,6 +2102,19 @@ function tplCoverSvg() {
 `
 }
 
+/**
+ * public/svg/ 下的示例 SVG 图标
+ * 用法：在 themeConfig 里 icon: 'svg:example' 即可引用（文件名去掉 .svg 后缀）
+ * 用户可把 .svg 文件丢到 public/svg/ 下，文件名即图标名
+ */
+function tplSvgIconExample() {
+  // 简单的心形图标（仅做演示，用户可自行替换）
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+  <path d="M12 21s-7-4.35-9.5-8.5C.5 9 2 5 5.5 5c2 0 3.5 1 6.5 4 3-3 4.5-4 6.5-4C22 5 23.5 9 21.5 12.5 19 16.65 12 21 12 21z"/>
+</svg>
+`
+}
+
 // ============== 主流程 ==============
 
 /** 打印后续步骤提示（依赖安装 + 启动命令） */
@@ -2063,7 +2182,7 @@ async function main() {
     clack.log.step('生成文件')
 
     clack.log.message(pc.dim('核心配置'))
-    await writeFile('package.json', tplPackageJson(cfg))
+    await writePackageJson(cfg)
     await writeFile('pnpm-workspace.yaml', tplPnpmWorkspaceYaml())
     await writeFile('index.md', tplIndexMd(cfg))
     await writeFile('.vitepress/config.mts', tplConfigMts(cfg))
@@ -2075,6 +2194,10 @@ async function main() {
     await writeFile('public/images/logo.svg', tplLogoSvg(), true)
     await writeFile('public/images/cover.svg', tplCoverSvg(), true)
     await writeFile('public/favicon.svg', tplLogoSvg(), true)
+
+    // SVG 图标目录（放进去的 .svg 文件可在 themeConfig 中以 'svg:文件名' 引用）
+    clack.log.message(pc.dim('SVG 图标目录'))
+    await writeFile('public/svg/example.svg', tplSvgIconExample(), true)
 
     await printNextSteps()
     return
@@ -2154,7 +2277,7 @@ async function main() {
 
   // 核心配置文件（始终生成）
   clack.log.message(pc.dim('核心配置'))
-  await writeFile('package.json', tplPackageJson(cfg))
+  await writePackageJson(cfg)
   await writeFile('pnpm-workspace.yaml', tplPnpmWorkspaceYaml())
   await writeFile('index.md', tplIndexMd(cfg))
   await writeFile('.vitepress/config.mts', tplConfigMts(cfg))
@@ -2228,6 +2351,10 @@ async function main() {
   await writeFile('public/images/logo.svg', tplLogoSvg(), true)
   await writeFile('public/images/cover.svg', tplCoverSvg(), true)
   await writeFile('public/favicon.svg', tplLogoSvg(), true)
+
+  // SVG 图标目录（放进去的 .svg 文件可在 themeConfig 中以 'svg:文件名' 引用）
+  clack.log.message(pc.dim('SVG 图标目录'))
+  await writeFile('public/svg/example.svg', tplSvgIconExample(), true)
 
   // 示例文章（可选）
   if (createSample) {

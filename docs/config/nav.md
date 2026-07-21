@@ -19,7 +19,7 @@
 | --- | --- | --- | --- |
 | `text` | `string` | — | 菜单项文字 |
 | `link` | `string` | — | 站内路径，如 `/pages/archives` |
-| `icon` | `string?` | — | iconfont 图标名，可选 |
+| `icon` | `IconField?` | — | 图标字段，支持三种写法：字符串(iconfont 名) / `'svg:文件名'` / `{ type, name }`，详见 [图标使用指南](../guide/icons.md) |
 
 默认 `nav` 值：
 
@@ -102,8 +102,13 @@ export const themeConfig = defineThemeConfig({
 `link` 字段填写站内绝对路径（以 `/` 开头，如 `/pages/archives`），主题会将其作为站内路由处理。外链请配置到 [`navMore`](./nav-more.md) 中。
 :::
 
-::: tip icon 可选且使用 iconfont
-`icon` 字段为可选项，填写 iconfont 图标名（如 `article`、`folder`）。需确保图标已在 iconfont 项目中引入，否则不会显示。
+::: tip icon 字段支持三种写法
+`icon` 字段为可选项，支持三种写法（详见 [图标使用指南](../guide/icons.md)）：
+- 字符串（iconfont 图标名，如 `'article'`、`'folder'`）—— 最简，向后兼容
+- `'svg:文件名'`（如 `'svg:article'`）—— 引用 `public/svg/` 下的 SVG 文件
+- 对象（如 `{ type: 'svg', name: 'article' }`）—— 显式声明类型与名称
+
+字体图标需确保图标已在主题内置 iconfont 中；如需自定义图标，请用 SVG 写法。
 :::
 
 ::: warning 分组形式
@@ -116,6 +121,8 @@ export const themeConfig = defineThemeConfig({
 
 ## 相关配置
 
+- [`icon` 图标字段](./icons.md) — `icon` 字段类型定义与字段参考
+- [`navButtons` 右侧自定义按钮](./nav-buttons.md) — 导航栏右侧的图标按钮（主题文档、GitHub 等外链入口）
 - [`navMore` 左侧更多菜单](./nav-more.md) — 侧边更多链接分组
 - [`homeTop` 首页顶部区域](./home-top.md) — 首页顶部快捷分类入口
 - [`footer` 页脚](./footer.md) — 页脚站点地图导航

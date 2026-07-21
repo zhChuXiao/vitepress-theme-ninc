@@ -22,7 +22,7 @@
                     class="link-child-btn"
                     @click="pageJump(child.link)"
                   >
-                    <i v-if="child.icon" :class="`iconfont icon-${child.icon}`" />
+                    <ThemeIcon v-if="child.icon" :icon="child.icon" />
                     <span class="name">{{ child.text }}</span>
                   </div>
                 </div>
@@ -53,6 +53,7 @@
 
 <script setup>
 import { mainStore } from '../store';
+import ThemeIcon from './ThemeIcon.vue';
 
 const store = mainStore();
 const router = useRouter();

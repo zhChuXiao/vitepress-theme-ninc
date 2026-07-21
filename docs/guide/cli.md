@@ -112,6 +112,22 @@ pnpm run dev      # 启动本地预览
 它会检测出当前目录已有配置，生成每个已存在的文件前都会先问「是否覆盖」，选否就跳过，不会冲掉你的内容。
 :::
 
+::: tip package.json 的特殊处理：选「不覆盖」也会合并更新
+`package.json` 是个例外——即使你选「不覆盖」，CLI 也会做合并更新，确保：
+
+- **`vitepress-theme-ninc` 版本强制对齐**：与当前 CLI 版本齐平（正式版 `^x.x.x`，预发布版精确锁定）。这避免了你装了新版 CLI、项目却还在用旧版主题导致特性对不上的情况。
+- **缺失依赖自动补充**：`vitepress` / `vue` / `nes-vue` / `patch-package` 等如果缺失会自动加上，已有的不会动。
+- **缺失脚本自动补充**：`summary` / `init-proxy` / `postinstall` 缺失会自动补上，已有的保留你的版本。
+
+其他字段（`name` / `version` / `description` / `type` / 已有的依赖版本和脚本内容）一律不动，尊重你的项目配置。合并完成后会打印变更清单，让你清楚改了什么。
+
+如果文件不存在或 JSON 解析失败，会直接生成新的 `package.json`。
+:::
+
+::: tip init 会顺手创建 `public/svg/` 目录
+`init` 命令在两种模式下都会在 `public/svg/` 下放一个 `example.svg` 示例图标，方便你直接往这个目录丢自己的 `.svg` 文件用。把 `.svg` 丢进去后，在 `themeConfig` 的 `icon` 字段里写 `'svg:文件名'` 就能用——无需任何额外配置。详见 [图标使用指南](./icons.md)。
+:::
+
 ## summary：预生成 AI 摘要
 
 ::: code-group

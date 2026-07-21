@@ -102,7 +102,7 @@ export const themeConfig = defineThemeConfig({
 :::
 
 ::: tip icon 使用 iconfont 图标名
-`icon` 字段填写的是 iconfont 图标名（如 `icon-article`），需确保对应图标已通过 iconfont 项目引入，否则图标将无法显示。
+`category` 的 `icon` 字段填写的是 iconfont 图标名（如 `icon-article`），需确保对应图标已通过 iconfont 项目引入，否则图标将无法显示。注意 `category` 的 `icon` 字段属于**图片路径/iconfont 类名**语义，暂未支持新的 `IconField` 三种写法（与 [`nav`](./nav.md)、[`footer.social`](./footer.md) 等的 `icon` 字段不同）。统一的图标字段说明见 [`icon` 图标字段](./icons.md)。
 :::
 
 ::: warning class 控制配色
@@ -172,6 +172,7 @@ homeTop: {
 
 ## 相关配置
 
+- [`icon` 图标字段](./icons.md) — `icon` 字段类型定义与字段参考
 - [`siteMeta` 站点信息](./site-meta.md) — 站点标题与作者信息
 - [`nav` 顶部导航栏](./nav.md) — 顶部菜单配置
 - [`cover` 文章封面](./cover.md) — 首页文章列表封面配置

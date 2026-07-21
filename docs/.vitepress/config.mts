@@ -158,6 +158,7 @@ export default defineConfig({
           items: [
             { text: '自定义样式', link: '/guide/custom-styles' },
             { text: '覆盖组件', link: '/guide/override-components' },
+            { text: '图标使用指南', link: '/guide/icons' },
             { text: '代码组图标', link: '/guide/code-group-icons' },
             { text: 'NES 模拟器', link: '/guide/nes' },
             { text: 'AI 文章摘要', link: '/guide/ai-summary' },
@@ -179,6 +180,12 @@ export default defineConfig({
           ]
         },
         {
+          text: '通用字段',
+          items: [
+            { text: 'icon 图标字段', link: '/config/icons' }
+          ]
+        },
+        {
           text: '功能配置',
           items: [
             { text: 'comment 评论', link: '/config/comment' },
@@ -186,6 +193,7 @@ export default defineConfig({
             { text: 'aiSummary AI 摘要', link: '/config/ai-summary' },
             { text: 'homeTop 首页顶部', link: '/config/home-top' },
             { text: 'navMore 更多菜单', link: '/config/nav-more' },
+            { text: 'navButtons 右侧自定义按钮', link: '/config/nav-buttons' },
             { text: 'about 关于本站', link: '/config/about' }
           ]
         },

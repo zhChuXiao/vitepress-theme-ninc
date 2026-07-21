@@ -19,8 +19,8 @@
 
 | 字段 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
-| `icon` | `string` | — | 图标路径（img 类型）或 iconfont 图标名 |
-| `iconType` | `'img' \| 'iconfont'?` | `'img'` | 图标类型，默认 `img` |
+| `icon` | `IconField` | — | 图标字段。`iconType='img'` 时为图片 URL；否则支持三种写法（字符串 / `'svg:文件名'` / 对象），详见 [图标使用指南](../guide/icons.md) |
+| `iconType` | `'img' \| 'iconfont'?` | `'img'` | 图标类型。`'img'`=图片 URL，`'iconfont'`=字体图标或 SVG 图标（默认） |
 | `name` | `string` | — | 链接显示名称 |
 | `url` | `string` | — | 链接地址，可为外链或站内路径 |
 | `target` | `string?` | — | 打开方式，如 `'_blank'` 表示新标签页 |
@@ -93,9 +93,14 @@ export const themeConfig = defineThemeConfig({
 ## 注意事项
 
 ::: tip iconType 区分图标类型
-`iconType` 用于区分图标来源：
-- `'img'`（默认）：`icon` 字段填写图片路径（如 `/images/avatar.png`），指向 `public` 目录。
-- `'iconfont'`：`icon` 字段填写 iconfont 图标名（如 `icon-github`），需确保图标已引入。
+`iconType` 用于区分图标来源（详见 [图标使用指南](../guide/icons.md)）：
+- `'img'`（默认）：`icon` 字段填写图片路径（如 `/images/avatar.png`），指向 `public` 目录
+- `'iconfont'`（或不填）：`icon` 字段支持三种写法 ——
+  - 字符串：iconfont 图标名（如 `'github'`、`'icon-github'`）
+  - `'svg:文件名'`：引用 `public/svg/` 下的 SVG 文件（如 `'svg:bilibili'`）
+  - 对象：`{ type: 'svg' | 'font', name: 'xxx' }`
+
+如需使用主题内置 iconfont 之外的图标，推荐用 SVG 写法，把 `.svg` 文件丢进 `public/svg/` 即可。
 :::
 
 > 图片路径以 `/` 开头，对应 `public/` 下的文件，如 `/images/xxx.png` 对应 `public/images/xxx.png`。
@@ -113,6 +118,7 @@ export const themeConfig = defineThemeConfig({
 
 ## 相关配置
 
+- [`icon` 图标字段](./icons.md) — `icon` 字段类型定义与字段参考
 - [`nav` 顶部导航栏](./nav.md) — 顶部下拉菜单配置
-- [`footer` 页脚](./footer.md) — 页脚社交链接（同样使用 iconfont 图标）
+- [`footer` 页脚](./footer.md) — 页脚社交链接（同样使用图标字段）
 - [`siteMeta` 站点信息](./site-meta.md) — 站点地址与作者信息

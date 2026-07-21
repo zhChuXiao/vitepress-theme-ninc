@@ -1,6 +1,8 @@
 // 主题配置类型 - 对应 assets/themeConfig.mjs 的所有字段
 // 这些类型用于 defineThemeConfig 的参数与返回值，提供 IDE 提示与校验
 
+import type { IconField } from '../client/utils/icon'
+
 /** VitePress head 配置项格式 */
 export type HeadConfig = [string, Record<string, any>] | [string, Record<string, any>, string]
 
@@ -89,7 +91,8 @@ export interface InjectConfig {
 export interface NavItem {
   text: string
   link: string
-  icon?: string
+  /** 图标字段，支持三种写法：字符串(iconfont 名) / 'svg:文件名' / { type, name } */
+  icon?: IconField
 }
 
 /** 导航栏下拉菜单 */
@@ -100,7 +103,13 @@ export interface NavGroup {
 
 /** 左侧更多菜单 - 单条链接 */
 export interface NavMoreLink {
-  icon: string
+  /**
+   * 图标字段：
+   * - iconType='img' 时：图片 URL（字符串）
+   * - iconType='iconfont' 或不填时：支持三种写法（字符串 / 'svg:文件名' / { type, name }）
+   */
+  icon: IconField
+  /** 图标类型：img=图片 URL；iconfont=字体图标或 SVG 图标（默认） */
   iconType?: 'img' | 'iconfont'
   name: string
   url: string
@@ -128,7 +137,8 @@ export interface CoverConfig {
 
 /** 页脚社交链接 */
 export interface FooterSocial {
-  icon: string
+  /** 图标字段，支持三种写法：字符串(iconfont 名) / 'svg:文件名' / { type, name } */
+  icon: IconField
   link: string
 }
 
@@ -336,14 +346,17 @@ export interface TravellingsConfig {
 export interface NavButtonConfig {
   /** 按钮名称（hover 时在站点标题位显示，同时作为 title 提示） */
   name: string
-  /** 图标类型：iconfont 字体图标 或 图片 URL（默认 iconfont） */
+  /** 图标类型：iconfont=字体图标或 SVG 图标（默认）；img=图片 URL */
   iconType?: 'iconfont' | 'img'
   /**
-   * 图标：
-   * - iconType=iconfont（默认）：iconfont 图标名，不含 `icon-` 前缀（例如 `github`、`list`）
-   * - iconType=img：图片 URL（例如 `/images/xxx.png`）
+   * 图标字段：
+   * - iconType='img' 时：图片 URL（字符串，例如 `/images/xxx.png`）
+   * - iconType='iconfont' 或不填时：支持三种写法
+   *   1. 字符串：iconfont 图标名，不含 `icon-` 前缀（例如 `github`、`list`）
+   *   2. `'svg:文件名'`：使用 public/svg/ 下的 SVG 文件
+   *   3. 对象：`{ type: 'svg' | 'font', name: '文件名或图标名' }`
    */
-  icon: string
+  icon: IconField
   /** 跳转链接 */
   url: string
   /** 链接打开方式，默认 `_blank` 新窗口 */

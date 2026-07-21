@@ -14,7 +14,7 @@
         target="_blank"
         class="social-link"
       >
-        <i :class="`iconfont icon-${item.icon}`"></i>
+        <ThemeIcon :icon="item.icon" size="20px" />
       </a>
       <div class="logo" title="返回顶部" @click="smoothScrolling">
         <img :src="siteMeta.author.cover" alt="author" class="author" />
@@ -26,7 +26,7 @@
         target="_blank"
         class="social-link"
       >
-        <i :class="`iconfont icon-${item.icon}`"></i>
+        <ThemeIcon :icon="item.icon" size="20px" />
       </a>
     </div>
     <div class="footer-sitemap">
@@ -50,6 +50,7 @@
 
 <script setup>
 import { smoothScrolling } from '../utils/helper';
+import ThemeIcon from './ThemeIcon.vue';
 
 const { theme, site } = useData();
 const { footer, siteMeta } = theme.value;
@@ -148,6 +149,10 @@ const socialLinkData = computed(() => {
       .iconfont {
         font-size: 20px;
         color: var(--main-card-background);
+      }
+      // SVG 图标样式对齐字体图标（20px + 反白）
+      .svg-icon {
+        fill: var(--main-card-background);
       }
       &:hover {
         transform: scale(1.15);

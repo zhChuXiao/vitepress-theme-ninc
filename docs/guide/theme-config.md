@@ -152,6 +152,7 @@ defineThemeConfig({
 | `inject` | `object` | 全局注入内容，`header` 为 VitePress head 标签数组 |
 | `nav` | `array` | 顶部导航栏菜单项 |
 | `navMore` | `array` | 折叠的「更多」导航项（侧边展开的链接列表） |
+| `navButtons` | `array` | 导航栏右侧自定义按钮（搜索按钮之后、中控台之前），可放主题文档、GitHub 等外链入口 |
 | `travellings` | `object` | 开往友链接力：导航栏「开往」按钮，点击随机跳转至参与计划的博客 |
 | `about` | `object` | 关于本站页面内容：头像技能标签、介绍、追求、技能、项目、座右铭 |
 | `cover` | `object` | 文章封面配置：双栏布局、封面布局方式、默认封面图列表 |
@@ -167,6 +168,10 @@ defineThemeConfig({
 | `fancybox` | `object` | 图片灯箱配置：JS / CSS CDN 地址 |
 | `jumpRedirect` | `object` | 外链中转跳转配置：排除类名列表 |
 | `tongji` | `object` | 站点统计代码配置（如 51la） |
+
+::: tip 通用字段：`icon`
+上表中 `nav` / `navMore` / `navButtons` / `footer.social` 等多个配置项都含 `icon` 字段，统一支持三种写法（字符串 / `'svg:文件名'` / 对象），可使用主题内置 iconfont 或自定义 SVG 文件。详见 [图标使用指南](./icons.md) 与 [`icon` 图标字段](../config/icons.md)。
+:::
 
 ## 快速字段说明
 

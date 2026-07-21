@@ -11,9 +11,9 @@
                 <span class="more-name">{{ item.name }}</span>
                 <div class="more-list">
                   <a v-for="(link, i) in item.list" :key="i" class="more-link" @click="handleClick($event, link)">
-                    <img v-if="link.iconType !== 'iconfont'" class="link-icon" :src="link.icon" :alt="link.name" />
+                    <img v-if="link.iconType === 'img'" class="link-icon" :src="link.icon" :alt="link.name" />
                     <span class="link-name">
-                      <i v-if="link.iconType === 'iconfont'" :class="`iconfont icon-${link.icon}`" class="link-icon" />
+                      <ThemeIcon v-if="link.iconType !== 'img'" :icon="link.icon" class="link-icon" />
                       {{ link.name }}
                     </span>
                   </a>
@@ -38,7 +38,7 @@
                   class="link-child-btn"
                   @click="router.go(child.link)"
                 >
-                  <i v-if="child.icon" :class="`iconfont icon-${child.icon}`" />
+                  <ThemeIcon v-if="child.icon" :icon="child.icon" />
                   {{ child.text }}
                 </span>
               </div>
@@ -108,16 +108,13 @@
             @mouseenter="menuBtnEnter('custom', btn)"
             @mouseleave="menuBtnLeave('custom')"
           >
-            <i
-              v-if="btn.iconType !== 'img'"
-              :class="`iconfont icon-${btn.icon}`"
-            />
             <img
-              v-else
+              v-if="btn.iconType === 'img'"
               class="nav-btn-img"
               :src="btn.icon"
               :alt="btn.name"
             />
+            <ThemeIcon v-else :icon="btn.icon" />
           </div>
           <!-- 中控台 -->
           <div
@@ -168,6 +165,7 @@ import { storeToRefs } from 'pinia'
 import { defineAsyncComponent, onMounted, onUnmounted } from 'vue'
 import { mainStore } from '../store'
 import { smoothScrolling, shufflePost } from '../utils/helper'
+import ThemeIcon from './ThemeIcon.vue'
 
 // 异步加载 Search 组件：避免 algoliasearch / vue-instantsearch 拖慢首屏
 // 同时通过 prefetchSearch 在浏览器空闲时和 hover 搜索按钮时主动预加载，

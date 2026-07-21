@@ -18,7 +18,7 @@
 
 | 字段 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
-| `icon` | `string` | — | 社交图标名（iconfont） |
+| `icon` | `IconField` | — | 图标字段，支持三种写法：字符串(iconfont 名) / `'svg:文件名'` / `{ type, name }`，详见 [图标使用指南](../guide/icons.md) |
 | `link` | `string` | — | 社交链接地址 |
 
 默认 `social` 值：
@@ -183,8 +183,13 @@ export const themeConfig = defineThemeConfig({
 
 ## 注意事项
 
-::: tip social 使用 iconfont 图标名
-`social` 的 `icon` 字段填写 iconfont 图标名（如 `email`、`github`、`rss`），需确保对应图标已在 iconfont 项目中引入。常用社交图标包括 `email`、`github`、`twitter`、`weibo`、`rss` 等。
+::: tip social 的 icon 字段支持三种写法
+`social` 的 `icon` 字段支持三种写法（详见 [图标使用指南](../guide/icons.md)）：
+- 字符串：iconfont 图标名（如 `'email'`、`'github'`、`'rss'`），需确保对应图标已在主题内置 iconfont 中
+- `'svg:文件名'`：引用 `public/svg/` 下的 SVG 文件（如 `'svg:bilibili'`、`'svg:zhihu'`）—— 推荐用于品牌 logo
+- 对象：`{ type: 'svg' | 'font', name: 'xxx' }` —— 显式声明类型与名称
+
+页脚社交图标会自动反白渲染（深色背景上的白色图标），SVG 图标通过 `fill: currentColor` 适配。
 :::
 
 ::: warning social 建议为偶数个
@@ -209,6 +214,7 @@ export const themeConfig = defineThemeConfig({
 
 ## 相关配置
 
+- [`icon` 图标字段](./icons.md) — `icon` 字段类型定义与字段参考
 - [`siteMeta` 站点信息](./site-meta.md) — 站点地址与作者信息（用于 RSS 与社交）
 - [`nav` 顶部导航栏](./nav.md) — 顶部菜单配置
 - [`navMore` 左侧更多菜单](./nav-more.md) — 侧边链接分组配置
