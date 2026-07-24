@@ -15,9 +15,9 @@ export function printCopyright() {
     // 三段式：标题（青绿渐变）→ URL（白底深字）→ 作者（青绿到珊瑚渐变）
     log(
       `%c ${title} %c ${url} %c ${author} `,
-      'background:linear-gradient(to right, #38a3a5, #57cc99); color:white; font-size:16px; padding:8px 5px 5px 8px; border-radius:5px 0 0 5px; font-weight:bold; box-shadow:0 2px 5px rgba(0,0,0,0.2);',
-      'background:#ffffff; color:#38a3a5; font-size:16px; padding:8px 5px 5px 5px; font-weight:bold; box-shadow:0 2px 5px rgba(0,0,0,0.2);',
-      'background:linear-gradient(to right, #57cc99, #ff6b6b); color:white; font-size:16px; padding:8px 5px 5px 0; border-radius:0 5px 5px 0; font-weight:bold; box-shadow:0 2px 5px rgba(0,0,0,0.2);',
+      'background:linear-gradient(to right, #38a3a5, #57cc99); color:white; font-size:16px; padding:8px 5px 5px 8px; border-radius:5px 0 0 5px; border:2px solid #38a3a5; border-right:none; font-weight:bold; box-shadow:0 2px 5px rgba(0,0,0,0.2);',
+      'background:#ffffff; color:#38a3a5; font-size:16px; padding:8px 5px 5px 5px; border-top:2px solid #38a3a5; border-bottom:2px solid #38a3a5; font-weight:bold; box-shadow:0 2px 5px rgba(0,0,0,0.2);',
+      'background:linear-gradient(to right, #57cc99, #ff6b6b); color:white; font-size:16px; padding:8px 5px 5px 0; border-radius:0 5px 5px 0; border:2px solid #38a3a5; border-left:none; font-weight:bold; box-shadow:0 2px 5px rgba(0,0,0,0.2);',
     )
   }, 2000)
 }
