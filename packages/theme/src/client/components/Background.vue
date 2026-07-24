@@ -3,7 +3,7 @@
     <!-- 站点背景 -->
     <div
       v-if="backgroundType !== 'close'"
-      :class="['background', backgroundType, isDark ? 'dark' : 'light']"
+      :class="['background', backgroundType, darkMode ? 'dark' : 'light']"
     >
       <img
         v-if="backgroundType === 'image'"
@@ -24,6 +24,19 @@ import { mainStore } from '../store';
 
 const store = mainStore();
 const { backgroundType, backgroundUrl, isDark } = storeToRefs(store);
+
+// 修复：SSR 阶段 isDark=false（服务端无 localStorage），生成的 HTML 是 light class。
+// 客户端 hydration 时 useDark 从 localStorage 恢复 isDark=true，但 hydration 时序
+// 可能导致 Background 的 class 未及时从 light 更新为 dark。
+// 解决：onMounted 后从 <html> class 兜底读取真实状态（此时 useDark 的 flush:post
+// 副作用已完成，<html> 已有正确的 dark/light class）。
+const darkMode = ref(isDark.value);
+onMounted(() => {
+  darkMode.value = document.documentElement.classList.contains("dark");
+});
+watch(isDark, (v) => {
+  darkMode.value = v;
+});
 
 // 加载失败
 const coverError = (e) => {

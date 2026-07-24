@@ -1993,7 +1993,7 @@ function tplPackageJson(cfg) {
 
   const pkg = {
     name: slug,
-    version: '1.0.40',
+    version: '1.0.41',
     description: cfg.description,
     type: 'module',
     scripts: {

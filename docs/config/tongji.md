@@ -83,10 +83,10 @@ export const themeConfig = defineThemeConfig({
 })
 ```
 
-4. 生产构建后，主题会在客户端注入 `/js-sdk-pro.min.js`，并调用 `window.LA.init({ id, ck: id, autoTrack: true })`。
+4. 生产构建后，主题会自动从 51la 官方 CDN（`https://sdk.51.la/js-sdk-pro.min.js`）加载 SDK，并调用 `window.LA.init({ id, ck: id, autoTrack: true })`。**无需手动下载 SDK 文件**，配置好 ID 即可生效。
 
-::: warning 脚本路径要求
-当前实现使用站内路径 `/js-sdk-pro.min.js`。请将 51la 的 `js-sdk-pro.min.js` 放到项目 `public/` 目录，使部署后可通过 `/js-sdk-pro.min.js` 访问；否则浏览器会返回 404，统计不会生效。
+::: tip SDK 从官方 CDN 加载
+主题直接从 `https://sdk.51.la/js-sdk-pro.min.js` 加载 51la SDK，用户无需把 `js-sdk-pro.min.js` 放到 `public/` 目录。如果你之前手动放了一份到 `public/`，可以删除（不影响功能）。
 :::
 
 ::: tip 仅生产环境注入

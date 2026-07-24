@@ -44,7 +44,7 @@ function inject51La(tongji: Record<string, string> = {}) {
   if (!laId) return
   const script = document.createElement('script')
   script.id = 'LA_COLLECT'
-  script.src = '/js-sdk-pro.min.js'
+  script.src = 'https://sdk.51.la/js-sdk-pro.min.js'
   script.onload = () => {
     // eslint-disable-next-line no-undef
     ;(window as any).LA?.init({ id: laId, ck: laId, autoTrack: true })
