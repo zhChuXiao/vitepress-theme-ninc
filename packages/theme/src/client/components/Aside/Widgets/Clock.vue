@@ -1,26 +1,22 @@
 <template>
-  <div class="clock_container">
+  <div ref="clockRoot" class="clock_container">
     <div class="center-dial">
-      <!-- <div class="clock_h1 center-preview">
-        <span v-for="(item, index) in 'HELLO'" :class="`char${index + 1}`" :key="index">{{ item }}</span>
-      </div> -->
       <div class="clock_head" :style="headStyle">
         <div class="clock_head-bg"></div>
       </div>
-      <!-- <div class="clock_torso"></div> -->
-      <div class="clock_hand-container" id="minutes">
+      <div ref="minutesEl" class="clock_hand-container">
         <div class="clock_minute-hand"></div>
       </div>
-      <div class="clock_hand-container" id="hours">
+      <div ref="hoursEl" class="clock_hand-container">
         <div class="clock_hour-hand"></div>
       </div>
-      <div class="clock_hand-container" id="seconds">
+      <div ref="secondsEl" class="clock_hand-container">
         <div class="clock_second-hand"></div>
       </div>
     </div>
     <div class="clock_day-name-dial">
       <div class="clock_ring-back"></div>
-      <div class="ring" id="r1">
+      <div ref="r1El" class="ring">
         <div class="clock_h1 day-name-preview">
           <span v-for="(item, index) in 'DAY NAME'" :class="`char${index + 1}`" :key="index">{{ item }}</span>
         </div>
@@ -36,7 +32,7 @@
     </div>
     <div class="month-dial">
       <div class="clock_ring-back"></div>
-      <div class="ring" id="r2">
+      <div ref="r2El" class="ring">
         <div class="clock_h1 month-preview">
           <span v-for="(item, index) in 'MONTH'" :class="`char${index + 1}`" :key="index">{{ item }}</span>
         </div>
@@ -52,7 +48,7 @@
     </div>
     <div class="day-dial">
       <div class="clock_ring-back"></div>
-      <div class="ring" id="r3">
+      <div ref="r3El" class="ring">
         <div class="clock_h1 day-preview">
           <span v-for="(item, index) in 'DAY'" :class="`char${index + 1}`" :key="index">{{ item }}</span>
         </div>
@@ -86,13 +82,28 @@ const headStyle = computed(() => {
 
 const isRunning = ref(false)
 
+// 组件根元素与各表盘引用：所有 DOM 查询均限定在组件内部，
+// 避免全局 id/class 选择器在多实例或同 class 元素并存时互相污染
+const clockRoot = ref(null)
+const minutesEl = ref(null)
+const hoursEl = ref(null)
+const secondsEl = ref(null)
+const r1El = ref(null)
+const r2El = ref(null)
+const r3El = ref(null)
+
 defineExpose({
   startClock,
   resetClock
 })
 
+// 挂载延迟启动的定时器 id，卸载时需清理（否则卸载后 startClock 仍会触发，
+// 新建的 setInterval 将无人清理造成泄漏）
+let mountTimeoutId = null
+
 onMounted(() => {
-  setTimeout(() => {
+  mountTimeoutId = setTimeout(() => {
+    mountTimeoutId = null
     startClock()
   }, 1000)
 })
@@ -116,18 +127,17 @@ const dayColor = '#FF2D55'
 const monthColor = '#007AFF'
 const dayNameColor = '#37BA5A'
 
-function rotateRing(input, sections, characters, ring, text, color) {
+function rotateRing(input, sections, characters, ringElement, text, color) {
   const sectionWidth = range / sections
   const initialRotation = 135 - sectionWidth / 2
   const rotateAmount = initialRotation - sectionWidth * (input - 1)
   const start = characters * (input - 1) + (input - 1) + 1
 
-  const ringElement = document.querySelector(ring)
   if (ringElement) {
     ringElement.style.transform = `rotate(${rotateAmount}deg)`
   }
 
-  const textElement = document.querySelector(text)
+  const textElement = clockRoot.value?.querySelector(text)
   if (textElement) {
     for (let i = start; i < start + characters; i++) {
       const charElement = textElement.querySelector(`.char${i}`)
@@ -149,21 +159,17 @@ function clockRotation() {
     const minutesRotation = minutes * 6
     const hoursRotation = hours * 30 + minutes / 2
 
-    document.getElementById('seconds').style.transform = `rotate(${secondsRotation}deg)`
-    document.getElementById('minutes').style.transform = `rotate(${minutesRotation}deg)`
-    document.getElementById('hours').style.transform = `rotate(${hoursRotation}deg)`
+    // 卸载后 interval 已清理，此处仍做守卫防止极端时序下的空引用
+    if (secondsEl.value) secondsEl.value.style.transform = `rotate(${secondsRotation}deg)`
+    if (minutesEl.value) minutesEl.value.style.transform = `rotate(${minutesRotation}deg)`
+    if (hoursEl.value) hoursEl.value.style.transform = `rotate(${hoursRotation}deg)`
   }, 1000)
-}
-
-// 暂停
-function pauseClock() {
-  clearInterval(clockInterval)
 }
 
 // Give column representing passed days and the current day this week a height
 function loadBars() {
   for (let i = 1; i <= dayName; i++) {
-    const barElement = document.getElementById(`x${i}`)
+    const barElement = clockRoot.value?.querySelector(`#x${i}`)
     if (barElement) {
       const newHeight = Math.floor(Math.random() * 85) + 5
       barElement.style.height = `${newHeight}px`
@@ -171,19 +177,17 @@ function loadBars() {
   }
 }
 
-// Fade effect function
+// Fade effect function（querySelectorAll 返回的 NodeList 自带 forEach，空列表天然无操作）
+// 查询限定在组件根元素内，避免影响页面上其他同 class 元素
 function fadeTo(selector, opacity, duration, callback) {
-  const element = document.querySelectorAll(selector)
-  if (element) {
-    ;[...element].forEach(el => {
-      el.style.transition = `opacity ${duration}ms`
-      el.style.opacity = opacity
+  clockRoot.value?.querySelectorAll(selector).forEach(el => {
+    el.style.transition = `opacity ${duration}ms`
+    el.style.opacity = opacity
 
-      if (callback) {
-        el.addEventListener('transitionend', callback, { once: true })
-      }
-    })
-  }
+    if (callback) {
+      el.addEventListener('transitionend', callback, { once: true })
+    }
+  })
 }
 
 function init() {
@@ -206,7 +210,7 @@ function init() {
   initTimeoutIds.push(setTimeout(() => {
     fadeTo('.day-preview', 0, 500)
     fadeTo('.day-text', 1, 500, () => {
-      rotateRing(day, sectionsDay, charactersDay, '#r3', '.day-text', dayColor)
+      rotateRing(day, sectionsDay, charactersDay, r3El.value, '.day-text', dayColor)
     })
   }, 200))
 
@@ -217,7 +221,7 @@ function init() {
     fadeTo('.temperature', 1, 500)
     fadeTo('.bars', 1, 500)
     fadeTo('.month-text', 1, 500, () => {
-      rotateRing(month, sectionsMonth, charactersMonth, '#r2', '.month-text', monthColor)
+      rotateRing(month, sectionsMonth, charactersMonth, r2El.value, '.month-text', monthColor)
       loadBars()
     })
   }, 700))
@@ -226,7 +230,7 @@ function init() {
   initTimeoutIds.push(setTimeout(() => {
     fadeTo('.day-name-preview', 0, 500)
     fadeTo('.day-name-text', 1, 500, () => {
-      rotateRing(dayName, sectionsDayName, charactersDayName, '#r1', '.day-name-text', dayNameColor)
+      rotateRing(dayName, sectionsDayName, charactersDayName, r1El.value, '.day-name-text', dayNameColor)
     })
   }, 1200))
 
@@ -234,7 +238,6 @@ function init() {
   initTimeoutIds.push(setTimeout(() => {
     fadeTo('.center-preview', 0, 500)
     fadeTo('.clock_head-bg', 0.4, 500)
-    // document.querySelector('.clock_head').style.filter = 'brightness(0.4)'
     fadeTo('.clock_hand-container', 1, 500)
   }, 1700))
   initTimeoutIds.push(setTimeout(() => {
@@ -267,12 +270,10 @@ function resetClock() {
   })
   fadeTo('.center-preview', 1, 10)
   fadeTo('.clock_head-bg', 0, 10)
-  // document.querySelector('.clock_head').style.filter = 'brightness(1)'
 
   // 重置表盘旋转
-  const rings = ['#r1', '#r2', '#r3']
-  rings.forEach(ring => {
-    const element = document.querySelector(ring)
+  const rings = [r1El.value, r2El.value, r3El.value]
+  rings.forEach(element => {
     if (element) {
       element.style.transform = 'rotate(0deg)'
     }
@@ -293,16 +294,11 @@ function startClock() {
   init()
 }
 
-function toggleClock() {
-  if (isRunning.value) {
-    resetClock()
-    isRunning.value = false
-  } else {
-    startClock()
-  }
-}
-
 onBeforeUnmount(() => {
+  if (mountTimeoutId) {
+    clearTimeout(mountTimeoutId)
+    mountTimeoutId = null
+  }
   clearInterval(clockInterval)
   resetClock()
 })

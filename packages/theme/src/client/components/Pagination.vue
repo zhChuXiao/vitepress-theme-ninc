@@ -135,6 +135,8 @@ const validateInput = () => {
 
 // 跳转页面
 const jumpPage = (url, page) => {
+  // 省略号占位项不可点击
+  if (page === '...') return
   // 使用参数跳转
   if (props.useParams) {
     if (page === 1) {

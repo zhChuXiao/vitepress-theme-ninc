@@ -56,7 +56,7 @@
 | `title` | `string` | 主标题（如「开启创造力」） |
 
 ::: tip 技能图标数据来源
-技能图标滚动条与完整列表的数据来自 [`homeTop.creativity`](./home-top.md#creativity)，而非 `about.skills`。`about.skills` 仅控制该区域的小标题与主标题文案。`homeTop.creativity` 为空时回退到主题内置的默认技能数据。
+技能图标滚动条与完整列表的数据来自 [`homeTop.creativity`](./home-top.md#技能图标)，而非 `about.skills`。`about.skills` 仅控制该区域的小标题与主标题文案。`homeTop.creativity` 为空时回退到主题内置的默认技能数据。
 :::
 
 ### career 生涯区域
@@ -255,7 +255,7 @@ export const themeConfig = defineThemeConfig({
 > 图片路径以 `/` 开头，对应 `public/` 下的文件，如 `/images/xxx.png` 对应 `public/images/xxx.png`。
 
 ::: tip 与导航配合
-在 [`nav`](./nav.md) 中添加指向 `/pages/about` 的入口，并在 `pages/about.md` 中显式导入 `About` 组件，才能访问关于页。详见 [自定义页面 - 关于页](../guide/pages.md#关于页about)。
+在 [`nav`](./nav.md) 中添加指向 `/pages/about` 的入口，并在 `pages/about.md` 中显式导入 `About` 组件，才能访问关于页。详见 [自定义页面 - 关于页](../guide/pages.md#关于页-about)。
 :::
 
 ## 相关配置

@@ -12,13 +12,13 @@
 | `description` | `string` | `'powered by ninc'` | 站点描述，用于 SEO meta 与 RSS |
 | `avatar` | `string` | 见下方 | 站点头像路径，指向 `public` 目录下的文件或任意可访问的网络图片；侧边栏 Clock 中心头像、关于页头像等共用此字段 |
 | `logo` | `string` | `''` | 站点 Logo 路径，指向 `public` 目录下的文件；留空则不显示 Logo |
-| `site` | `string` | `'https://example.com'` | 站点完整地址，用于 SEO、RSS 与社交分享卡片 |
-| `base` | `string` | `'/'` | VitePress `base` 路径，需与 VitePress 配置保持一致 |
+| `site` | `string` | `'https://example.com'` | 站点完整地址，用于 RSS 链接生成与 sitemap `hostname`（SEO 基础设施） |
+| `base` | `string` | `'/'` | VitePress `base` 路径；主题会自动将其同步为 VitePress `base` 与 PWA `start_url`，通常只需在此设置一处 |
 | `lang` | `string` | `'zh-CN'` | 站点语言，影响 `<html lang>` 属性 |
 | `author` | `AuthorInfo` | 见下方子表 | 作者信息对象 |
 
 ::: tip avatar 默认值
-`http://blog.ninc.top/images/cxLogo/avatar2.jpg`（作者自己的头像，替换方法见说明列）
+`https://blog.ninc.top/images/cxLogo/avatar2.jpg`（作者自己的头像，替换方法见说明列）
 :::
 
 ### author 子表
@@ -64,11 +64,11 @@ export const themeConfig = defineThemeConfig({
 
 `siteMeta` 中的字段会在站点多处同步渲染，理解其作用范围有助于一次性配置到位：
 
-- **浏览器标签页**：`title` 作为页面标题，搭配 [`inject.header`](./inject.md) 默认注入的 `/favicon.ico`（`logo` 作为站点图标）。
+- **浏览器标签页**：`title` 作为页面标题；favicon 需通过 [`inject.header`](./inject.md) 自行配置（主题默认不注入任何 head 标签，或将 `favicon.ico` 放入 `public/` 依赖浏览器默认请求）。
 - **站点头部**：`title` 与 `logo` 组成顶部品牌区，`avatar` 用于作者相关卡片。
-- **页脚区域**：`author.name` 与 `site` 用于版权信息与 RSS 链接生成。
-- **SEO 卡片**：`title`、`description`、`site`、`avatar` 共同决定 Open Graph 与 Twitter Card 的分享卡片样式。
-- **RSS 订阅**：`site`、`author.email`、`lang` 参与生成 RSS channel 元信息。
+- **页脚区域**：`author.name` 用于版权信息（搭配 `since` 计算年份）。
+- **分享卡片（Open Graph / Twitter Card）**：主题**不会自动生成** og/twitter 标签，如需分享卡片请在 [`inject.header`](./inject.md) 中自行配置（该页提供完整模板）。
+- **RSS 订阅**：`site`、`author.email`、`author.name` 参与生成 RSS channel 与条目元信息。
 
 ::: tip 常见配置组合
 - **个人博客**：`title` 与 `author.name` 保持一致风格，`avatar` 使用清晰正方形头像，`site` 填写 Pages 部署地址。
@@ -78,15 +78,15 @@ export const themeConfig = defineThemeConfig({
 ## 注意事项
 
 ::: warning 资源需自行准备
-`avatar` 与 `logo` 默认为空字符串，主题不预置任何图片。请将图片放到 `public/images/` 下，再填入对应路径（不含 `public` 前缀）。例如文件位于 `public/images/avatar.png` 时，配置为 `/images/avatar.png`。留空时对应位置不渲染图片。
+`avatar` 默认是主题作者的示例头像 URL（仅作占位演示），`logo` 默认为空字符串。正式使用时请将图片放到 `public/images/` 下，再填入对应路径（不含 `public` 前缀）。例如文件位于 `public/images/avatar.png` 时，配置为 `/images/avatar.png`。`logo` 留空时对应位置不渲染图片。
 :::
 
-::: warning base 与 VitePress 配置同步
-`base` 字段必须与 VitePress 配置文件中 `defineConfig({ base })` 保持完全一致，否则将导致 RSS 链接、社交分享卡片等生成错误地址。
+::: warning base 通常只需在 siteMeta 设置一处
+主题会自动把 `siteMeta.base` 同步为 VitePress `base`（路由与资源路径）与 PWA `start_url`，因此在绝大多数场景下**只改这里即可**。如果你选择在 `defineConfig` 第一参数中直接设置 `base`（会覆盖 `siteMeta.base` 的同步值），请同时把 `siteMeta.base` 改为相同值——否则 PWA `start_url` 仍取 `siteMeta.base`，与站点实际路径不一致。
 :::
 
-::: tip site 用于 SEO 与 RSS
-`site` 字段必须填写完整地址（包含协议 `https://` 且不要带末尾斜杠），它会被用于生成 RSS 订阅链接、Open Graph 与 Twitter Card 等元信息。
+::: tip site 用于 RSS 与 sitemap
+`site` 字段必须填写完整地址（包含协议 `https://` 且不要带末尾斜杠），它会被用于生成 RSS 订阅链接与 sitemap 的 `hostname`。注意：RSS 文章链接由 `site + 文章路径` 直接拼接，不包含 `base` 前缀——子路径部署（如 GitHub Pages 项目站）时请在 `site` 中带上子路径（如 `https://example.com/blog`），或在部署后自行校验 RSS 链接可达。
 :::
 
 ::: tip author.link 与 author.email 用于侧边栏 hello 卡片社交入口

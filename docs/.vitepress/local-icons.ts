@@ -41,8 +41,10 @@ function getInstalledPrefixes(): Set<string> {
   if (installedPrefixesCache) return installedPrefixesCache
   const result = new Set<string>()
   // 扫描 @iconify-json/* 下所有已安装的集合
+  // 注意：@iconify-json/* 声明在 docs/package.json，pnpm 下装在 docs/node_modules（上一级），
+  // 不能扫仓库根 node_modules——那里没有这些包，扫了也是空，只能靠下方 require.resolve 兜底
   try {
-    const pnpmRoot = path.join(__dirname, '..', '..', 'node_modules', '@iconify-json')
+    const pnpmRoot = path.join(__dirname, '..', 'node_modules', '@iconify-json')
     if (fs.existsSync(pnpmRoot)) {
       for (const name of fs.readdirSync(pnpmRoot)) {
         result.add(name)

@@ -72,7 +72,16 @@ DEEPSEEK_API_KEY=sk-你的真实Key
 .env.local
 ```
 
-VitePress 构建时会自动加载 `.env.local`，不需要装任何插件。部署时的环境变量配置在 [第五步](#第五步-部署时做什么) 讲。
+::: warning `.env.local` 不会自动生效
+只有 CLI 预生成命令（`pnpm run summary`）会自动加载 `.env.local`（Node 原生 `process.loadEnvFile`，无需插件）；`pnpm dev` / `pnpm build` **不会**自动加载它——VitePress 加载配置文件时不读 `.env` 文件。想让本地构建期也能读到 `.env.local`，在 `.vitepress/themeConfig.ts` 顶部加一行（Node 20.12+ 原生 API，无需装插件）：
+
+```ts
+// .vitepress/themeConfig.ts 顶部
+try { process.loadEnvFile('.env.local') } catch {}
+```
+
+已通过 shell export 或部署平台配置的环境变量优先级高于文件内容，两者共存时互不影响。部署时的环境变量配置在 [第五步](#第五步-部署时做什么) 讲。
+:::
 
 ## 第三步：修改主题配置
 
@@ -189,7 +198,11 @@ pnpm build
    已自动降级为不生成 AI 摘要，构建将继续，文章页摘要回退到 description。
 ```
 
-按提示检查 `.env.local` 是否存在、变量名有没有拼错、改完配置后有没有重新构建。即使配置错了也**不会构建失败**，文章页会回退显示 `description`，这是故意的兜底设计。
+按提示检查：`.env.local` 是否存在、变量名有没有拼错、themeConfig.ts 顶部是否加了 `process.loadEnvFile` 那行（`pnpm build` 不会自动加载 `.env.local`，见第二步）、改完配置后有没有重新构建。即使配置错了也**不会构建失败**，这是故意的兜底设计。
+
+::: warning 关于「回退到 description」的实际行为
+日志中「文章页摘要回退到 description」的描述与当前客户端行为不一致：配置缺失导致摘要未生成时，文章页的摘要卡片实际显示「摘要生成失败」（而非 description）；只有**运行时代理**抓取失败时才会真正回退到 `description` 或 `fallbackText`。该日志文案与行为的差异已记录待后续版本修正。配置正确并重新构建后，摘要会正常生成显示。
+:::
 
 ::: tip 哪些文章不会生成
 - 已经手动填了 `articleGPT` 的文章（手动优先，不浪费 token）
@@ -220,7 +233,7 @@ git commit -m "chore: add ai summary cache"
 | Vercel | Project Settings → Environment Variables，添加 `DEEPSEEK_API_KEY` |
 | Netlify | Site settings → Environment variables，添加同名变量 |
 | GitHub Actions | 仓库 Settings → Secrets and variables → Actions 添加同名 Secret，工作流里通过 `secrets` 上下文注入 |
-| 自有服务器 | 构建前 `export DEEPSEEK_API_KEY=sk-xxx`，或把 `.env.local` 放到服务器项目目录 |
+| 自有服务器 | 构建前 `export DEEPSEEK_API_KEY=sk-xxx`；或把 `.env.local` 放到服务器项目目录（需 themeConfig.ts 顶部已加第二步那行 `process.loadEnvFile`） |
 
 GitHub Actions 的完整示例：
 
@@ -334,7 +347,7 @@ aiSummary: {
 
 ### 构建时提示配置缺失
 
-`enable: true` 但 `apiKey` / `model` / `baseURL` 没配齐。检查 `.env.local` 是否存在、变量名是否拼对、部署平台的环境变量是否已添加。系统会自动降级为不生成摘要，构建不会失败。
+`enable: true` 但 `apiKey` / `model` / `baseURL` 没配齐。检查 `.env.local` 是否存在、变量名是否拼对、themeConfig.ts 顶部是否加了 `process.loadEnvFile` 那行（构建期必需，见第二步）、部署平台的环境变量是否已添加。系统会自动降级为不生成摘要，构建不会失败。
 
 ### 自定义服务请求失败或 404
 

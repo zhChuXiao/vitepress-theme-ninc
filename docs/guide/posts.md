@@ -39,7 +39,7 @@ posts/
 :::
 
 ::: warning 不要把页面放进 posts/
-`posts/` 下的文件默认会被 `getAllPosts()` 收集，进入文章列表、归档、分类与标签体系。如果某个文件不想被当作文章（如速查表、工具页），请放到 `pages/` 目录，或在 frontmatter 中设置 `isPage: true`。详见 [页面与文章的取舍](./pages.md#页面与文章的取舍)。
+`posts/` 下的文件默认会被 `getAllPosts()` 收集，进入文章列表、归档、分类与标签体系。如果某个文件不想被当作文章（如速查表、工具页），请放到 `pages/` 目录，或在 frontmatter 中设置 `isPage: true`。详见 [文章与页面的区别](#文章与页面的区别)。
 :::
 
 ![文章列表渲染效果](/images/article/posts-list.png)
@@ -108,7 +108,7 @@ reprint:
 
 ## 组件 Demo 文章
 
-本主题集成了 [vitepress-demo-plugin](https://github.com/flqweb/vitepress-demo-plugin)，可在 Markdown 中嵌入可交互的 Vue 组件示例，并支持查看源码。这类文章通常放在 `posts/components/` 与 `posts/utils/` 两个目录协同组织：
+本主题集成了 [vitepress-demo-plugin](https://github.com/zh-lx/vitepress-demo-plugin)，可在 Markdown 中嵌入可交互的 Vue 组件示例，并支持查看源码。这类文章通常放在 `posts/components/` 与 `posts/utils/` 两个目录协同组织：
 
 - `posts/components/<组件名>/`：存放组件本体与各 demo 的 `.vue` 文件
 - `posts/utils/<组件名>.md`：文章正文，通过 `<demo vue="..." />` 引用 demo
@@ -187,7 +187,7 @@ title: 旋转边框按钮
 tags: [通用组件, Vue]
 categories: [通用组件]
 date: 2024-12-25
-mainColor: #f3b0ab
+mainColor: '#f3b0ab'
 cover: /images/cover/rotate-button-cover.jpg
 description: 本文介绍旋转按钮组件，阐述其基础用法，说明属性、插槽、事件相关内容。
 articleGPT: 本文介绍旋转按钮组件，阐述其基础用法，说明属性、插槽、事件相关内容。
@@ -222,7 +222,7 @@ articleGPT: 本文介绍旋转按钮组件，阐述其基础用法，说明属�
 ```ts
 // .vitepress/config.mts
 import { defineConfig } from 'vitepress-theme-ninc/defineConfig'
-import { themeConfig } from '../themeConfig'
+import { themeConfig } from './themeConfig'
 
 export default defineConfig(
   {},
@@ -262,7 +262,7 @@ export const themeConfig = defineThemeConfig({
 })
 ```
 
-分页路由由 `page/[num].paths.mjs` 在构建时生成，它会读取 `themeConfig.postSize` 计算总页数，并为第 2 页到最后一页生成路由参数。完整写法见 [自定义页面 - 分页页示例](./pages.md#完整示例-分页页)。
+分页路由由 `page/[num].paths.mjs` 在构建时生成，它会读取 `themeConfig.postSize` 计算总页数，并为第 2 页到最后一页生成路由参数。完整写法见 [自定义页面 - 分页页](./pages.md#分页页)。
 
 ::: tip 修改 postSize 后的影响
 `postSize` 变化会改变分页路由数量。若你从 `10` 改为 `8`，原来 `/page/5` 可能不再存在或内容会重新分布。这是构建期行为，无需手动维护。

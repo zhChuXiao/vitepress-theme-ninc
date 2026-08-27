@@ -229,6 +229,8 @@ const locationMessages = {
 
 // 计算距离
 function getDistance(address, e2, n2) {
+  // 未配置博主坐标时返回 0，避免解构 undefined 崩溃
+  if (!Array.isArray(address) || address.length < 2) return 0
   let [e1, n1] = address
   const R = 6371
   const { sin, cos, asin, PI, hypot } = Math

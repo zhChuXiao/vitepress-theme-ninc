@@ -7,7 +7,7 @@
   >
     <div
       v-for="(item, index) in listData"
-      :key="index"
+      :key="item.regularPath"
       :class="[
         'post-item',
         's-card',
@@ -52,16 +52,10 @@
             <i class="iconfont icon-hashtag" />
             转载
           </span>
-          <!-- 原创 -->
-          <!-- <span v-if="!item?.reprint" class="original">
-            <i class="iconfont icon-hashtag" />
-            原创
-          </span> -->
           <!-- 置顶 -->
           <span v-if="item?.top" class="top">
             <i class="iconfont icon-align-top" />
             置顶
-            <!-- <i v-if="item.top" class="iconfont icon-fire" /> -->
           </span>
           <!-- 推荐 -->
           <span v-if="item?.recommend" class="recommend">
@@ -103,7 +97,7 @@ import { formatTimestamp } from '../../utils/helper';
 const store = mainStore();
 const router = useRouter();
 
-const props = defineProps({
+defineProps({
   // 列表数据
   listData: {
     type: [Array, String],
@@ -138,18 +132,29 @@ const gridStyle = computed(() =>
 // 判断是否显示封面
 const showCover = () => themeConfig.value?.cover?.showCover?.enable;
 
+// 随机封面缓存：以文章路径为 key，保证同一文章在 v-if 与 :src 两次取值、
+// 以及组件重渲染时得到同一张封面（此前每次调用都重新 Math.random，可能不一致）
+const coverCache = new Map();
+
 // 获取封面图片 按优先级获取：cover > defaultCover > false
-const getCover = ({ cover: itemCover }) => {
+const getCover = (item) => {
+  const { cover: itemCover, regularPath, title } = item;
   const { cover } = themeConfig.value ?? {};
 
   if (!cover?.showCover?.enable) return false;
   if (itemCover) return itemCover;
 
-  return Array.isArray(cover.showCover.defaultCover)
-    ? cover.showCover.defaultCover[
-        Math.floor(Math.random() * cover.showCover.defaultCover.length)
-      ]
-    : false;
+  const cacheKey = regularPath || title;
+  if (!coverCache.has(cacheKey)) {
+    const pool = cover.showCover.defaultCover;
+    coverCache.set(
+      cacheKey,
+      Array.isArray(pool) && pool.length
+        ? pool[Math.floor(Math.random() * pool.length)]
+        : false
+    );
+  }
+  return coverCache.get(cacheKey);
 };
 
 // 取标题首字（中文取第一个汉字，英文取首字母大写）

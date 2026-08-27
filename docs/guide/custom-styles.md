@@ -101,7 +101,7 @@ export default Theme
 
 ## 方式三：通过 themeConfig 注入
 
-主题的 `themeConfig.inject.header` 字段会被注入到 VitePress 的 `head` 中（详见 [配置详解 - 主题配置顶层字段](./configuration.md#主题配置顶层字段一览)）。你可以借此引入远程 CSS 文件，例如字体 CDN、图标库或自定义皮肤。
+主题的 `themeConfig.inject.header` 字段会被注入到 VitePress 的 `head` 中（详见 [主题配置详解 - 顶层字段总览](./theme-config.md#顶层字段总览)）。你可以借此引入远程 CSS 文件，例如字体 CDN、图标库或自定义皮肤。
 
 ```ts
 // themeConfig.ts
@@ -125,8 +125,8 @@ export const themeConfig = defineThemeConfig({
 })
 ```
 
-::: warning 仅适合远程样式
-`inject.header` 只能注入 `<link>` 标签，无法写入内联 CSS 变量覆盖。若需覆盖主题变量，请使用方式一或方式二。
+::: warning 仅适合远程样式与小段内联 CSS
+`inject.header` 适合注入 `<link>` 远程样式表；也可以用 `['style', {}, '...内联 CSS...']` 三元组注入内联 `<style>`——VitePress 会把 `inject.header` 的内容渲染在打包 CSS **之后**，因此内联样式在同优先级下能覆盖主题变量。但大段 CSS 写在字符串里难以维护，覆盖主题变量仍推荐方式一或方式二。
 :::
 
 ## 暗色模式适配

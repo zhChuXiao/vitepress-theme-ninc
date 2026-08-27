@@ -9,7 +9,7 @@
         image="https://pic.efefee.cn/uploads/2024/02/27/65dd8dae6043c.webp"
       >
         <template #footer-slot>
-          <a class="to-github" href="https://github.com/zhChuXiao/" target="_blank">
+          <a class="to-github" href="https://github.com/zhChuXiao/" target="_blank" rel="noopener noreferrer">
             <i class="iconfont icon-github"></i>
             <span>前往 Github</span>
           </a>

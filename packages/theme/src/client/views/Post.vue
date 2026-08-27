@@ -7,7 +7,6 @@
           <svg
             class="waves-svg"
             xmlns="http://www.w3.org/2000/svg"
-            xlink="http://www.w3.org/1999/xlink"
             viewBox="0 24 150 28"
             preserveAspectRatio="none"
             shape-rendering="auto"
@@ -289,7 +288,8 @@ const jumpRedirect = () => {
       // 判断是否为外部链接（不是以 / 或 # 开头，且不包含当前域名）
       if (href && !href.startsWith('/') && !href.startsWith('#') && !href.includes(window.location.hostname)) {
         // 创建新的跳转链接，将原始链接作为参数传递
-        const redirectUrl = `/redirect.html?url=${encodeURIComponent(btoa(href))}`
+        // UTF-8 安全 base64：裸 btoa 遇含中文等非 Latin1 字符的外链会抛 InvalidCharacterError
+        const redirectUrl = `/redirect.html?url=${encodeURIComponent(btoa(unescape(encodeURIComponent(href))))}`
 
         // 修改链接地址
         link.setAttribute('href', redirectUrl)
@@ -325,7 +325,8 @@ onMounted(() => {
     loadScript(busuanziScript.value, {
       async: true,
       reload: true
-    })
+      // 不蒜子脚本常被广告拦截器屏蔽，静默兜底避免 unhandled rejection（与 SiteData.vue 对齐）
+    }).catch(() => {})
   }
 })
 

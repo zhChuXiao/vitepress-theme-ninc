@@ -86,7 +86,7 @@ const emit = defineEmits([
 ]);
 
 const container = ref(null);
-let animation = ref(null);
+const animation = ref(null);
 let lottie = null;
 
 // 定义控制方法
@@ -239,21 +239,22 @@ watch(
   { immediate: false, deep: true }
 );
 
-onMounted(() => {
-  // 监听动画数据变化，重新加载动画
-  watch(
-    () => props.animationData,
-    (newData) => {
-      if (animation.value) {
-        animation.value.destroy();
-      }
+// 监听动画数据变化，重新加载动画（浅监听即可：父级更换数据对象引用时触发，
+// 无需对大体积 lottie JSON 做 deep 遍历）
+watch(
+  () => props.animationData,
+  (newData) => {
+    if (animation.value) {
+      animation.value.destroy();
+    }
 
-      if (newData && container.value) {
-        initLottie();
-      }
-    },
-    { deep: true }
-  );
+    if (newData && container.value) {
+      initLottie();
+    }
+  }
+);
+
+onMounted(() => {
   initLottie();
 });
 

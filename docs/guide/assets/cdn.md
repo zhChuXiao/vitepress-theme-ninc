@@ -17,14 +17,14 @@
 
 | 功能 | 加载方式 | 默认 CDN 源 | 配置字段 | 是否可覆盖 |
 | --- | --- | --- | --- | --- |
-| 图片灯箱（Fancybox） | 运行时 `loadScript` / `loadCSS` 动态加载 | `cdn.jsdelivr.net` | `themeConfig.fastjson.js` / `themeConfig.fastjson.css` | :done: 可改为任意 CDN 或本地路径 |
-| 评论系统（Twikoo） | 源码直接打包在主题内（`twikoo.nocss.js`） | 无需 CDN | `themeConfig.comment.twikoo.envId` | :done: 仅需配置 envId |
+| 图片灯箱（Fancybox） | 运行时 `loadScript` / `loadCSS` 动态加载 | `cdn.jsdelivr.net` | `themeConfig.fancybox.js` / `themeConfig.fancybox.css` | :done: 可改为任意 CDN 或本地路径 |
+| 评论系统（Twikoo） | 组件挂载时动态 `import('twikoo/dist/twikoo.nocss.js')`（包随主题依赖安装） | 无需 CDN | `themeConfig.comment.twikoo.envId` | :done: 仅需配置 envId |
 | 音乐播放器（Meting API） | 后端 API 调用（非静态资源） | `api.injahow.cn` | `themeConfig.music.url` | :done: 可改为自建 API |
-| 不蒜子站点统计 | 运行时 `loadScript` 动态加载 | `busuanzi.ibruce.info` | 无（硬编码） | :fail: 不可配置 |
-| 51.la 统计 | 运行时 `fetch` 加载 widget | `v6-widget.51.la` | `themeConfig.tongji.LA.ck` | :done: 需用户提供 ck |
+| 不蒜子站点统计 | 运行时 `loadScript` 动态加载 | `busuanzi.ibruce.info` | `themeConfig.tongji.busuanzi.scriptUrl` | :done: 可改为自建镜像 |
+| 51.la 统计 | 生产环境运行时注入 `<script src="https://sdk.51.la/js-sdk-pro.min.js">` | `sdk.51.la` | `themeConfig.tongji['51la']` | :done: 需用户提供 51la V6 统计 ID |
 
 ::: tip 为什么 Twikoo 不走 CDN？
-Twikoo 评论脚本体积较大且版本敏感，主题将源码直接打包在 `packages/theme/src/client/utils/twikoo.nocss.js` 中。这样做的好处是：1）无需额外网络请求，加载更快；2）版本与主题严格匹配，避免 CDN 版本漂移导致的兼容问题；3）离线环境下也能渲染评论组件外壳。你只需要在 `themeConfig.comment.twikoo.envId` 中填入自己的 Twikoo 环境地址即可。
+Twikoo 评论脚本体积较大且版本敏感，主题将 `twikoo` 声明为 npm 依赖（而非 CDN 链接），构建时由 Vite 直接打包进产物，运行时通过 `import('twikoo/dist/twikoo.nocss.js')` 动态加载。这样做的好处是：1）无需额外 CDN 请求，加载更快；2）版本与主题严格匹配，避免 CDN 版本漂移导致的兼容问题；3）离线环境下也能渲染评论组件外壳。你只需要在 `themeConfig.comment.twikoo.envId` 中填入自己的 Twikoo 环境地址即可。
 :::
 
 ### Fancybox CDN 配置详解
@@ -205,8 +205,8 @@ export default defineThemeConfig({
 })
 ```
 
-::: warning 数组整体替换
-`inject.header` 是数组字段，会整体替换默认值（defu 对数组是 concat 合并，但主题默认值为空数组 `[]`）。你写入的每一项都会被注入到 `<head>` 中，不会与默认值冲突。
+::: warning 数组与默认值 concat
+`inject.header` 是数组字段，defu 对数组的合并策略是 **concat 追加**；由于主题默认值为空数组 `[]`，你写入的列表即为完整生效列表。你写入的每一项都会被注入到 `<head>` 中，不会与默认值冲突。
 :::
 
 ### 常见配置场景
@@ -301,8 +301,8 @@ iconfont 的 URL 需要在 [iconfont.cn](https://www.iconfont.cn/) 创建自己�
 
 **排查步骤**：
 
-1. 不蒜子（`busuanzi.ibruce.info`）是免费公共服务，偶有宕机，属正常现象
-2. 51.la 需在 `themeConfig.tongji.LA.ck` 中配置正确的 ck 值
+1. 不蒜子（`busuanzi.ibruce.info`）是免费公共服务，偶有宕机，属正常现象；可通过 `themeConfig.tongji.busuanzi.scriptUrl` 更换自建镜像
+2. 51.la 需在 `themeConfig.tongji['51la']` 中配置正确的统计 ID（仅生产环境注入脚本，`pnpm dev` 下不加载属正常）
 3. 若长期不需要统计，可在 `themeConfig.aside.siteData.enable` 设为 `false` 关闭站点数据 widget
 
 ### 症状：字体未应用
@@ -330,15 +330,15 @@ iconfont 的 URL 需要在 [iconfont.cn](https://www.iconfont.cn/) 创建自己�
    ↓
 4. 主题 JS（组件挂载）
    ↓
-5. Fancybox（首次点击图片时懒加载）
+5. Fancybox（文章页/装备页挂载时加载）
    ↓
 6. Twikoo（评论组件挂载时初始化）
    ↓
 7. 不蒜子统计（站点数据 widget 渲染时加载）
 ```
 
-::: tip 懒加载策略
-Fancybox 采用懒加载策略 —— 只有当用户首次点击图片时才会加载 Fancybox 的 JS/CSS，避免首屏加载不必要的资源。Twikoo 虽然源码已打包，但评论数据的 fetch 请求会在评论组件进入视口时才触发。
+::: tip 加载时机
+Fancybox 的 JS/CSS 在文章页（Post）与装备页（Equipment）组件 `onMounted` 时即加载，并非点击图片才懒加载——首页等不含这些视图的页面不会加载。Twikoo 脚本由 Vite 打包进产物、在评论组件挂载时动态 import 并初始化（初始化后 Twikoo 即拉取评论数据），同样并非进入视口才触发。
 :::
 
 
@@ -351,8 +351,8 @@ Fancybox 采用懒加载策略 —— 只有当用户首次点击图片时才会
 | Fancybox 灯箱 | 默认 CDN，可覆盖 | 通常无需操作；CDN 不稳时改源或本地化 |
 | Twikoo 评论 | 源码打包 | 配置 `comment.twikoo.envId` |
 | Meting 音乐 | 默认 API，可覆盖 | 配置 `music.id` / `music.server`；建议自建 API |
-| 不蒜子统计 | 硬编码加载 | 无需操作；不需要时关闭 `aside.siteData` |
-| 51.la 统计 | 硬编码加载 | 配置 `tongji.LA.ck` |
+| 不蒜子统计 | 默认官方脚本，可覆盖 | 无需操作；不需要时关闭 `aside.siteData`，或换 `tongji.busuanzi.scriptUrl` 镜像 |
+| 51.la 统计 | 生产环境注入官方 SDK | 配置 `tongji['51la']` 统计 ID |
 | 字体 / 图标库 / favicon | 用户通过 `inject.header` 配置 | 按需引入 |
 
 

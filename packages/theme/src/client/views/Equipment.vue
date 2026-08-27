@@ -30,12 +30,17 @@
               <!-- <img class="equipment-item-content-item-image" :src="equipment.image" :alt="equipment.name" /> -->
             </div>
             <div class="equipment-item-content-item-info">
-              <el-tooltip content="点击复制名称" placement="right" :show-after="500" :enterable="false">
+              <!-- ElTooltip SSR 与客户端 popper id 序列不一致（hydration mismatch 实证），
+                   tooltip 挂载后激活；SSR/hydration 期渲染同款裸元素 -->
+              <el-tooltip v-if="tooltipMounted" content="点击复制名称" placement="right" :show-after="500" :enterable="false">
                 <div class="equipment-item-content-item-name" @click="copyText(equipment.name)" :title="equipment.name">
                   {{ equipment.name }}
                 </div>
               </el-tooltip>
-              <div class="equipment-item-content-item-specification" v-if="equipment.specification.includes('|')">
+              <div v-else class="equipment-item-content-item-name" @click="copyText(equipment.name)" :title="equipment.name">
+                {{ equipment.name }}
+              </div>
+              <div class="equipment-item-content-item-specification" v-if="equipment.specification?.includes('|')">
                 {{ equipment.specification.split('|')[0] }}&nbsp;-&nbsp;{{ equipment.specification.split('|')[1] }}
               </div>
               <div class="equipment-item-content-item-specification" v-else>
@@ -44,26 +49,34 @@
               <div class="equipment-item-content-item-description">{{ equipment.description }}</div>
               <div class="equipment-item-content-item-toolbar">
                 <template v-if="isExternalLink(equipment.link)">
-                  <a class="equipment-item-content-item-link" :href="equipment.link" target="_blank"> 详情 </a>
-                  <el-tooltip content="快速评论" placement="right" :show-after="500" :enterable="false">
+                  <a class="equipment-item-content-item-link" :href="equipment.link" target="_blank" rel="noopener noreferrer"> 详情 </a>
+                  <el-tooltip v-if="tooltipMounted" content="快速评论" placement="right" :show-after="500" :enterable="false">
                     <div class="bber-reply"
                       @click="comment(equipment.name, equipment.specification, equipment.description)">
                       <i class="iconfont icon-chat"></i>
                     </div>
                   </el-tooltip>
+                  <div v-else class="bber-reply"
+                    @click="comment(equipment.name, equipment.specification, equipment.description)">
+                    <i class="iconfont icon-chat"></i>
+                  </div>
                 </template>
                 <template v-else>
                   <a class="equipment-item-content-item-link" v-if="equipment.link" :href="equipment.link"
-                    target="_blank">
+                    target="_blank" rel="noopener noreferrer">
                     查看文章
                   </a>
                   <div v-else></div>
-                  <el-tooltip content="快速评论" placement="right" :show-after="500" :enterable="false">
+                  <el-tooltip v-if="tooltipMounted" content="快速评论" placement="right" :show-after="500" :enterable="false">
                     <div class="bber-reply"
                       @click="comment(equipment.name, equipment.specification, equipment.description)">
                       <i class="iconfont icon-chat"></i>
                     </div>
                   </el-tooltip>
+                  <div v-else class="bber-reply"
+                    @click="comment(equipment.name, equipment.specification, equipment.description)">
+                    <i class="iconfont icon-chat"></i>
+                  </div>
                 </template>
               </div>
             </div>
@@ -75,7 +88,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, onBeforeUnmount, ref } from 'vue'
 import initFancybox from '../utils/initFancybox'
 import { commentText } from '../utils/helper'
 const { theme } = useData()
@@ -455,6 +468,11 @@ const defaultEquipmentData = {
 
 // 从主题配置读取，未配置时使用默认数据
 const equipmentData = ref({ ...defaultEquipmentData, ...theme.value.equipment })
+// ElTooltip 挂载后激活标记（SSR/hydration 期渲染裸元素，避免 popper id 序列错位 mismatch）
+const tooltipMounted = ref(false)
+onMounted(() => {
+  tooltipMounted.value = true
+})
 
 // 判断是否是外部链接
 const isExternalLink = link => {
@@ -464,8 +482,16 @@ const isExternalLink = link => {
 
 // 复制文本
 const copyText = text => {
+  // 非安全上下文（http/部分浏览器）无剪贴板 API，降级提示
+  if (!navigator.clipboard) {
+    $message.error('当前环境不支持剪贴板，请手动复制')
+    return
+  }
   navigator.clipboard.writeText(text).then(() => {
     $message.success(`已复制名称 【 ${text} 】`)
+  }).catch(() => {
+    // 剪贴板写入被拒绝（如浏览器权限策略）时给出可操作反馈
+    $message.error('复制失败，请手动复制')
   })
 }
 
@@ -511,11 +537,19 @@ const setupIntersectionObserver = () => {
 
 
 
+// 装备卡入场观察者（引用保存，卸载时 disconnect，避免僵尸观察者持有已分离卡片元素）
+let equipmentObserver = null
+
 onMounted(() => {
   initFancybox(theme.value)
 
   // 初始化观察者
-  const observer = setupIntersectionObserver()
+  equipmentObserver = setupIntersectionObserver()
+})
+
+onBeforeUnmount(() => {
+  equipmentObserver?.disconnect()
+  equipmentObserver = null
 })
 </script>
 <style lang="scss" scoped>

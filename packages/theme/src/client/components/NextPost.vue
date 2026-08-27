@@ -31,8 +31,8 @@ const store = mainStore();
 const { theme, page } = useData();
 const { footerIsShow, infoPosition } = storeToRefs(store);
 
-// 文章信息
-const observer = ref(null);
+// 文章信息（observer 不需要响应式，普通变量即可，避免 Vue 深度响应化原生对象）
+let observer = null;
 const isNextPost = ref(true);
 const nextPostShow = ref(false);
 const nextPostData = ref(null);
@@ -66,14 +66,14 @@ const getNextPostData = () => {
 const isShowNext = () => {
   const postDom = document.getElementById("page-content");
   if (!postDom) return false;
-  if (observer.value) observer.value?.disconnect();
-  observer.value = new IntersectionObserver((entries) => {
+  if (observer) observer.disconnect();
+  observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
-      nextPostShow.value = entry.isIntersecting ? false : true;
+      nextPostShow.value = !entry.isIntersecting;
     });
   });
   // 添加监视器
-  observer.value?.observe(postDom);
+  observer.observe(postDom);
 };
 
 watch(
@@ -82,6 +82,9 @@ watch(
     getNextPostData();
     isShowNext();
   },
+  // flush: 'post'：等路由对应的新 DOM 渲染完成后再查询 #page-content，
+  // 否则（默认 'pre'）观察到的可能是上一篇文章的旧元素，旧元素被移除后观察器即失效
+  { flush: "post" },
 );
 
 onMounted(() => {
@@ -90,7 +93,7 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
-  if (observer.value) observer.value?.disconnect();
+  if (observer) observer.disconnect();
 });
 </script>
 

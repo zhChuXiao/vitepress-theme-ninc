@@ -181,8 +181,8 @@ layout: home
 ```vue
 <!-- 在自定义 Layout 中引用主题组件 -->
 <script setup>
-import Home from '@/views/Home.vue'
-import Nav from '@/components/Nav.vue'
+import { Home } from 'vitepress-theme-ninc/views'  // 页面组件：用导出入口（兼容保证）
+import Nav from '@/components/Nav.vue'            // 未导出的内部组件：只能用 @/ 别名
 import Footer from '@/components/Footer.vue'
 </script>
 
@@ -197,17 +197,15 @@ import Footer from '@/components/Footer.vue'
 
 常见可引用路径：
 
-| 引用路径 | 对应主题文件 |
-| --- | --- |
-| `@/views/Home.vue` | 首页视图 |
-| `@/views/Post.vue` | 文章页视图 |
-| `@/views/Page.vue` | 普通页面视图 |
-| `@/views/NotFound.vue` | 404 页面 |
-| `@/components/Nav.vue` | 导航栏 |
-| `@/components/Background.vue` | 背景层 |
-| `@/components/ScrollProgress.vue` | 滚动进度条 |
-| `@/store` | Pinia 主 store（`import { mainStore } from '@/store'`） |
-| `@/utils/helper.mjs` | 运行时工具函数 |
+| 引用路径 | 对应主题文件 | 说明 |
+| --- | --- | --- |
+| `vitepress-theme-ninc/views` | 14 个页面组件 | **优先使用**（导出入口，兼容保证） |
+| `@/components/Nav.vue` | 导航栏 | 未导出，仅 @/ 可用 |
+| `@/components/Background.vue` | 背景层 | 未导出，仅 @/ 可用 |
+| `@/components/ScrollProgress.vue` | 滚动进度条 | 未导出，仅 @/ 可用 |
+| `vitepress-theme-ninc/store` | Pinia 主 store（`import { mainStore } from 'vitepress-theme-ninc/store'`） | 已导出，**优先使用**；`@/store` 亦可用 |
+| `@/utils/helper.ts` | 运行时工具函数 | 未导出，仅 @/ 可用 |
+| `@/views/Home.vue` 等 | 页面组件 | 可用但**不推荐**——页面组件请改用 `vitepress-theme-ninc/views` 导出入口 |
 
 ::: warning @/ 指向主题包，不是你的项目
 `@/` 在本主题中**指向主题包的 `src/client/`**，而非用户项目的 `.vitepress/theme/`。你自己的组件请用相对路径 import，或依赖自动注册机制。

@@ -35,7 +35,7 @@ Node.js 和 pnpm 的详细安装步骤（含验证命令、VS Code 推荐配置�
 
 ## 可选依赖说明
 
-本主题将一部分功能依赖声明为 `optionalDependencies`。**与 npm 不同，pnpm 默认会安装 `optionalDependencies`**，因此 `pnpm add vitepress-theme-ninc` 之后这些功能即可开箱即用，无需额外操作。
+本主题将一部分功能依赖声明为 `optionalDependencies`。npm 与 pnpm 默认均会安装 `optionalDependencies`，因此 `pnpm add vitepress-theme-ninc` 之后这些功能即可开箱即用，无需额外操作。
 
 如果某些功能你确定不需要，可以精简安装以减小 `node_modules` 体积。下表列出关键可选依赖及其用途：
 
@@ -69,7 +69,13 @@ optional=false
 ```
 
 ::: warning 谨慎精简
-`element-plus`、`@vueuse/core` 等是主题核心组件运行所必需的依赖（声明在 `dependencies`，不会被上面的可选开关影响）。仅当明确知道某项 `optionalDependencies` 对应的功能不会用到时才精简，否则可能造成页面组件失效。
+另请特别注意：以下三类依赖**虽声明在 `optionalDependencies`，但实质必需，精简后主题无法正常工作**——
+
+1. **`element-plus`**：页脚徽标、评论等多个组件顶层静态 `import { ElTooltip } from 'element-plus'`，被精简后客户端 bundle 直接解析失败；
+2. **`unplugin-auto-import`**：主题的 `.vue` 组件依赖其编译期自动导入（`ref`/`computed` 等 API 注入）；
+3. **`unplugin-vue-components`**：主题组件依赖其自动注册。
+
+`@vueuse/core` 是主题核心组件运行所必需的依赖（声明在 `dependencies`，不会被可选开关影响）。Vite 插件包未安装时主题会打印警告并跳过对应插件（不再直接报错崩溃），`vite-plugin-vue-mcp`、`code-inspector-plugin`、`vite-plugin-compression`、`vitepress-plugin-group-icons`、`vite-plugin-svg-icons`、`@rollup/plugin-alias` 均可安全精简（对应功能降级或关闭）；`@vitejs/plugin-vue-jsx` 同样**不可精简**——主题 `TopGroup.vue` 的今日卡片提示使用 JSX 语法，缺失后构建即报语法错误。唯独上述四者**必须保留**。
 :::
 
 ::: warning 关于 PWA 自动降级
@@ -78,7 +84,9 @@ optional=false
 
 ### 关于扩展页面与小工具
 
-主题包本身只提供博客与文档的核心能力（首页布局、文章页、归档、标签、评论、搜索等）。NES 游戏模拟器、Sass 转 CSS、代码差异对比、键盘键码值查询、KMS 激活脚本、妙控键盘等扩展页面属于演示站点的额外内容，**不再随主题包分发**，相应的扩展依赖（`nes-vue`、`v-code-diff`、`sass.js`、`codejar` 等）也已从主题包中移除。
+主题包本身提供博客与文档的核心能力（首页布局、文章页、归档、标签、评论、搜索等），并**内置 NES 游戏模拟器**（`views/NesGame.vue` + `nes-vue` 依赖，通过 `themeConfig.nes` 配置即可使用，详见 [NES 模拟器](./nes.md)）。
+
+其余扩展页面——Sass 转 CSS、代码差异对比、键盘键码值查询、KMS 激活脚本、妙控键盘——属于演示站点（本仓库 `blog/`）的额外内容，**不随主题包分发**，相应依赖（`v-code-diff`、`sass.js`、`codejar` 等）也未列入主题包。
 
 如果你希望在自己的站点实现类似功能，可以参考本仓库 `blog/` 目录下的实现方式：在 `.vitepress/theme/views/` 下自行创建扩展页面组件，并按需安装对应的依赖。主题内置的 `unplugin-vue-components` 自动注册机制会扫描该目录，组件可直接在 Markdown 中通过标签名使用，无需手动 `import`。
 

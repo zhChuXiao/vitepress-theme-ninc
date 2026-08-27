@@ -28,8 +28,7 @@
 <script setup>
 import { getGreetings } from '../../../utils/helper'
 
-const { site, theme } = useData()
-import { throttle } from 'lodash-es'
+const { theme } = useData()
 
 // 问候数据
 const helloClick = ref(0)

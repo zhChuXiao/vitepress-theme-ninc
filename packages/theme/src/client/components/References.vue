@@ -5,32 +5,32 @@
       <i class="iconfont icon-quote"></i>
       <span class="title-text">参考资料</span>
     </div>
-    <ul class="list">
+    <div class="list">
       <a
         v-for="(item, index) in references"
         :key="index"
         :href="item.url"
         class="list-item"
         target="_blank"
+        rel="noopener noreferrer"
       >
         <span class="item-title">{{ item.title }}</span>
     </a>
-    </ul>
+    </div>
   </div>
 </template>
 
 <script setup>
 const { frontmatter } = useData();
 
-// 参考资料
-const references = frontmatter.value?.references;
+// 参考资料（computed 保证文章间 SPA 跳转时随 frontmatter 刷新）
+const references = computed(() => frontmatter.value?.references);
 </script>
 
 <style lang="scss" scoped>
 .references {
-  margin: 1rem 0;
+  margin: 2rem 0 1rem;
   padding: 18px;
-  margin-top: 2rem;
   background-color: var(--main-card-second-background);
   .title {
     display: flex;

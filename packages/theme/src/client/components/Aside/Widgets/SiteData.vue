@@ -58,7 +58,8 @@ onMounted(() => {
   loadScript(busuanziScript.value, {
     async: true,
     reload: true,
-  });
+    // 不蒜子脚本常被广告拦截器屏蔽，静默兜底避免 unhandled rejection
+  }).catch(() => {});
 });
 </script>
 

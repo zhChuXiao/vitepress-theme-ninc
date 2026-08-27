@@ -10,8 +10,8 @@
 
 ## 工作原理
 
-1. 构建阶段：插件扫描 `svgIconDirs` 下的所有 `.svg`，将每个文件转为 `<symbol id="文件名">` 并合并为雪碧图。
-2. 运行时：主题入口已引入 `virtual:svg-icons-register`，自动把雪碧图注入到页面 `<body>` 起始处。
+1. 构建阶段：插件扫描 `svgIconDirs` 下的所有 `.svg`，按 `icon-[dir]-[name]` 规则将每个文件转为 `<symbol>` 并合并为雪碧图。
+2. 运行时：主题入口已引入 `virtual:svg-icons-register`，自动把雪碧图注入到页面 `<body>` 末尾（插件配置 `inject: 'body-last'`）。
 3. 渲染阶段：通过全局注册的 `<SvgIcon name="icon-name" />` 组件，渲染为 `<svg><use href="#icon-name" /></svg>`。
 
 ## 配置方式
@@ -21,7 +21,7 @@
 ```ts
 // .vitepress/config.mts
 import { defineConfig } from 'vitepress-theme-ninc/defineConfig'
-import { themeConfig } from '../themeConfig'
+import { themeConfig } from './themeConfig'
 
 export default defineConfig(
   {},
@@ -41,7 +41,7 @@ svgIconDirs: options.svgIconDirs || [path.resolve(cwd, 'public/svg')]
 
 ## 多目录配置
 
-`svgIconDirs` 是字符串数组，可同时扫描多个目录。多目录的 symbol 会合并到同一张雪碧图中。若不同目录下存在同名 `.svg` 文件，后扫描的会覆盖前者：
+`svgIconDirs` 是字符串数组，可同时扫描多个目录。多目录的 symbol 会合并到同一张雪碧图中。若不同目录下存在同名 `.svg` 文件，两者的 symbol id 相同，**先扫描目录（数组中靠前）的那份生效**（浏览器对重复 id 的 `<symbol>` 取第一个）：
 
 ```ts
 export default defineConfig(
@@ -61,19 +61,21 @@ export default defineConfig(
 <!-- 引用 public/svg/github.svg -->
 <SvgIcon name="github" />
 
-<!-- 带尺寸与颜色 -->
-<SvgIcon name="github" size="24" color="#181717" />
+<!-- 指定渲染尺寸（默认 16px × 16px） -->
+<SvgIcon name="github" width="24px" height="24px" />
 ```
 
 ```vue
 <!-- .vue 组件中 -->
 <template>
-  <SvgIcon name="email" :size="20" />
+  <SvgIcon name="email" width="20px" height="20px" />
 </template>
 ```
 
+`<SvgIcon>` 可用 props：`name`（必填，对应 symbol id 后缀）、`prefix`（默认 `'icon'`）、`width` / `height`（默认 `'16px'`）。图标颜色由 CSS 控制：svgo 压缩时已移除 SVG 文件中的 `fill`/`stroke` 属性（包括手写的 `fill="currentColor"`）；当前版本 `<SvgIcon>` 未内置 `fill` 样式，图标呈现为浏览器默认黑色——需要跟随文字颜色时，在自定义样式中加 `.svg-icon { fill: currentColor; }` 即可（详见 [图标使用指南](../icons.md#第三步-验证)）。（附注：组件源码中仍保留一个 `color` prop 定义，但未参与模板渲染，属于遗留代码，设置它不会有任何效果。）
+
 ::: tip name 命名规则
-`name` 直接对应文件名。若文件位于子目录（如 `public/svg/social/github.svg`），`name` 仍为 `github`（不带目录前缀）。建议保证扫描目录下文件名唯一，避免冲突。
+`symbolId` 格式为 `icon-[dir]-[name]`：位于扫描目录**根层级**的文件，`name` 即文件名（如 `public/svg/github.svg` → `<SvgIcon name="github" />`）；位于**子目录**的文件需带上目录前缀（如 `public/svg/social/github.svg` → `<SvgIcon name="social-github" />`，多级目录以此类推 `dir-dir2-icon1`）。建议保证扫描目录下最终 symbol id 唯一，避免冲突。
 :::
 
 ## 完整 config.mts 示例
@@ -81,7 +83,7 @@ export default defineConfig(
 ```ts
 // .vitepress/config.mts
 import { defineConfig } from 'vitepress-theme-ninc/defineConfig'
-import { themeConfig } from '../themeConfig'
+import { themeConfig } from './themeConfig'
 import groupIconConfig from './groupIconConfig.json'
 
 export default defineConfig(

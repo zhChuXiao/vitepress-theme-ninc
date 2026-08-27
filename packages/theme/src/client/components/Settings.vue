@@ -79,8 +79,8 @@ import { mainStore } from '../store'
 import { throttle } from 'lodash-es'
 
 const store = mainStore()
-const { themeType, fontFamily, fontSize, infoPosition, backgroundType, backgroundUrl, bannerType } = storeToRefs(store)
-// 监听屏幕大小，屏幕小于900px时，bannerType为半屏
+const { fontFamily, fontSize, infoPosition, backgroundType, backgroundUrl, bannerType } = storeToRefs(store)
+// 监听屏幕大小，屏幕小于1200px时，bannerType为半屏
 const resize = throttle(() => {
   if (window.innerWidth < 1200) {
     bannerType.value = 'half'
@@ -91,6 +91,8 @@ onMounted(() => {
 })
 onUnmounted(() => {
   window.removeEventListener('resize', resize)
+  // 取消防抖尾调用：避免卸载后 trailing edge 仍执行一次写 store
+  resize.cancel()
 })
 </script>
 

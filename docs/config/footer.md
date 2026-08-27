@@ -21,12 +21,14 @@
 | `icon` | `IconField` | — | 图标字段，支持三种写法：字符串(iconfont 名) / `'svg:文件名'` / `{ type, name }`，详见 [图标使用指南](../guide/icons.md) |
 | `link` | `string` | — | 社交链接地址 |
 
-默认 `social` 值：
+::: tip 默认值说明
+主题包内置默认 `social: []`（空数组）。以下为 `npx vitepress-theme-ninc init` 脚手架生成的初始配置（defu 对数组为 concat 合并，故脚手架需完整给出；`email` 为脚手架交互时填写的邮箱）：
+:::
 
 ```ts
 social: [
   { icon: 'email', link: 'mailto:you@example.com' },
-  { icon: 'github', link: 'https://github.com/your-name' }
+  { icon: 'github', link: 'https://github.com/' }
 ]
 ```
 
@@ -34,26 +36,37 @@ social: [
 
 | 字段 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
-| `leftText` | `string` | `'CopyRight'` | 徽标左侧文字 |
-| `rightText` | `string` | `'BY-NC-SA 4.0'` | 徽标右侧文字 |
-| `color` | `string` | `'#ae3b37'` | 徽标颜色 |
-| `tooltip` | `string?` | `'知识共享 署名-非商业性使用-相同方式共享 4.0 国际许可协议'` | 鼠标悬停提示 |
-| `link` | `string` | `'https://creativecommons.org/licenses/by-nc-sa/4.0/'` | 徽标跳转链接 |
-| `logo` | `string` | `'creativecommons'` | shields.io 徽标 logo |
-| `style` | `string?` | `'for-the-badge'` | shields.io 徽标样式 |
+| `leftText` | `string` | — | 徽标左侧文字 |
+| `rightText` | `string` | — | 徽标右侧文字 |
+| `color` | `string` | — | 徽标颜色（空时不着色） |
+| `tooltip` | `string?` | — | 鼠标悬停提示（空则无提示） |
+| `link` | `string` | — | 徽标跳转链接 |
+| `logo` | `string` | — | shields.io 徽标 logo（空则无 logo） |
+| `style` | `string?` | `'for-the-badge'` | shields.io 徽标样式（运行时兜底） |
 
-默认 `badge` 值：
+::: tip 默认值说明
+主题包内置默认 `badge: []`（空数组）。以下为脚手架生成的初始配置（两项）：
+:::
 
 ```ts
 badge: [
   {
+    leftText: '',
+    rightText: 'VitePress',
+    color: '#646CFF',
+    tooltip: '博客框架：VitePress',
+    link: 'https://vitepress.dev/',
+    style: 'for-the-badge',
+    logo: 'vitepress'
+  },
+  {
     leftText: 'CopyRight',
     rightText: 'BY-NC-SA 4.0',
     color: '#ae3b37',
-    tooltip: '知识共享 署名-非商业性使用-相同方式共享 4.0 国际许可协议',
+    tooltip: '知识共享 署名-非商业性使用-相同方式共享 4.0',
     link: 'https://creativecommons.org/licenses/by-nc-sa/4.0/',
-    logo: 'creativecommons',
-    style: 'for-the-badge'
+    style: 'for-the-badge',
+    logo: 'creativecommons'
   }
 ]
 ```
@@ -73,7 +86,9 @@ badge: [
 | `link` | `string` | — | 链接地址 |
 | `newTab` | `boolean?` | — | 是否在新标签页打开 |
 
-默认 `sitemap` 值：
+::: tip 默认值说明
+主题包内置默认 `sitemap: []`（空数组）。以下为脚手架生成的初始配置（三组）：
+:::
 
 ```ts
 sitemap: [
@@ -84,6 +99,13 @@ sitemap: [
       { text: '全部分类', link: '/pages/categories' },
       { text: '全部标签', link: '/pages/tags' },
       { text: '文章归档', link: '/pages/archives' }
+    ]
+  },
+  {
+    text: '专栏',
+    items: [
+      { text: '随笔笔记', link: '/pages/categories/随笔笔记' },
+      { text: '技术教程', link: '/pages/categories/技术教程' }
     ]
   },
   {
@@ -107,7 +129,7 @@ export const themeConfig = defineThemeConfig({
     social: [
       { icon: 'email', link: 'mailto:you@example.com' },
       { icon: 'github', link: 'https://github.com/your-name' },
-      { icon: 'twitter', link: 'https://twitter.com/your-name' },
+      { icon: 'twitter-x', link: 'https://twitter.com/your-name' },
       { icon: 'rss', link: 'https://example.com/rss.xml' }
     ],
     badge: [
@@ -189,7 +211,7 @@ export const themeConfig = defineThemeConfig({
 - `'svg:文件名'`：引用 `public/svg/` 下的 SVG 文件（如 `'svg:bilibili'`、`'svg:zhihu'`）—— 推荐用于品牌 logo
 - 对象：`{ type: 'svg' | 'font', name: 'xxx' }` —— 显式声明类型与名称
 
-页脚社交图标会自动反白渲染（深色背景上的白色图标），SVG 图标通过 `fill: currentColor` 适配。
+页脚社交图标会自动反白渲染（深色背景上的白色图标），SVG 图标同样反白（填充随卡片背景色变量适配明暗主题）。
 :::
 
 ::: warning social 建议为偶数个

@@ -37,7 +37,7 @@
 | `title` | `string` | `'留言板'` | 留言板标题 |
 | `author` | `string` | `'Your Name'` | 留言板作者 |
 | `cover` | `string` | `''` | 留言板封面，需用户自行提供 |
-| `message` | `string[]` | `[]` | 留言板欢迎语数组，需用户自行提供，多条会循环显示 |
+| `message` | `string[]` | `[]` | 留言板欢迎语数组，需用户自行提供，多条按顺序逐条展示（带逐条入场动画） |
 | `bottom` | `string` | `'感谢你的留言'` | 留言板底部文字 |
 | `envelope` | `object?` | 见下表 | 信封展开效果装饰图片，不配置则使用主题内置默认图 |
 
@@ -52,7 +52,7 @@
 | `after` | `string?` | `'https://npm.elemecdn.com/hexo-butterfly-envelope/lib/after.png'` | 信封展开后的底图 |
 
 ::: tip 三张图需配套使用
-`line`、`before`、`after` 三张图来自同一套素材，尺寸与位置在设计时互相配合。若只替换其中一张可能导致信封拼合错位，建议整套替换或整套保留默认值。窄屏（< 600px）下信封装饰图会自动隐藏，仅展示留言内容卡片。
+`line`、`before`、`after` 三张图来自同一套素材，尺寸与位置在设计时互相配合。若只替换其中一张可能导致信封拼合错位，建议整套替换或整套保留默认值。窄屏（≤600px）下信封的展开前/展开后装饰图会自动隐藏，仅展示留言内容卡片。
 :::
 
 ::: tip 替换为本地图片
@@ -108,10 +108,24 @@ export const themeConfig = defineThemeConfig({
 
 `friends.comments` 渲染为留言板页面（`/pages/comments`）：
 
-- **留言板（comments）**：`message` 数组循环显示欢迎语，`cover` 作为留言板封面，底部展示 `bottom` 文案，访客可在下方留言。
+- **留言板（comments）**：`message` 数组按顺序逐条展示欢迎语，`cover` 作为信封内头图，底部展示 `bottom` 文案。
+- **页面评论区**：`CommentsView` 组件本身不含评论区；如需访客留言，请在页面 frontmatter 中设置 `comment: true`（需先启用 [`comment`](./comment.md) 评论系统），由主题在页面末尾渲染 Twikoo 评论区。
 
 ::: tip 留言板独立可用
-配置 `comments` 各字段即可作为站点留言入口，不依赖友链功能。在 `pages/comments.md` 中引入 `<CommentsView />` 组件即可渲染。
+配置 `comments` 各字段即可作为站点留言入口，不依赖友链功能。在 `pages/comments.md` 中引入 `<CommentsView />` 组件并设置 frontmatter `comment: true` 即可渲染完整留言板：
+
+```md
+---
+title: 留言板
+comment: true
+---
+
+<script setup>
+import { CommentsView } from 'vitepress-theme-ninc/views'
+</script>
+
+<CommentsView />
+```
 :::
 
 ::: warning 动态友链字段为预留
@@ -124,8 +138,8 @@ export const themeConfig = defineThemeConfig({
 `circleOfFriends` 指向友链圈（朋友圈）的页面地址，例如 `https://circle.example.com`。当前版本为预留字段，待友链页发布后生效。
 :::
 
-::: tip message 数组循环显示
-`comments.message` 支持配置多条欢迎语，前端会按数组顺序循环展示。建议每条控制在一到两行内，避免单条过长影响排版。
+::: tip message 数组逐条展示
+`comments.message` 支持配置多条欢迎语，前端会将所有条目按数组顺序依次渲染（带逐条入场动画）。建议每条控制在一到两行内，避免单条过长影响排版。
 :::
 
 > 图片路径以 `/` 开头，对应 `public/` 下的文件，如 `/images/xxx.png` 对应 `public/images/xxx.png`。

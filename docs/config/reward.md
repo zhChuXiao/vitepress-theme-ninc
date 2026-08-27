@@ -9,8 +9,8 @@
 | 字段 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | `enable` | `boolean` | `false` | 是否启用打赏 |
-| `wechat` | `string` | `''` | 微信收款码图片路径，为空时使用主题内置默认图 |
-| `alipay` | `string` | `''` | 支付宝收款码图片路径，为空时使用主题内置默认图 |
+| `wechat` | `string` | `''` | 微信收款码图片路径；为空时对应二维码槽位不渲染（主题不内置默认收款码） |
+| `alipay` | `string` | `''` | 支付宝收款码图片路径；为空时对应二维码槽位不渲染（主题不内置默认收款码） |
 | `list` | `RewardListItem[]` | `[]` | 赞赏者名单，用于 `/pages/thanks` 页面展示 |
 
 ### list 数组项字段
@@ -47,10 +47,10 @@ export const themeConfig = defineThemeConfig({
 
 `rewardData` 渲染在文章正文末尾（评论之上），交互流程：
 
-- **打赏按钮**：文章底部出现「打赏」按钮，点击触发弹窗。
+- **打赏按钮**：文章底部出现「赞赏博主」按钮，点击触发弹窗。
 - **二维码弹窗**：弹窗中并排展示微信（`wechat`）与支付宝（`alipay`）收款码图片，读者扫码即可打赏。
 - **赞赏名单入口**：弹窗底部「全部赞赏者名单」链接跳转至 `/pages/thanks` 页面。
-- **灯箱联动**：弹窗中的二维码图片可借助 [`fancybox`](./fancybox.md) 进一步放大查看。
+- **点击查看原图**：弹窗中的二维码图片为外链锚点，点击后在新标签页打开收款码原图（不参与 [`fancybox`](./fancybox.md) 灯箱）。
 
 ## 赞赏名单页（/pages/thanks）
 
@@ -85,8 +85,8 @@ import { Thanks } from 'vitepress-theme-ninc/views'
 :::
 
 ::: tip 常见配置组合
-- **双码打赏**：同时配置 `wechat` 与 `alipay`，覆盖主流支付方式。
-- **仅微信**：只配置 `wechat`，`alipay` 留空，适合个人轻量打赏。
+- **双码打赏**：同时配置 `wechat` 与 `alipay`，弹窗双列并排，覆盖主流支付方式。
+- **仅微信**：只配置 `wechat`，`alipay` 留空——弹窗自动切换为单列居中布局，不会渲染空槽位。
 - **配合评论引导**：在文章末尾文案中引导读者「觉得有用可打赏」，提升转化率。
 :::
 
@@ -98,8 +98,8 @@ import { Thanks } from 'vitepress-theme-ninc/views'
 
 > 图片路径以 `/` 开头，对应 `public/` 下的文件，如 `/images/xxx.png` 对应 `public/images/xxx.png`。
 
-::: tip 二维码默认图
-`wechat` 与 `alipay` 留空时，主题会使用内置的默认二维码占位图。如需替换为自己的收款码，只需在 `themeConfig` 中填入图片路径即可覆盖。
+::: warning 二维码无内置默认图
+`wechat` 与 `alipay` 留空时，主题**不会**提供默认收款码：只配置一个时弹窗单列居中显示已配置的图片；两个都未配置时二维码区域不渲染，弹窗显示「博主暂未配置收款码」占位文案。如需展示收款码，请在 `themeConfig` 中填入自己的图片路径。
 :::
 
 ::: tip enable 关闭后不显示打赏按钮
@@ -114,4 +114,4 @@ import { Thanks } from 'vitepress-theme-ninc/views'
 
 - [`aside` 侧边栏](./aside.md) — 文章页侧边栏模块配置
 - [`comment` 评论](./comment.md) — 文章页评论系统配置
-- [`fancybox` 灯箱](./fancybox.md) — 图片灯箱配置（打赏码图片也可点击放大）
+- [`fancybox` 灯箱](./fancybox.md) — 文章图片灯箱配置（打赏弹窗中的二维码为外链锚点，不参与灯箱）

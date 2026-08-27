@@ -33,8 +33,8 @@ public/svg/github.svg      →  /svg/github.svg
 | `siteMeta.avatar` | 站点头像 | `/images/avatar.png` |
 | `siteMeta.logo` | 站点 Logo | `/images/logo.png` |
 | `cover.showCover.defaultCover` | 默认封面图数组 | `['/images/cover/001.jpeg', ...]` |
-| `wechat.face` | 微信头像 | `/images/weixin.png` |
-| `wechat.back` | 微信二维码 | `/images/weixin-qrcode.png` |
+| `aside.wechat.face` | 微信头像（侧边栏微信模块正面图） | `/images/weixin.png` |
+| `aside.wechat.back` | 微信二维码（侧边栏微信模块背面图） | `/images/weixin-qrcode.png` |
 | `rewardData.wechat` | 微信打赏码 | `/images/reward-wechat.png` |
 | `rewardData.alipay` | 支付宝打赏码 | `/images/reward-alipay.png` |
 
@@ -95,7 +95,7 @@ JPEG 适合色彩丰富的照片，PNG 适合需要透明通道的图标与截�
 }
 ```
 
-主题内置字体的 `@font-face` 均已设置 `font-display: swap`，自定义字体时建议沿用。
+主题内置标题字体（Site Title）的 `@font-face` 已设置 `font-display: swap`，自定义字体时建议沿用。
 
 ### CDN 选择
 
@@ -133,8 +133,8 @@ JPEG 适合色彩丰富的照片，PNG 适合需要透明通道的图标与截�
 
 1. 确认 `.svg` 文件位于 `svgIconDirs` 指定的目录下（默认 `public/svg`）。
 2. 确认 `<SvgIcon name="github" />` 的 `name` 与文件名一致（不含 `.svg` 后缀）。
-3. 浏览器开发者工具 Elements 面板检查 `<body>` 起始处是否有 `<svg style="display:none">` 雪碧图节点。
-4. 若多目录配置下存在同名文件，后者会覆盖前者，确认 `name` 唯一。
+3. 浏览器开发者工具 Elements 面板检查 `<body>` 末尾是否有 `<svg style="display:none">` 雪碧图节点（插件配置 `inject: 'body-last'`）。
+4. 若多目录配置下存在同名文件，两者 symbol id 相同，**先扫描目录（数组中靠前）的那份生效**（浏览器对重复 id 的 `<symbol>` 取第一个），确认 `name` 唯一。
 
 ### Q: 字体不生效
 
@@ -146,7 +146,7 @@ JPEG 适合色彩丰富的照片，PNG 适合需要透明通道的图标与截�
 2. 远程字体：确认 `inject.header` 中的 `<link>` 已生效（Network 面板查看 CSS 是否加载）。
 3. 确认已覆盖 `--main-font-family` 变量，且覆盖 SCSS 在 `import Theme` 之后引入。
 4. 浏览器开发者工具 Elements 面板检查目标元素的 `font-family` 计算值是否包含自定义字体名。
-5. 详见 [自定义样式 - 覆盖顺序](../custom-styles.md#方式一覆盖-css-变量)。
+5. 详见 [自定义样式 - 覆盖顺序](../custom-styles.md#方式一-覆盖-css-变量)。
 
 ### Q: CDN 资源加载慢
 

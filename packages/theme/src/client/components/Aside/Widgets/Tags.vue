@@ -7,8 +7,8 @@
     </div>
     <div class="all-tags">
       <a
-        v-for="(item, tag, index) in theme.tagsData"
-        :key="index"
+        v-for="(item, tag) in theme.tagsData"
+        :key="tag"
         :href="`/pages/tags/${tag}`"
         class="tags"
       >

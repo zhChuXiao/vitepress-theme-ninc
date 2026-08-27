@@ -1,9 +1,26 @@
 import { defineStore } from 'pinia'
 import { useDark, useToggle } from '@vueuse/core'
-import { ref, reactive, computed, type Ref } from 'vue'
+import { ref, reactive, computed, shallowRef, type Ref } from 'vue'
 
 // 全局消息组件（由 unplugin-auto-import 注入），此处仅作类型占位
 declare const $message: any
+
+// ━━━ body 滚动锁（模块级引用计数，全站共享）━━━
+// Modal 组件与 store 覆盖层（controlShow/mobileMenuShow/searchShow/showSeetings）
+// 可能同时持有锁：计数归 0 时才真正解锁，任一方提前关闭都不会误放背景滚动
+let bodyLockCount = 0
+export const lockBodyScroll = () => {
+  if (typeof document === 'undefined') return
+  bodyLockCount++
+  document.body.style.overflowY = 'hidden'
+}
+export const unlockBodyScroll = () => {
+  if (typeof document === 'undefined') return
+  bodyLockCount = Math.max(0, bodyLockCount - 1)
+  if (bodyLockCount === 0) {
+    document.body.style.overflowY = ''
+  }
+}
 
 export const mainStore = defineStore('main', () => {
   // 主题相关
@@ -58,13 +75,17 @@ export const mainStore = defineStore('main', () => {
   const infoPosition = ref('normal')
   const lastScrollY = ref(0)
   const backgroundType = ref('patterns')
-  const backgroundUrl = ref('/public/images/bg.png')
+  const backgroundUrl = ref('/images/bg.png')
 
   // 评论数量
   const commentCount = reactive(new Map<string, number>())
 
   // 用户地理位置
   const userLocation = ref<any>()
+
+  // 「打开中控台」按钮的 DOM 引用（由 Nav.vue 挂载时注册，Control.vue 读取定位关闭按钮）
+  // 用 shallowRef：DOM 元素不需要深度响应化；此引用替代原 #open-control 跨组件 id 查询
+  const controlTriggerEl = shallowRef<HTMLElement | null>(null)
 
   // 可被 changeShowStatus 切换的布尔状态集合
   // 替代原 eval 实现：避免动态求值（CSP 风险、严格模式报错、可读性差）
@@ -84,6 +105,10 @@ export const mainStore = defineStore('main', () => {
     backgroundBlur
   }
 
+  // 需要锁滚动的覆盖层面板状态；设置类开关（backgroundBlur 等）不参与，
+  // 否则在面板打开期间切换设置会把 overflowY 复位成 ''（面板仍开着但页面可滚动）
+  const overlayStates = new Set(['controlShow', 'mobileMenuShow', 'searchShow', 'showSeetings'])
+
   // Actions
   // 切换应用状态
   function changeShowStatus(value: string, blur = true) {
@@ -91,8 +116,11 @@ export const mainStore = defineStore('main', () => {
     // 仅处理布尔类型的状态 ref，未知名称或非布尔值直接忽略（比原 eval 更安全）
     if (!target || typeof target.value !== 'boolean') return
     target.value = !target.value
-    // 阻止滚动
-    document.body.style.overflowY = target.value ? 'hidden' : ''
+    // 阻止滚动（计数锁：与 Modal 组件共享计数，多锁并存时归 0 才解锁）
+    if (overlayStates.has(value)) {
+      if (target.value) lockBodyScroll()
+      else unlockBodyScroll()
+    }
     // 全局模糊
     const globalApp = document.getElementById('app')
     if (!globalApp) return
@@ -114,15 +142,17 @@ export const mainStore = defineStore('main', () => {
   }
 
   // 切换明暗模式
-  function changeThemeType(event: MouseEvent) {
+  // event 可选：当前调用方均传鼠标事件（View Transition 圆形扩散起点），
+  // 若未来出现键盘/程序化调用则回退为视口中心，避免读 clientX 抛错
+  function changeThemeType(event?: MouseEvent) {
     // 禁止壁纸模式切换明暗
     if (backgroundType.value === 'image') {
       $message.warning('无法在壁纸模式下切换明暗模式', { duration: 1500 })
       return false
     }
 
-    const x = event.clientX
-    const y = event.clientY
+    const x = event?.clientX ?? window.innerWidth / 2
+    const y = event?.clientY ?? window.innerHeight / 2
     const endRadius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y))
 
     // 兼容性处理：不支持 View Transitions API 时直接切换
@@ -210,6 +240,7 @@ export const mainStore = defineStore('main', () => {
     backgroundType,
     backgroundUrl,
     commentCount,
+    controlTriggerEl,
 
     // 方法
     changeShowStatus,

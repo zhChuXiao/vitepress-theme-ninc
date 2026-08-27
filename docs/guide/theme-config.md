@@ -83,7 +83,7 @@ defineThemeConfig({
     description: 'A blog',       // ← 沿用默认
     author: { name: '示例博主', email: '', link: '' }  // ← author 递归合并
   },
-  nav: [                          // ← 数组整体替换（不会和默认拼接）
+  nav: [                          // ← 数组默认值通常为 []，写入完整列表即可（效果等同替换）
     { text: '文库', items: [...] }
   ],
   postSize: 10                    // ← 沿用默认
@@ -109,9 +109,9 @@ defineThemeConfig({
 无需为了「补全层级」而写空对象。`defu` 会自动沿默认层级合并，缺省的层级会从默认值中补齐。
 :::
 
-### 完全替换数组
+### 数组字段怎么写
 
-数组的合并语义是「替换而非拼接」。若你想自定义 `nav`，直接写完整的新数组即可，默认的导航项不会残留：
+`defu` 对数组的真实语义是 **concat 拼接（用户项在前，默认项在后）**。不过主题把绝大多数数组的默认值置为了空数组（如 `nav`、`inject.header`、`cover.showCover.defaultCover`），因此这些字段你直接写完整的新数组即可，效果等同整体替换，默认项不会残留：
 
 ```ts
 defineThemeConfig({
@@ -201,7 +201,7 @@ export const themeConfig = defineThemeConfig({
 })
 ```
 
-页脚会显示 `© 2024 - 当前年份`（如当前是 2026 年，则显示 `© 2024 - 2026`）。若 `since` 与当前年份相同，则只显示一个年份。
+页脚版权区域固定渲染为 `@ 起始年份 - 当前年份 By 作者名`（如 `@ 2024 - 2026 By ninc`）。起始年份取 `since` 的年份部分（`YYYY-MM-DD` 与 `YYYY` 均只取年份）；未填写或解析失败时回退为当前年份（此时起止年份相同，显示为 `@ 2026 - 2026`）。
 
 ### postSize
 
@@ -227,12 +227,13 @@ export const themeConfig = defineThemeConfig({
 })
 ```
 
-启用后，页面左下角出现齿轮图标按钮，点击弹出设置面板，可切换：
-- 主题模式（亮色/暗色/跟随系统）
-- 字体大小
-- 其他个性化选项
+启用后，页面左下角出现齿轮图标按钮，点击弹出「个性化配置」面板，可切换：
+- 全站字体（HarmonyOS Sans / 进步体）与字体大小
+- 全站背景（关闭 / 纹理）
+- 首页 Banner 高度（半屏 / 全屏）
+- 额外信息显示位置（默认位置 / 右下角）
 
-设置项持久化存储在浏览器的 `localStorage`，下次访问时自动恢复。
+明暗主题切换不在此面板，而在导航栏右侧的主题切换按钮。设置项持久化存储在浏览器的 `localStorage`（键名 `siteData`），下次访问时自动恢复。
 
 ![个性化设置按钮](/images/article/settingButton.png)
 
@@ -425,8 +426,8 @@ export const themeConfig = defineThemeConfig({
 })
 ```
 
-::: warning 数组字段必须完整
-上例中的 `nav`、`inject.header`、`cover.showCover.defaultCover`、`jumpRedirect.exclude` 都是数组，**会整体替换默认值**。请确保写入你需要的完整列表，不要假设会与默认项拼接。
+::: warning 数组字段的例外：jumpRedirect
+上例中的 `nav`、`inject.header`、`cover.showCover.defaultCover` 默认值都是空数组，写入你的完整列表即可（效果等同替换）。但 `jumpRedirect.exclude`、`jumpRedirect.whitelist`、`jumpRedirect.blacklist` 三个数组**有非空默认值**，defu 会把你的数组与默认项**拼接**（用户项在前）。如果你不想保留默认的排除 class 或黑白名单域名，目前需要连同默认值一起完整写出。
 :::
 
 

@@ -5,12 +5,12 @@
       <sup v-if="theme.postData?.length" class="num">{{ theme.postData.length }}</sup>
     </div>
     <div class="archives-list">
-      <div v-for="(year, index) in theme.archivesData.year" :key="index" class="year-list">
+      <div v-for="year in theme.archivesData.year" :key="year" class="year-list">
         <span class="year">{{ year }}</span>
         <div class="posts">
           <div
-            v-for="(post, postIndex) in theme.archivesData.data[year].articles"
-            :key="postIndex"
+            v-for="post in theme.archivesData.data[year].articles"
+            :key="post.regularPath"
             class="posts-item s-card hover"
             @click="router.go(post.regularPath)"
           >

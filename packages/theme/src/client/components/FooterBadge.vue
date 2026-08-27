@@ -1,7 +1,10 @@
 <template>
   <div class="badge-container vp-raw">
+    <!-- ElTooltip 的 popper Teleport 容器 id 含运行时计数器，SSR 与客户端序列不一致
+         必然触发 hydration mismatch（dev 版 Vue 实证）——故 tooltip 仅在挂载后激活：
+         SSR/hydration 时刻均渲染裸 img（结构一致），mounted 后切换为 ElTooltip 分支 -->
     <template v-for="item in theme.footer.badge" :key="item.rightText">
-      <el-tooltip v-if="item.tooltip" :content="item.tooltip" placement="top">
+      <el-tooltip v-if="mounted && item.tooltip" :content="item.tooltip" placement="top">
         <img
           class="badge-img"
           :src="badgeSrc(item)"
@@ -13,7 +16,7 @@
         v-else
         class="badge-img"
         :src="badgeSrc(item)"
-        :alt="item.tooltip"
+        :alt="item.tooltip || item.rightText"
         @click="toLink(item.link)"
       />
     </template>
@@ -24,8 +27,14 @@
 import { ElTooltip } from 'element-plus'
 const { theme } = useData()
 
+// 挂载标记：tooltip 延迟到 hydration 完成后激活（见模板注释）
+const mounted = ref(false)
+onMounted(() => {
+  mounted.value = true
+})
+
 const toLink = link => {
-  if (link) window.open(link, '_blank')
+  if (link) window.open(link, '_blank', 'noopener')
 }
 
 // shields.io badge URL 中 - 是字段分隔符，_ 会被解析为空格。

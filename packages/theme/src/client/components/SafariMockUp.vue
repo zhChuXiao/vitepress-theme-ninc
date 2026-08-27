@@ -1,19 +1,19 @@
 <template>
   <svg class="safari-mockup" fill="none" xmlns="http://www.w3.org/2000/svg" :width="width" :height="height" :viewBox="`0 0 ${width} ${height}`">
-    <g clipPath="url(#path0)">
+    <g :clip-path="`url(#${clipId0})`">
       <path
         d="M0 52H1202V741C1202 747.627 1196.63 753 1190 753H12C5.37258 753 0 747.627 0 741V52Z"
         class="fill-[#E5E5E5] dark:fill-[#404040]"
       ></path>
       <path
-        fillRule="evenodd"
-        clipRule="evenodd"
+        fill-rule="evenodd"
+        clip-rule="evenodd"
         d="M0 12C0 5.37258 5.37258 0 12 0H1190C1196.63 0 1202 5.37258 1202 12V52H0L0 12Z"
         class="fill-[#E5E5E5] dark:fill-[#404040]"
       ></path>
       <path
-        fillRule="evenodd"
-        clipRule="evenodd"
+        fill-rule="evenodd"
+        clip-rule="evenodd"
         d="M1.06738 12C1.06738 5.92487 5.99225 1 12.0674 1H1189.93C1196.01 1 1200.93 5.92487 1200.93 12V51H1.06738V12Z"
         class="fill-white dark:fill-[#262626]"
       ></path>
@@ -31,7 +31,7 @@
         ></path>
       </g>
       <g class="mix-blend-luminosity">
-        <text x="580" y="30" fill="#A3A3A3" fontSize="12" fontFamily="Arial, sans-serif">
+        <text x="580" y="30" fill="#A3A3A3" font-size="12" font-family="Arial, sans-serif">
           {{ url }}
         </text>
       </g>
@@ -90,14 +90,14 @@
         y="52"
         preserveAspectRatio="xMidYMid slice"
         :href="src"
-        style="clip-path: url(#roundedBottom)"
+        :style="`clip-path: url(#${clipIdRounded})`"
       ></image>
     </g>
     <defs>
-      <clipPath id="path0">
+      <clipPath :id="clipId0">
         <rect fill="white" :width="width" :height="height"></rect>
       </clipPath>
-      <clipPath id="roundedBottom">
+      <clipPath :id="clipIdRounded">
         <path d="M1 52H1201V741C1201 747.075 1196.08 752 1190 752H12C5.92486 752 1 747.075 1 741V52Z" fill="white"></path>
       </clipPath>
     </defs>
@@ -116,6 +116,11 @@ withDefaults(defineProps<SafariMockupProps>(), {
   width: 1203,
   height: 753
 })
+
+// 多实例共存时 clipPath id 必须唯一（同 AnimatedBeam 的 useId 修法）
+const uid = useId()
+const clipId0 = `safari-path0-${uid}`
+const clipIdRounded = `safari-rounded-${uid}`
 </script>
 
 <style scoped lang="scss">

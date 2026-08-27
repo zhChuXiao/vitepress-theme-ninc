@@ -9,7 +9,7 @@
 </template>
 
 <script setup>
-const props = defineProps({
+defineProps({
   // 兼容友链朋友圈
   useFriendsLink: {
     type: [Boolean, String],
@@ -47,7 +47,7 @@ onMounted(() => {
     if (entry.isIntersecting) {
       // 当内容可见
       load.value = true;
-      observer.unobserve(box.value);
+      observer.disconnect();
       observer = null;
     }
   });
@@ -55,7 +55,10 @@ onMounted(() => {
   observer.observe(box.value);
 });
 
-onBeforeUnmount(() => observer && observer.unobserve(box.value));
+onBeforeUnmount(() => {
+  observer?.disconnect();
+  observer = null;
+});
 </script>
 
 <style lang="scss" scoped>

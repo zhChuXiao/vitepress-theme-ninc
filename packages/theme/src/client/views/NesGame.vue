@@ -577,7 +577,7 @@
             <li class="bold">I/U 键为连发键，适合射击类游戏</li>
             <li class="bold">支持双人游戏（P2使用方向键和小键盘）</li>
             <li class="bold">支持手柄控制，连接即可使用</li>
-            <li class="bold">存档会保存在IndexDB中</li>
+            <li class="bold">存档会保存在IndexedDB中</li>
           </ul>
         </div>
 
@@ -675,7 +675,12 @@ const isDragging = ref(false);
 // 从 themeConfig.nes 读取 ROM 列表（默认配置已含超级马里奥，无需额外导入）
 const { theme } = useData();
 const nesConfig = computed(() => theme.value?.nes || {});
-const gameRoms = computed(() => nesConfig.value.roms || []);
+// 配置来源的 ROM 列表（只读）
+const configRoms = computed(() => nesConfig.value.roms || []);
+// 用户上传的自定义 ROM（独立 ref——直接 push 配置数组会突变 VitePress 主题配置对象，污染共享状态）
+const customRoms = ref([]);
+// 最终列表 = 配置 + 自定义，保持 computed 语义纯净
+const gameRoms = computed(() => [...configRoms.value, ...customRoms.value]);
 const defaultRomId = computed(() => nesConfig.value.defaultRomId || gameRoms.value[0]?.id || "mario");
 const selectedGame = ref(defaultRomId.value);
 
@@ -726,7 +731,7 @@ async function changeGame() {
 }
 
 // 内置默认按键（KeyboardEvent.code）
-// P2 不依赖小键盘，笔记本也能用
+// 注意：P2 的 A/B/C/D 默认绑定小键盘（Numpad1/2/4/5），无小键盘的设备需在页面上改键
 const DEFAULT_CONTROLS = {
   p1: {
     UP: "KeyW",
@@ -1184,6 +1189,16 @@ function onGameLoaded() {
 function handleKeyDown(event) {
   if (!isGameLoaded.value || !nesRef.value) return;
 
+  // 文本输入场景（金手指代码输入框、评论框、下拉搜索框等）不触发游戏快捷键，
+  // 避免在输入时误触 Shift+Q 清档 / Shift+数字 存读档；
+  // checkbox/file 等非文本 input 不消耗字符，放行以保留游戏操作连续性
+  const target = event.target;
+  if (target) {
+    const tag = target.tagName;
+    if (tag === "TEXTAREA" || target.isContentEditable) return;
+    if (tag === "INPUT" && !["checkbox", "radio", "button", "file"].includes(target.type)) return;
+  }
+
   const key = event.key.toLowerCase();
 
   // 判断是否需要 Shift 键
@@ -1351,6 +1366,11 @@ onBeforeUnmount(() => {
   window.removeEventListener("keydown", handleCustomizeKeydown, true);
   window.removeEventListener("resize", handleResize);
   document.removeEventListener("click", handleCheatClickOutside, true);
+  // 回收自定义 ROM 的 blob URL
+  if (customRomUrl) {
+    URL.revokeObjectURL(customRomUrl);
+    customRomUrl = null;
+  }
 });
 
 // 触发文件选择
@@ -1391,6 +1411,9 @@ async function onFileSelected(e) {
   e.target.value = "";
 }
 
+// 自定义 ROM 的 blob URL 跟踪：重复上传前回收旧 URL，卸载时统一回收，避免内存泄漏
+let customRomUrl = null;
+
 // 处理ROM文件
 async function handleRomFile(file) {
   try {
@@ -1399,14 +1422,19 @@ async function handleRomFile(file) {
       nesRef.value.pause();
     }
 
+    if (customRomUrl) URL.revokeObjectURL(customRomUrl);
+    customRomUrl = URL.createObjectURL(file);
+
     const customGame = {
       id: "custom-" + Date.now(),
       name: file.name.replace(".nes", ""),
-      url: URL.createObjectURL(file),
+      url: customRomUrl,
       savePrefix: "custom-" + Date.now(),
     };
-    // 添加到游戏列表
-    gameRoms.value.push(customGame);
+    // 单槽位语义：旧自定义条目的 blob URL 刚被回收，必须先移出列表，
+    // 否则用户从下拉框选回旧条目会拿到已 revoke 的 URL，加载静默失败
+    customRoms.value = [];
+    customRoms.value.push(customGame);
 
     // 等待一下确保组件状态更新
     await nextTick();

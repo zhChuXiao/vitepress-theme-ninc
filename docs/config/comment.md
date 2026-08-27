@@ -18,8 +18,8 @@
 | 字段 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | `envId` | `string` | `''` | Twikoo 环境 ID 或服务地址 |
-| `region` | `string?` | — | 地域（如 `ap-shanghai`），仅云函数部署时使用 |
-| `lang` | `string?` | `'zh-CN'` | 评论界面语言 |
+| `region` | `string?` | — | 地域（如 `ap-shanghai`），仅云函数部署时使用（⚠️ **预留字段，当前版本未透传至 Twikoo，配置暂不生效**） |
+| `lang` | `string?` | `'zh-CN'` | 评论界面语言（⚠️ **预留字段，当前版本未透传至 Twikoo，配置暂不生效**） |
 
 ## 示例
 

@@ -309,7 +309,7 @@ export const themeConfig = defineThemeConfig({
     // 站点头像（侧边栏 Clock 中心头像、关于页头像等共用）
     // 默认使用主题作者提供的网络图片，开箱即用
     // 替换为自己的头像：把图片放到 public/images/ 下，改为 '/images/your-avatar.jpg'
-    avatar: 'http://blog.ninc.top/images/cxLogo/avatar2.jpg',
+    avatar: 'https://blog.ninc.top/images/cxLogo/avatar2.jpg',
     logo: '/images/logo.svg',
     site: ${JSON.stringify(cfg.site)},
     base: '/',
@@ -317,7 +317,7 @@ export const themeConfig = defineThemeConfig({
     author: {
       name: ${JSON.stringify(cfg.author)},
       // 作者头像（Clock 中心头像优先使用此字段，未配置时回退到 siteMeta.avatar）
-      cover: 'http://blog.ninc.top/images/cxLogo/avatar2.jpg',
+      cover: 'https://blog.ninc.top/images/cxLogo/avatar2.jpg',
       email: ${JSON.stringify(cfg.email)},
       // 作者主页链接（如 GitHub），填写后侧边栏 hello 卡片会显示 GitHub 图标入口；留空则不显示
       link: ''
@@ -335,7 +335,7 @@ export const themeConfig = defineThemeConfig({
       title: ${JSON.stringify(cfg.title)},
       // 推荐站点封面图默认使用主题作者提供的网络图片，开箱即用
       // 替换为自己的图：放到 public/images/ 下，改为 '/images/your-banner.jpg'
-      image: 'http://blog.ninc.top/images/cover/003405.jpeg',
+      image: 'https://blog.ninc.top/images/cover/003405.jpeg',
       // 暗色模式封面图（不配置时与 image 相同）
       darkImage: '',
       recommendUrl: 'https://blog.ninc.top',
@@ -621,7 +621,7 @@ ${commentBlock}
   //   indexName: 'your_index_name'
   // },
 
-  // 打赏二维码
+  // 打赏二维码（只配置一个时弹窗自动单列居中；都不配则显示占位文案）
   // rewardData: {
   //   enable: true,
   //   wechat: '/images/reward-wechat.png',
@@ -654,14 +654,14 @@ export const themeConfig = defineThemeConfig({
     description: ${JSON.stringify(cfg.description)},
     // 站点头像默认使用主题作者提供的网络图片，开箱即用
     // 替换方法：把图片放到 public/images/ 下，改为 '/images/your-avatar.jpg'
-    avatar: 'http://blog.ninc.top/images/cxLogo/avatar2.jpg',
+    avatar: 'https://blog.ninc.top/images/cxLogo/avatar2.jpg',
     logo: '/images/logo.svg',
     site: ${JSON.stringify(cfg.site)},
     base: '/',
     lang: 'zh-CN',
     author: {
       name: ${JSON.stringify(cfg.author)},
-      cover: 'http://blog.ninc.top/images/cxLogo/avatar2.jpg',
+      cover: 'https://blog.ninc.top/images/cxLogo/avatar2.jpg',
       email: ${JSON.stringify(cfg.email)},
       // 作者主页链接（如 GitHub），填写后侧边栏 hello 卡片会显示 GitHub 图标入口；留空则不显示
       link: ''
@@ -1288,7 +1288,7 @@ console.log('tab B')
 使用 \`%%按键名%%\` 语法创建键盘按键样式：
 
 按 %%Ctrl%% + %%C%% 复制，按 %%Ctrl%% + %%V%% 粘贴。  
-快捷键 %%Cmd%% + %%K%% 打开搜索。  
+快捷键 %%Ctrl%% + %%Shift%% + %%P%% 打开命令面板。  
 %%Enter%% 确认，%%Esc%% 取消。
 
 ## 二十二、属性语法 markdown-it-attrs
@@ -1301,7 +1301,7 @@ console.log('tab B')
 
 [带类名的链接](https://vitepress.dev){.custom-link target=_blank}
 
-![带类名的图片](/images/cover.svg){.rounded}
+> 注意：图片上的属性语法支持白名单属性（\`class\`/\`id\`/\`width\`/\`height\`，如 \`![图](x.png){width=200 .rounded}\`），其余键会被安全丢弃。
 
 带多个属性 {class="highlight" id="sec1" data-value="42"}
 
@@ -1993,7 +1993,7 @@ function tplPackageJson(cfg) {
 
   const pkg = {
     name: slug,
-    version: '1.0.42',
+    version: '1.0.44',
     description: cfg.description,
     type: 'module',
     scripts: {

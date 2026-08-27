@@ -19,25 +19,31 @@ const { scrollDataProgress } = storeToRefs(store)
   left: 0;
   right: 0;
   margin: 0 auto;
-  width: 100vw;
   height: 3px;
   background: var(--vp-c-bg-soft);
   z-index: 9999;
 
   .scroll-progress-bar {
+    // 渐变色变量化：视觉默认值与此前硬编码完全一致，
+    // 用户可在自定义样式中覆盖这些变量替换进度条配色/辉光
+    --sp-color-1: #ff6b6b;
+    --sp-color-2: #feca57;
+    --sp-color-3: #48dbfb;
+    --sp-color-4: #1dd1a1;
+    --sp-glow: rgba(255, 107, 107, 0.3);
     height: 100%;
     width: 0;
     background: linear-gradient(
       90deg,
-      #ff6b6b 0%,
-      #feca57 25%,
-      #48dbfb 50%,
-      #1dd1a1 75%,
-      #ff6b6b 100%
+      var(--sp-color-1) 0%,
+      var(--sp-color-2) 25%,
+      var(--sp-color-3) 50%,
+      var(--sp-color-4) 75%,
+      var(--sp-color-1) 100%
     );
     background-size: 200% 100%;
     transition: width 100ms ease;
-    box-shadow: 0 0 10px rgba(255, 107, 107, 0.3);
+    box-shadow: 0 0 10px var(--sp-glow);
     animation: moveGradient 2s linear infinite;
   }
 }
@@ -50,4 +56,12 @@ const { scrollDataProgress } = storeToRefs(store)
     background-position: -200% 0%;
   }
 }
-</style> 
+
+// 与 NesGame/docs 动效组件一致：尊重系统减少动效偏好
+@media (prefers-reduced-motion: reduce) {
+  .scroll-progress .scroll-progress-bar {
+    animation: none;
+    transition: none;
+  }
+}
+</style>

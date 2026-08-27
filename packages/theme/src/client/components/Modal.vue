@@ -31,6 +31,11 @@
 </template>
 
 <script setup>
+import { onKeyStroke } from "@vueuse/core";
+// 滚动锁与 store 共享模块级计数：store 覆盖层（设置/搜索/中控台/移动菜单）
+// 与 Modal 可能同时持锁，计数归 0 时才解锁，互不越权
+import { lockBodyScroll, unlockBodyScroll } from "../store";
+
 const props = defineProps({
   // 是否显示
   show: {
@@ -71,13 +76,36 @@ const emit = defineEmits(["mask-click", "modal-close"]);
 const maskClick = () => emit("mask-click");
 const modalClose = () => emit("modal-close");
 
-// 监听开启
+// Esc 键关闭（仅本弹窗开启时响应；onKeyStroke 随组件卸载自动清理监听）
+onKeyStroke("Escape", () => {
+  if (props.show) modalClose();
+});
+
+// 本实例当前是否持有滚动锁（保证加锁/解锁严格配对，不与其它实例互相干扰）
+let instanceLocked = false;
+
+// 监听开启（immediate 覆盖"挂载时 show 即为 true"的边界，保证计数平衡）
 watch(
   () => props.show,
   (val) => {
-    document.body.style.overflowY = val ? "hidden" : "";
+    if (val && !instanceLocked) {
+      lockBodyScroll();
+      instanceLocked = true;
+    } else if (!val && instanceLocked) {
+      unlockBodyScroll();
+      instanceLocked = false;
+    }
   },
+  { immediate: true },
 );
+
+// 组件卸载时若本实例仍持有锁，归还计数，避免整站无法滚动
+onBeforeUnmount(() => {
+  if (instanceLocked) {
+    unlockBodyScroll();
+    instanceLocked = false;
+  }
+});
 </script>
 
 <style lang="scss" scoped>

@@ -1,4 +1,4 @@
-// 主题配置类型 - 对应 assets/themeConfig.mjs 的所有字段
+// 主题配置类型 - 对应 node/defaultThemeConfig.ts 的所有字段
 // 这些类型用于 defineThemeConfig 的参数与返回值，提供 IDE 提示与校验
 
 import type { IconField } from '../client/utils/icon'
@@ -70,8 +70,10 @@ export interface CreativityItem {
   name: string
   /** 图标背景色（CSS 颜色值） */
   color: string
-  /** 图标图片路径，放在 public/images/icon/ 下；图片缺失时显示名称首字母 */
+  /** 图标图片路径，放在 public/images/icon/ 下；路径错误时组件隐藏破碎 img、保留 color 底色块兜底 */
   icon: string
+  /** 技能详情链接（可选；配置后关于页技能项可点击、新标签打开，未配置时降级为纯展示） */
+  link?: string
 }
 
 /** 技能图标分组 */
@@ -206,7 +208,7 @@ export interface AsideWelcome {
   text3: string
   email: string
   address: [number, number] | []
-  /** IP 定位服务配置（用于欢迎卡片展示访客位置，不配置则使用内置默认接口） */
+  /** IP 定位服务配置（用于欢迎卡片展示访客位置；主题不内置默认接口，ipApi 与 locationApi 均需填写，未配置时该功能不生效） */
   ipLocation?: {
     /** IP 查询接口地址（GET 请求，返回 JSON，含 data.ip 字段） */
     ipApi?: string
@@ -319,9 +321,9 @@ export interface RewardListItem {
 /** 打赏配置 */
 export interface RewardConfig {
   enable: boolean
-  /** 微信收款二维码（为空时使用主题内置默认图） */
+  /** 微信收款二维码（为空时对应二维码区域不显示图片，主题不内置默认收款码） */
   wechat?: string
-  /** 支付宝收款二维码（为空时使用主题内置默认图） */
+  /** 支付宝收款二维码（为空时对应二维码区域不显示图片，主题不内置默认收款码） */
   alipay?: string
   /** 赞赏者名单（用于 /pages/thanks 页面展示，由用户提供） */
   list?: RewardListItem[]

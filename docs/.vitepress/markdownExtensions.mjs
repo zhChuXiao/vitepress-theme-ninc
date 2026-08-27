@@ -85,6 +85,8 @@ const markdownExtensions = (md) => {
   })
 
   // button 按钮容器
+  // 注意：文档站刻意使用 md-button/md-card 类名（与主题包真实输出的 button/card 类名不同），
+  // 避免文档站在演示这些容器时与主题样式冲突；docs/guide/markdown/containers.md 描述的是主题行为
   md.use(container, 'button', {
     render: (tokens, idx) => {
       const token = tokens[idx]

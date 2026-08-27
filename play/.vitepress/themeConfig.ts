@@ -11,7 +11,7 @@ export const themeConfig = defineThemeConfig({
     // 站点头像（侧边栏 Clock 中心头像、关于页头像等共用）
     // 默认使用主题作者提供的网络图片，开箱即用
     // 替换为自己的头像：把图片放到 public/images/ 下，改为 '/images/your-avatar.jpg'
-    avatar: 'http://blog.ninc.top/images/cxLogo/avatar2.jpg',
+    avatar: 'https://blog.ninc.top/images/cxLogo/avatar2.jpg',
     logo: '/images/logo.svg',
     site: "https://example.com",
     base: '/',
@@ -19,7 +19,7 @@ export const themeConfig = defineThemeConfig({
     author: {
       name: "博主",
       // 作者头像（Clock 中心头像优先使用此字段，未配置时回退到 siteMeta.avatar）
-      cover: 'http://blog.ninc.top/images/cxLogo/avatar2.jpg',
+      cover: 'https://blog.ninc.top/images/cxLogo/avatar2.jpg',
       email: "blog@example.com",
       // 作者主页链接（如 GitHub），填写后侧边栏 hello 卡片会显示 GitHub 图标入口；留空则不显示
       link: ''
@@ -37,7 +37,7 @@ export const themeConfig = defineThemeConfig({
       title: "我的博客",
       // 推荐站点封面图默认使用主题作者提供的网络图片，开箱即用
       // 替换为自己的图：放到 public/images/ 下，改为 '/images/your-banner.jpg'
-      image: 'http://blog.ninc.top/images/cover/003405.jpeg',
+      image: 'https://blog.ninc.top/images/cover/003405.jpeg',
       // 暗色模式封面图（不配置时与 image 相同）
       darkImage: '',
       recommendUrl: 'https://blog.ninc.top',

@@ -13,7 +13,8 @@ export const calculateScroll = throttle(
       if (typeof window === 'undefined' || typeof document === 'undefined') return false
       const store = mainStore()
       const scrollY = window.scrollY || window.pageYOffset
-      const totalHeight = document.documentElement.scrollHeight - window.innerHeight
+      // 短页面 totalHeight 可能为 0，用 1 兜底避免 NaN/Infinity 写入 store
+      const totalHeight = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1)
       const scrollPercentage = ((scrollY / totalHeight) * 100).toFixed(0)
       // 判断滚动方向
       const scrollDirection = scrollY > store.scrollData.height ? 'down' : 'up'
@@ -42,14 +43,14 @@ export const smoothScrolling = (target: number | HTMLElement | string = 0): bool
       // 滚动至指定高度
       window.scrollTo({ top: target, behavior: 'smooth' })
     } else if (target instanceof HTMLElement) {
-      // 滚动至元素
-      const top = target.getBoundingClientRect().top - 80
+      // 滚动至元素（getBoundingClientRect 相对视口，需加 window.scrollY 换算为文档绝对位置）
+      const top = target.getBoundingClientRect().top + window.scrollY - 80
       window.scrollTo({ top, behavior: 'smooth' })
     } else if (typeof target === 'string' && target.startsWith('#')) {
-      // 滚动至 ID
+      // 滚动至 ID（同上换算）
       const element = document.querySelector(target)
       if (element) {
-        const top = (element as HTMLElement).getBoundingClientRect().top - 80
+        const top = (element as HTMLElement).getBoundingClientRect().top + window.scrollY - 80
         window.scrollTo({ top, behavior: 'smooth' })
       }
     } else {
@@ -86,11 +87,7 @@ export const formatTimestamp = (timestamp: number): string => {
       let year = targetDate.getFullYear()
       let month = targetDate.getMonth() + 1
       let day = targetDate.getDate()
-      if (year === now.getFullYear()) {
-        return `${year}-${month}-${day}`
-      } else {
-        return `${year}-${month}-${day}`
-      }
+      return `${year}-${month}-${day}`
     }
   }
 }
@@ -120,6 +117,8 @@ let lastIndex = -1
  * @returns 随机文章路径
  */
 export const shufflePost = (postData: PostItem[]): string => {
+  // 空文章列表兜底：返回首页，避免读取 regularPath 时崩溃
+  if (!postData?.length) return '/'
   let randomIndex: number
   do {
     // 随机生成一个索引值
@@ -202,6 +201,7 @@ export const downloadImage = (imageUrl: string): void => {
     anchor.download = imageName
     anchor.href = imageUrl
     anchor.target = '_blank'
+    anchor.rel = 'noopener noreferrer'
     anchor.style.display = 'none'
     document.body.appendChild(anchor)
     anchor.click()
@@ -568,7 +568,9 @@ function replaceAll(string: string, search: string, replace: string): string {
 export const commentText = function (txt: string): void {
   const postCommentDom = document.getElementById('main-comment')
   if (!postCommentDom) return
-  const domTop = postCommentDom.offsetTop
+  // offsetTop 相对最近定位祖先（中间容器带 position 即算错）；
+  // 与 Toc/smoothScrolling 同款修正：getBoundingClientRect + scrollY 取文档绝对位置
+  const domTop = postCommentDom.getBoundingClientRect().top + window.scrollY
   window.scrollTo(0, domTop - 80)
   if (txt === 'undefined' || txt === 'null') txt = ' '
   function setText() {

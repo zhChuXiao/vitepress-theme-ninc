@@ -7,14 +7,22 @@ const initFancybox = (themeConfig: any): boolean | void => {
   try {
     const option = themeConfig.fancybox
     if (!option.enable) return false
-    // 引入css及js
-    loadCSS(option.css)
-    loadScript(option.js, {
+    // 引入css及js（CSS 加载失败同样产生 Promise reject，无 callback 可接，静默兜底）
+    const cssLoading = loadCSS(option.css)
+    if (cssLoading && typeof (cssLoading as Promise<HTMLLinkElement>).catch === 'function') {
+      ;(cssLoading as Promise<HTMLLinkElement>).catch(() => {})
+    }
+    // loadScript 加载失败时其返回的 Promise 会 reject——error 已由 callback 记录，
+    // 此处接住 Promise 仅防止 unhandledrejection 噪音（CDN 不可达场景）
+    const loading = loadScript(option.js, {
       callback: (error: any) => {
         if (error) {
           console.error('图片灯箱初始化失败', error)
           return false
         }
+        // 路由往返会重复触发本回调（loadScript 对已缓存脚本也每次执行 callback），
+        // 先 unbind 同选择器再 bind，保证全局只有一个委托绑定，避免一次点击弹出多层灯箱
+        Fancybox.unbind('[data-fancybox]')
         Fancybox.bind('[data-fancybox]', {
           hideScrollbar: true,
           Carousel: {
@@ -47,8 +55,8 @@ const initFancybox = (themeConfig: any): boolean | void => {
             RESET: '重置',
             TOGGLEFS: '切换全屏',
             CLOSE: '关闭',
-            NEXT: '上一个',
-            PREV: '下一个',
+            NEXT: '下一个',
+            PREV: '上一个',
             MODAL: '使用 ESC 键关闭',
             ERROR: '发生了错误，请稍后再试',
             IMAGE_ERROR: '找不到图像',
@@ -65,6 +73,10 @@ const initFancybox = (themeConfig: any): boolean | void => {
         })
       }
     })
+    // 接住 reject（错误已在 callback 中记录，此处仅防 unhandledrejection）
+    if (loading && typeof (loading as Promise<HTMLScriptElement>).catch === 'function') {
+      ;(loading as Promise<HTMLScriptElement>).catch(() => {})
+    }
   } catch (error) {
     console.error('图片灯箱初始化失败', error)
   }

@@ -23,16 +23,14 @@ import NProgress from 'nprogress'
 
 const store = mainStore()
 const { theme } = useData()
-const { loadingStatus,scrollDataProgress } = storeToRefs(store)
+const { loadingStatus, scrollDataProgress } = storeToRefs(store)
 
 // 显示提示
 const showTip = ref(false)
 const showTimeOut = ref(null)
 
 // 监听加载状态
-watch(
-  () => loadingStatus.value,
-  val => {
+watch(loadingStatus, (val) => {
     if (val) {
       scrollDataProgress.value = 0
       NProgress.start()
@@ -44,8 +42,7 @@ watch(
       clearTimeout(showTimeOut.value)
       NProgress.done()
     }
-  }
-)
+})
 
 onMounted(() => {
   NProgress.start()

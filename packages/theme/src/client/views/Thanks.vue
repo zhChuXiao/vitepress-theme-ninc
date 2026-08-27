@@ -89,7 +89,7 @@
     </MacCard>
 
     <!-- 底部打赏入口 -->
-    <RewardBtn v-if="rewardData.enable" :showJump="false" />
+    <RewardBtn v-if="rewardData?.enable" :showJump="false" />
   </div>
 </template>
 

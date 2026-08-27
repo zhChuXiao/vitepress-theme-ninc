@@ -116,6 +116,7 @@
               :href="`${isLink(clickedTypeData)}`"
               class="btn right-menu-link"
               target="_blank"
+              rel="noopener noreferrer"
             >
               <i class="iconfont icon-link"></i>
               <span class="name">在新标签页打开</span>
@@ -127,6 +128,7 @@
               )}`"
               class="btn right-menu-link"
               target="_blank"
+              rel="noopener noreferrer"
             >
               <i class="iconfont icon-baidu"></i>
               <span class="name">使用百度搜索</span>
@@ -138,6 +140,7 @@
               )}`"
               class="btn right-menu-link"
               target="_blank"
+              rel="noopener noreferrer"
             >
               <i class="iconfont icon-bing"></i>
               <span class="name">使用必应搜索</span>
@@ -180,16 +183,6 @@
             </div>
             <!-- 明暗模式 -->
             <div class="btn" @click.stop="store.changeThemeType($event)">
-              <!-- <i
-                :class="`iconfont icon-${
-                  themeType === 'auto' ? 'dark' : themeType === 'dark' ? 'light' : 'auto'
-                }`"
-              />
-              <span class="name">
-                {{
-                  themeType === 'auto' ? '深色模式' : themeType === 'dark' ? '浅色模式' : '跟随系统'
-                }}
-              </span> -->
               <i :class="`iconfont icon-${store.isDark ? 'light' : 'dark'}`" />
               <span class="name">{{
                 store.isDark ? "浅色模式" : "深色模式"
@@ -264,6 +257,7 @@
 
 <script setup>
 import { storeToRefs } from "pinia";
+import { onKeyStroke } from "@vueuse/core";
 import { mainStore } from '../store';
 import {
   smoothScrolling,
@@ -281,12 +275,16 @@ const store = mainStore();
 const { theme } = useData();
 const {
   useRightMenu,
-  themeType,
   playerShow,
   playerVolume,
   playState,
   playerData,
 } = storeToRefs(store);
+
+// Esc 键关闭右键菜单（对齐平台原生菜单惯例；onKeyStroke 随组件卸载自动清理）
+onKeyStroke('Escape', () => {
+  if (rightMenuShow.value) closeRightMenu();
+});
 
 // 右键菜单数据
 const rightMenuX = ref(0);
@@ -405,7 +403,7 @@ const rightMenuFunc = async (type) => {
         window.location.reload();
         break;
       case "open-link":
-        window.open(clickedTypeData.value?.href);
+        window.open(clickedTypeData.value?.href, '_blank', 'noopener');
         break;
       case "copy-link":
         const pageLink = theme.value.siteMeta.site + router.route.path;

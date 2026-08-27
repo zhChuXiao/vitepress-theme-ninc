@@ -14,8 +14,8 @@
 | 动态路由页面 | 路径含 `[参数]`，需 `paths.mjs` 配合 | 是，从 `vitepress-theme-ninc/views` 导入 | 分类详情、标签详情、分页 |
 | 纯文字页面 | 纯 Markdown 内容，无组件 | 否 | 版权协议、隐私政策、Cookies |
 
-::: warning 组件必须显式导入
-主题内置组件**不会自动注册到 md 文件中**，所有组件页面都必须在 `<script setup>` 中显式导入：
+::: warning 统一约定：显式导入组件
+虽然主题的 unplugin-vue-components 会自动注册组件目录（含主题内置 views），但所有组件页面**统一约定**在 `<script setup>` 中显式导入：
 
 ```md
 <script setup>
@@ -25,7 +25,7 @@ import { About } from 'vitepress-theme-ninc/views'
 <About />
 ```
 
-这是为了保证博客与主题包解耦，避免使用 `@/views/xxx.vue` 这种暴露主题内部路径的写法。
+显式导入能保证博客与主题包解耦（避免 `@/views/xxx.vue` 这类暴露主题内部路径的写法）、获得完整的 IDE 类型提示，且不受组件自动注册规则调整的影响。
 :::
 
 ---
@@ -122,7 +122,7 @@ import { CommentsView } from 'vitepress-theme-ninc/views'
 ```
 ![留言板渲染效果](/images/scrollShowcase/comments-dark.png)
 
-留言板页面的评论功能依赖 [评论系统配置](./theme-config.md#评论系统)。`comment: true` 确保评论组件在此页面渲染。
+留言板页面的评论功能依赖 [评论系统配置](../config/comment.md)。`comment: true` 确保评论组件在此页面渲染。
 
 ### 赞赏名单（Thanks）
 
@@ -180,7 +180,7 @@ onMounted(() => router.go("/"));
 ```
 
 ::: tip 首页位置
-通常首页就是根目录的 `index.md`，通过 `layout: home` 标识。首页顶部的标题、副标题、横幅等通过 [themeConfig.homeTop](./theme-config.md#首页配置) 配置。
+通常首页就是根目录的 `index.md`，通过 `layout: home` 标识。首页顶部的标题、副标题、横幅等通过 [themeConfig.homeTop](../config/home-top.md) 配置。
 :::
 
 ---
@@ -341,10 +341,10 @@ export default {
 | 函数 | 作用 |
 | --- | --- |
 | `getAllPosts()` | 读取 `posts/` 下所有文章，返回 PostData 数组 |
-| `getAllType(posts)` | 从文章中提取所有标签，返回 `{ 标签名: 文章列表 }` |
-| `getAllCategories(posts)` | 从文章中提取所有分类，返回 `{ 分类名: 文章列表 }` |
-| `getAllArchives(posts)` | 按年月归档文章 |
-| `getUnencryptedPosts()` | 返回未加密的文章列表 |
+| `getAllType(posts)` | 从文章中提取所有标签，返回 `{ 标签名: { count, articles } }` |
+| `getAllCategories(posts)` | 从文章中提取所有分类，返回 `{ 分类名: { count, articles } }` |
+| `getAllArchives(posts)` | 按**年份**归档文章，返回 `{ data: { 年份: { count, articles } }, year: 降序年份数组 }` |
+| `getUnencryptedPosts(posts)` | 从文章数组中筛出未加密的文章（需传入 `getAllPosts()` 的结果） |
 
 ---
 
@@ -478,6 +478,7 @@ import { About, Home } from 'vitepress-theme-ninc/views'
 | `CommentsView` | 留言板 | — |
 | `Equipment` | 装备展示 | — |
 | `Home` | 首页/文章列表 | `:showCategories`、`:showTags`、`:page`、`:showHeader` |
+| `NesGame` | NES 模拟器页 | —（建议搭配 `fullWidth: true` 与 `<ClientOnly>`） |
 | `Post` | 文章详情页 | — |
 | `Page` | 普通页面布局 | — |
 | `Project` | 项目展示页 | — |
@@ -486,8 +487,10 @@ import { About, Home } from 'vitepress-theme-ninc/views'
 | `BackgroundCanvas` | 3D 粒子背景（依赖 three.js） | — |
 | `BackgroundCanvas2d` | 2D 星空背景（默认启用） | — |
 
-::: warning 不要使用 @ 别名导入
-请始终通过 `vitepress-theme-ninc/views` 导入组件，**不要**使用 `@/views/About.vue` 这类直接引用主题内部路径的写法。`@` 别名指向主题包内部目录，可能在未来版本调整，使用导出入口可保证兼容性。
+::: warning 页面组件不要用 @ 别名导入
+导入上表中的页面组件时，请始终通过 `vitepress-theme-ninc/views` 导入，**不要**使用 `@/views/About.vue` 这类直接引用主题内部路径的写法。`@` 别名指向主题包内部目录，可能在未来版本调整，使用导出入口可保证兼容性。
+
+**例外**：`Nav`、`Footer`、`Background`、`ScrollProgress` 等**未从 views 导出**的内部组件没有导出入口——装配自定义 Layout 引用它们时只能使用 `@/` 别名，详见 [覆盖组件 - `@/` 别名](./override-components.md#别名)。
 :::
 
 ---
@@ -498,9 +501,9 @@ import { About, Home } from 'vitepress-theme-ninc/views'
 
 | 字段 | 作用 | 适用场景 |
 | --- | --- | --- |
-| `aside` | `false` 隐藏侧边栏 | 工具页、分类页、标签页 |
+| `aside` | `true` 显示侧边栏（pages/ 页面默认不显示）；文章页（posts/）相反——默认显示，`false` 隐藏 | 留言板、归档页显示欢迎卡片 |
 | `fullWidth` | `true` 启用全宽布局 | 速查表、表格密集型页面 |
-| `padding` | `false` 去除内容区内边距 | 全屏组件式页面 |
+| `padding` | `false` 去除内容区内边距（⚠️ **预留字段，当前版本未实现**——CLI 模板会写入但组件暂不消费，设置与否无差异） | 全屏组件式页面 |
 | `card` | `true` 启用卡片背景 | 版权协议、隐私政策等文字页面 |
 | `comment` | `true` 启用评论 | 留言板 |
 | `layout` | `home` / `doc` 等 | 首页用 `home` |
@@ -515,20 +518,20 @@ import { About, Home } from 'vitepress-theme-ninc/views'
 
 | 页面 | 文件路径 | 核心内容 | 依赖配置 |
 | --- | --- | --- | --- |
-| 首页 | `index.md` | `layout: home` | [homeTop](./theme-config.md#首页配置) |
+| 首页 | `index.md` | `layout: home` | [homeTop](../config/home-top.md) |
 | 关于 | `pages/about.md` | `<About />` | 站点信息 + 侧边栏欢迎信息 |
 | 归档 | `pages/archives.md` | `<Archives />` | 自动读取 posts |
 | 分类 | `pages/categories.md` | `<CatOrTag />` | 自动读取 posts |
 | 标签 | `pages/tags.md` | `<CatOrTag type="tags" />` | 自动读取 posts |
 | 分类详情 | `pages/categories/[name].md` + `.paths.mjs` | `<Home :showCategories="params.name" />` | paths.mjs 调用 `getAllCategories` |
 | 标签详情 | `pages/tags/[name].md` + `.paths.mjs` | `<Home :showTags="params.name" />` | paths.mjs 调用 `getAllType` |
-| 留言板 | `pages/comments.md` | `<CommentsView />` | [评论系统](./theme-config.md#评论系统) + [friends.comments](./theme-config.md#友情链接) |
+| 留言板 | `pages/comments.md` | `<CommentsView />` | [评论系统](../config/comment.md) + [friends.comments](../config/friends.md) |
 | 赞赏名单 | `pages/thanks.md` | `<Thanks />` | [rewardData.list](../config/reward.md) |
 | 装备 | `pages/equipment.md` | `<Equipment />` | equipment 配置 |
 | 版权协议 | `pages/cc.md` | 纯 Markdown | 无 |
 | 隐私政策 | `pages/privacy.md` | 纯 Markdown | 无 |
 | Cookies | `pages/cookies.md` | 纯 Markdown | 无 |
-| 分页 | `page/[num].md` + `.paths.mjs` | `<Home :page="Number(params.num)" />` | [postSize](./theme-config.md#基础配置) |
+| 分页 | `page/[num].md` + `.paths.mjs` | `<Home :page="Number(params.num)" />` | [postSize](./theme-config.md#postsize) |
 
 ::: tip 统一约定
 所有使用主题组件的页面（组件页面 + 动态路由页面）都需要在 `<script setup>` 中从 `vitepress-theme-ninc/views` 显式导入对应组件。纯文字页面无需导入任何组件。

@@ -40,7 +40,7 @@ articleGPT: 本文转载介绍 oh-my-zsh 安装与命令行高亮配置方法。
 | `url` | 原文链接 | `https://example.com/original-article` |
 | `icon` | 来源图标路径（可选） | `/svg/csdn.svg` |
 
-`icon` 为可选字段，不设置时来源卡片仅显示文字。图标文件放在 `public/svg/` 下，路径以 `/svg/` 开头。
+`icon` 为可选字段。不设置时，主题会尝试自动抓取目标站点的 favicon 作为图标；抓取失败时回退显示默认的链接图标（iconfont）。图标文件放在 `public/svg/` 下，路径以 `/svg/` 开头。
 
 转载文章的正文仍按普通文章渲染，`reprint` 只在文章页顶部追加来源卡片，不影响列表、归档、分类与标签的展示。
 

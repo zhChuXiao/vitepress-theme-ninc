@@ -60,16 +60,16 @@ resolveIcon(null)                                // null
 | [`navButtons`](./nav-buttons.md) | `navButtons[].icon` | `NavButtonConfig.icon` | 导航栏右侧自定义按钮图标（`iconType='img'` 时走图片 URL） |
 | [`footer`](./footer.md) | `footer.social[].icon` | `FooterSocial.icon` | 页脚社交链接图标 |
 
-## 仍使用图片路径的字段
+## 仍使用图片路径或类名语义的字段
 
-下列字段历史上是「图片路径」语义，不属于 `IconField` 体系，仍只接受字符串图片 URL：
+下列字段历史上是「图片路径」或「iconfont 类名」语义，不属于 `IconField` 体系：
 
 | 配置项 | 字段路径 | 类型 | 说明 |
 | --- | --- | --- | --- |
-| [`homeTop`](./home-top.md) | `homeTop.category[].icon` | `string` | 首页顶部快捷分类的图片路径 |
+| [`homeTop`](./home-top.md) | `homeTop.category[].icon` | `string` | **iconfont 类名**（需含 `icon-` 前缀，如 `'icon-article'`），渲染为 `<i class="iconfont icon-xxx">` 装饰性大图标 |
 | [`homeTop`](./home-top.md) | `homeTop.creativity[].creativity_list[].icon` | `string` | 技能图标图片路径，放在 `public/images/icon/` 下 |
 
-这两个字段的注释明确标注是「图片路径」，图片缺失时显示名称首字母。后续可能扩展支持 `IconField`，目前保持向后兼容。
+`creativity` 的图标缺失时组件隐藏破碎 img、保留 color 底色块。后续可能统一扩展到 `IconField`，目前保持向后兼容。
 
 ## 与 iconType 字段的关系
 
@@ -109,7 +109,7 @@ SVG 图标的扫描目录由 `defineConfig` 的第三参数 `svgIconDirs` 控制
 ```ts
 // .vitepress/config.mts
 import { defineConfig } from 'vitepress-theme-ninc/defineConfig'
-import { themeConfig } from '../themeConfig'
+import { themeConfig } from './themeConfig'
 
 export default defineConfig(
   {},
@@ -128,8 +128,8 @@ export default defineConfig(
 主题内置的 iconfont 图标来源是固定的字体文件，主要覆盖：
 
 - 导航栏常用图标：`menu` `close` `search` `light` `dark` `up` `toc` `dashboard` `shuffle` `subway`
-- 社交平台：`github` `mail` `qq` `weixin` `weibo` `zhihu` `bilibili`（部分可能未内置）
-- 通用图标：`list` `link` `image` `music` `message` `tag` `category` `archive` `time` `edit` `delete` `home` `user`
+- 社交平台：`github` `email` `qq` `bilibili` `twitter-x` `telegram` `csdn` `wechat-pay`（微信/微博/知乎社交图标未内置）
+- 通用图标：`list` `link` `img` `music` `chat` `hashtag` `folder` `article` `time` `home` `account` `people`
 
 完整列表可查看主题包内 `packages/theme/src/client/styles/iconfont.scss` 中的 `.icon-{name}:before` 规则。
 

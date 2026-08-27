@@ -72,6 +72,7 @@
             title="开往-友链接力"
             :href="theme.travellings?.url || 'https://www.travellings.cn/go.html'"
             target="_blank"
+            rel="noopener noreferrer"
             @mouseenter="menuBtnEnter('travellings')"
             @mouseleave="menuBtnLeave('travellings')"
           >
@@ -118,7 +119,7 @@
           </div>
           <!-- 中控台 -->
           <div
-            id="open-control"
+            ref="controlTriggerRef"
             class="menu-btn nav-btn pc"
             title="打开中控台"
             @click="store.changeShowStatus('controlShow')"
@@ -182,7 +183,8 @@ const props = defineProps({
     default: false
   }
 })
-let direction
+// 记录进入菜单按钮前的滚动方向（leave 先于 enter 触发时保持默认值，避免写入 undefined）
+let direction = 'up'
 
 // 导航栏右侧自定义按钮
 const navButtons = theme.value.navButtons || []
@@ -202,10 +204,16 @@ const prefetchSearch = () => {
   import('./Search.vue').catch(() => {})
 }
 
+// 「打开中控台」按钮引用：挂载时注册到 store，供 Control.vue 定位关闭按钮
+// （替代原 #open-control 跨组件 id 查询，解除 Banner/Nav 与 Control 的 DOM id 耦合）
+const controlTriggerRef = ref(null)
+
 // 组件挂载时初始化
 onMounted(() => {
   checkIsMobile()
   window.addEventListener('resize', checkIsMobile)
+  // 注册中控台触发按钮引用
+  store.controlTriggerEl = controlTriggerRef.value
   // 首屏渲染完成后，在浏览器空闲时预加载搜索组件
   if ('requestIdleCallback' in window) {
     requestIdleCallback(prefetchSearch, { timeout: 4000 })
@@ -217,6 +225,10 @@ onMounted(() => {
 // 组件卸载时清理
 onUnmounted(() => {
   window.removeEventListener('resize', checkIsMobile)
+  // 注销引用，避免悬挂到已卸载的 DOM
+  if (store.controlTriggerEl === controlTriggerRef.value) {
+    store.controlTriggerEl = null
+  }
 })
 
 const toggleTheme = event => {
@@ -226,7 +238,7 @@ const toggleTheme = event => {
 const handleClick = ($event, link) => {
   if (link.target === '_blank') {
     $event.preventDefault()
-    window.open(link.url, '_blank')
+    window.open(link.url, '_blank', 'noopener')
   } else {
     router.go(link.url)
   }
@@ -236,7 +248,7 @@ const handleClick = ($event, link) => {
 const handleNavButtonClick = (btn) => {
   const target = btn.target || '_blank'
   if (target === '_blank') {
-    window.open(btn.url, '_blank')
+    window.open(btn.url, '_blank', 'noopener')
   } else {
     router.go(btn.url)
   }

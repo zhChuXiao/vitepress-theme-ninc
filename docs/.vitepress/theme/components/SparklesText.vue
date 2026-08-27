@@ -61,6 +61,8 @@ function updateStars() {
 let interval: number
 
 onMounted(() => {
+  // 尊重系统减少动效偏好：不生成星星、不开定时器，仅渲染静态文字
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
   initializeStars()
   interval = window.setInterval(updateStars, 100)
 })

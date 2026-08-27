@@ -3,12 +3,13 @@
   <div class="count-down s-card">
     <div class="count-left">
       <span class="text"> 距离 </span>
-      <span class="name">{{ theme.aside.countDown.data.name }}</span>
-      <span class="time"> {{ getDaysUntil(theme.aside.countDown.data.date) }} </span>
-      <span class="date">{{ theme.aside.countDown.data.date }}</span>
+      <!-- 可选链：countDown.enable 开启但 data 字段缺失时降级为空白而非渲染期抛错 -->
+      <span class="name">{{ theme.aside.countDown.data?.name }}</span>
+      <span class="time"> {{ getDaysUntil(theme.aside.countDown.data?.date) }} </span>
+      <span class="date">{{ theme.aside.countDown.data?.date }}</span>
     </div>
     <div v-if="remainData" class="count-right">
-      <div v-for="(item, tag, index) in remainData" :key="index" class="count-item">
+      <div v-for="(item, tag) in remainData" :key="tag" class="count-item">
         <div class="item-name">{{ item.name }}</div>
         <div class="item-progress">
           <div

@@ -48,19 +48,22 @@
         <span class="title2">{{ aboutConfig.skills?.title }}</span>
         <TagsGroupAll class="skills-swiper" :creativity-data="creativityData" />
         <div class="skills-list">
-          <a
-            v-for="(item, index) in creativityData[0].creativity_list"
+          <!-- 无 link 的技能项降级为 span，避免空 href 锚点点击刷新当前页 -->
+          <component
+            :is="item.link ? 'a' : 'span'"
+            v-for="(item, index) in creativityData[0]?.creativity_list"
             :key="index"
             :style="{ '--color': item.color }"
-            :href="item.link"
+            :href="item.link || undefined"
             class="skills-item"
-            target="_blank"
+            :target="item.link ? '_blank' : undefined"
+            :rel="item.link ? 'noopener noreferrer' : undefined"
           >
             <div class="skills-logo">
-              <img :src="item.icon" :alt="item.name" />
+              <img :src="item.icon" :alt="item.name" @error="$event.target.style.display = 'none'" />
             </div>
             <span class="skills-name">{{ item.name }}</span>
-          </a>
+          </component>
         </div>
       </div>
 
@@ -88,7 +91,7 @@
         <span class="title2" style="color: var(--color)">{{ aboutConfig.character?.mbti }}</span>
         <span class="more">
           {{ aboutConfig.character?.desc }}
-          <a :href="aboutConfig.character?.link" target="_blank">{{ aboutConfig.character?.linkText }}</a>
+          <a :href="aboutConfig.character?.link" target="_blank" rel="noopener noreferrer">{{ aboutConfig.character?.linkText }}</a>
         </span>
         <img v-if="!mbtiIconError && mbtiIconSrc" :src="mbtiIconSrc" alt="male" class="male" @error="mbtiIconError = true" />
       </div>
@@ -138,7 +141,7 @@
             </div>
           </div>
           <div class="image-desc opacity">
-            <span class="left"> {{ aboutConfig.statistics?.desc }} <a :href="aboutConfig.statistics?.sourceLink" target="_blank">{{ aboutConfig.statistics?.source }}</a> </span>
+            <span class="left"> {{ aboutConfig.statistics?.desc }} <a :href="aboutConfig.statistics?.sourceLink" target="_blank" rel="noopener noreferrer">{{ aboutConfig.statistics?.source }}</a> </span>
           </div>
         </div>
       </div>
@@ -203,7 +206,10 @@ let pursuitInterval = ref(null)
 const initPursuit = () => {
   pursuitInterval.value = setInterval(function () {
     const show = document.querySelector('span[data-show]')
+    // pursuit 未配置或元素尚未渲染时静默跳过，避免空指针
+    if (!show) return
     const next = show.nextElementSibling || document.querySelector('.first-tips')
+    if (!next) return
     const up = document.querySelector('span[data-up]')
 
     if (up) {
@@ -222,8 +228,14 @@ const statisticsData = ref(null)
 
 // 获取站点统计数据
 const getStatisticsData = async () => {
-  const result = await getStatistics(theme.value.tongji['51la'])
-  statisticsData.value = result
+  const key = theme.value.tongji?.['51la']
+  if (!key) return
+  try {
+    const result = await getStatistics(key)
+    statisticsData.value = result
+  } catch {
+    // 统计接口失败不影响页面其他区域
+  }
 }
 
 // 将Geolocation API封装为Promise
@@ -273,19 +285,26 @@ function getUserLocationPromise() {
 const toMap = () => {
   let title = theme.value.siteMeta.title
   let themeAddress = theme.value?.aside?.welcome?.address
+  // 未配置博主坐标时不构造地图链接，避免索引 undefined
+  if (!themeAddress) return
   let address = aboutConfig.value.info?.address || ''
   let origin_region = userLocation.value?.city || '中国'
   let url =
     userLocation.value?.country === '中国'
-      ? `http://api.map.baidu.com/direction?origin=latlng:${userLocation.value.lat},${userLocation.value.lng}|name:我家&destination=latlng:${themeAddress[1]},${themeAddress[0]}|name:${address}&origin_region=${origin_region}&destination_region=${address}&mode=driving&output=html&src=webapp.companyName.appName&coord_type=bd09ll`
-      : `http://api.map.baidu.com/marker?location=${themeAddress.join(',')}&title=${title}&content=${title}&output=html&src=webapp.baidu.openAPIdemo&coord_type=bd09ll`
+      ? `https://api.map.baidu.com/direction?origin=latlng:${userLocation.value.lat},${userLocation.value.lng}|name:我家&destination=latlng:${themeAddress[1]},${themeAddress[0]}|name:${address}&origin_region=${origin_region}&destination_region=${address}&mode=driving&output=html&src=webapp.companyName.appName&coord_type=bd09ll`
+      : `https://api.map.baidu.com/marker?location=${themeAddress.join(',')}&title=${title}&content=${title}&output=html&src=webapp.baidu.openAPIdemo&coord_type=bd09ll`
   getUserLocationPromise()
     .then(res => {
-      userLocation.value.lat = res.lat
-      userLocation.value.lng = res.lng
+      if (userLocation.value) {
+        userLocation.value.lat = res.lat
+        userLocation.value.lng = res.lng
+      }
+    })
+    .catch(() => {
+      // 定位被拒绝/超时属正常降级路径：静默处理，.finally 仍会打开地图
     })
     .finally(() => {
-      window.open(url)
+      window.open(url, '_blank', 'noopener')
     })
 }
 
@@ -598,7 +617,6 @@ onBeforeUnmount(() => {
             border: 1px solid var(--main-card-border);
             box-shadow: 0 8px 12px -4px var(--main-border-shadow);
             transition: background-color 0.3s;
-            cursor: var(--main-pointer-cursor);
             .skills-logo {
               position: relative;
               display: flex;
@@ -626,6 +644,10 @@ onBeforeUnmount(() => {
             &:hover {
               background-color: var(--main-card-background);
             }
+          }
+          // 仅可跳转的技能项（渲染为 a 标签）显示手型光标
+          a.skills-item {
+            cursor: var(--main-pointer-cursor);
           }
         }
         &:hover {

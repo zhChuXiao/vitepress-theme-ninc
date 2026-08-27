@@ -34,8 +34,8 @@
               <span class="link-title"> 标签</span>
               <div class="link-child">
                 <div
-                  v-for="(item, tag, index) in tagsData"
-                  :key="index"
+                  v-for="(item, tag) in tagsData"
+                  :key="tag"
                   class="link-child-btn"
                   @click="pageJump(`/pages/tags/${tag}`)"
                 >
@@ -53,11 +53,17 @@
 
 <script setup>
 import { mainStore } from '../store';
+import { onKeyStroke } from '@vueuse/core';
 import ThemeIcon from './ThemeIcon.vue';
 
 const store = mainStore();
 const router = useRouter();
 const { theme } = useData();
+
+// Esc 键关闭移动端菜单（仅开启时响应）
+onKeyStroke('Escape', () => {
+  if (store.mobileMenuShow) store.changeShowStatus('mobileMenuShow');
+});
 
 // 菜单数据
 const { nav, tagsData } = theme.value;

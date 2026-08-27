@@ -29,8 +29,8 @@ const getRelatedData = () => {
   const catName = frontmatter.value.categories?.[0];
   // 指定分类数据
   const postData = theme.value.categoriesData?.[catName]?.articles;
-  // 本篇索引
-  const postId = generateId(page.value?.filePath);
+  // 本篇索引（filePath 缺失时传空串，避免 generateId 读取 .length 崩溃）
+  const postId = generateId(page.value?.filePath || '');
   // 过滤掉当前文章
   const filteredPosts = postData?.filter((post) => post.id !== postId);
   // 取出两篇文章

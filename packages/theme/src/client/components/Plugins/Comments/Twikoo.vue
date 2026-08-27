@@ -5,8 +5,6 @@
 <script setup>
 import { jumpRedirect } from '../../../utils/commonTools'
 import { twikooClick, cancelTwikooClick } from '../../../utils/useTwikooClick'
-// import initComments from '../../../utils/initComments'
-// 使用异步导入方式
 
 import { mainStore } from '../../../store'
 const props = defineProps({
@@ -21,7 +19,6 @@ const { theme } = useData()
 const { comment } = theme.value
 
 // 评论数据
-const twikoo = ref(null)
 const commentRef = ref(null)
 const route = useRoute()
 const store = mainStore()
@@ -34,12 +31,11 @@ const initTwikoo = async () => {
   const { init: TwikooInit, getCommentsCount } = await import('twikoo/dist/twikoo.nocss.js')
   try {
     await nextTick()
-    // const Twikoo = await import('twikoo')
-    twikoo.value = TwikooInit({
+    // init 返回值不存 ref：Promise 无消费方，且第三方实例入 ref 会引入响应式代理负担
+    TwikooInit({
       el: commentRef.value || '#comment-dom',
       envId: comment.twikoo.envId,
       onCommentLoaded: async () => {
-        // console.log('评论已加载完毕')
         // 装备页面点击评论跳转
         if (route.path === "/pages/equipment") {
           twikooClick()
@@ -58,10 +54,12 @@ const initTwikoo = async () => {
             url: route.path,
             count: res[0].count
           })
+        }).catch(err => {
+          // 计数失败不影响评论区主体功能，静默降级（保持默认 0）
+          console.warn('获取评论数量失败：', err)
         })
       }
     })
-    return twikoo.value
   } catch (error) {
     console.error('初始化评论出错：', error)
   }
@@ -69,18 +67,18 @@ const initTwikoo = async () => {
 
 // 填充评论区
 const fillComments = data => {
-  // console.log('填充评论：', data)
   // 获取评论元素
   const commentDom = document.querySelector('.tk-input.el-textarea')
   if (!commentDom) return false
-  // 获取输入框
+  // 获取输入框（Twikoo DOM 结构异常时静默退出，避免 TypeError 中断 onCommentLoaded 后续逻辑）
   const commentInput = commentDom.querySelector('textarea')
+  if (!commentInput) return false
   // 写入内容
   commentInput.value = data + '\n\n'
   commentInput.focus()
 }
 
-onMounted(async () => {
+onMounted(() => {
   initTwikoo()
 })
 

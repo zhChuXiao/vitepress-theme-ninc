@@ -1,6 +1,6 @@
 # 代码组图标
 
-本主题集成了 [vitepress-plugin-group-icons](https://github.com/sapphi-red/vitepress-plugin-group-icons)，可在 VitePress 的代码组（code group）标签上自动显示对应的语言 / 文件类型图标，**开箱即用，无需任何配置**。
+本主题集成了 [vitepress-plugin-group-icons](https://github.com/yuyinws/vitepress-plugin-group-icons)，可在 VitePress 的代码组（code group）标签上自动显示对应的语言 / 文件类型图标，**开箱即用，无需任何配置**。
 
 ## 效果预览
 
@@ -68,14 +68,15 @@ yarn install
 
 ## 工作原理
 
-主题包内置了 58 条 **语言 / 文件类型 → iconify 图标** 的默认映射（见 [defaultGroupIconConfig.ts](https://github.com/zhChuXiao/vitepress-theme-ninc/blob/main/packages/theme/src/node/defaultGroupIconConfig.ts)）。插件会根据代码组中每个代码块的 **标签文本** 或 **语言标识符** 匹配映射表，匹配成功后在标签前渲染对应的 iconify 图标。
+主题包内置了 48 条 **语言 / 文件类型 → iconify 图标** 的默认映射（见 [defaultGroupIconConfig.ts](https://github.com/zhChuXiao/vitepress-theme-ninc/blob/main/packages/theme/src/node/defaultGroupIconConfig.ts)）。插件会根据代码组中每个代码块的 **标签文本** 或 **语言标识符** 匹配映射表，匹配成功后在标签前渲染对应的 iconify 图标。
 
 ### 匹配规则
 
-插件按以下优先级匹配：
+插件收集每个标签页的文本（` ```sh [pnpm] ` 中的 `pnpm`；不写标题时 VitePress 会把语言标识符作为标签文本，如 ` ```ts ` 显示为 `ts`），然后按以下优先级与映射表匹配：
 
-1. **标签文本完全匹配**：` ```sh [pnpm] ` 中的 `pnpm`
-2. **语言标识符匹配**：` ```ts ` 中的 `ts`、` ```js ` 中的 `js`
+1. **命名图标**：标签文本中含 `~图标名~` 时直接使用该图标（见插件文档的 Named icons 语法）
+2. **关键词匹配**：映射 key 不含 `.` 时（如 `ts`、`pnpm`、`component`），标签文本**包含**该 key（不区分大小写）即命中；多个 key 同时包含时，**较长的 key 优先**（如 `app.component.ts` 命中 `component` 而非 `ts`）
+3. **扩展名匹配**：映射 key 含 `.` 时（如 `.c`、`.tsx`、`robots.txt`），标签文本**以该 key 结尾**即命中
 
 例如，以下代码组中 `ts` 标签会匹配到 `logos:typescript-icon` 图标：
 
@@ -557,7 +558,7 @@ export default defineConfig(
 
 | 字段 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
-| `groupIconConfig` | `Record<string, string>` | 内置 58 条映射 | 自定义图标映射，与默认配置合并 |
+| `groupIconConfig` | `Record<string, string>` | 内置 48 条映射 | 自定义图标映射，与默认配置合并 |
 | `plugins.groupIcons` | `false` | — | 设为 `false` 关闭代码组图标插件 |
 
 ## 常见问题

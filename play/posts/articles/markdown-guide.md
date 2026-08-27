@@ -480,7 +480,7 @@ console.log('tab B')
 
 [带类名的链接](https://vitepress.dev){.custom-link target=_blank}
 
-![带类名的图片](/images/cover.svg){.rounded}
+![设置宽度的图片](/images/cover.svg){width=300}
 
 带多个属性 {class="highlight" id="sec1" data-value="42"}
 
@@ -528,9 +528,9 @@ const doubled = computed(() => count.value * 2)
 
 ```vue
 <script setup>
-import { Badge } from 'vitepress'
-// 或使用主题导出的组件
-// import { ComponentName } from 'vitepress-theme-ninc/components'
+// Badge 等主题组件已由 unplugin-vue-components 全局注册，无需 import
+// 如需显式导入（如主题页面视图），可用：
+// import { MacCard } from 'vitepress-theme-ninc/components'
 </script>
 
 <Badge type="tip" text="在 Markdown 中使用" />

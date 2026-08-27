@@ -30,7 +30,7 @@ export const themeConfig = defineThemeConfig({
   footer: {
     social: [
       { icon: 'github', link: 'https://github.com/zhChuXiao/vitepress-theme-ninc' },
-      { icon: 'mail', link: 'mailto:blog@example.com' }
+      { icon: 'email', link: 'mailto:blog@example.com' }
     ]
   }
 })
@@ -99,7 +99,7 @@ export const themeConfig = defineThemeConfig({
 
 ::: tip 文件名规则
 - 只能用半角字母、数字、`-`、`_`，**避免中文与空格**
-- 文件名在扫描目录内需唯一，同名文件后扫描的会覆盖前者
+- 多目录扫描时同名文件的 symbolId 会冲突，实际生效的是**先扫描到**的那份（浏览器对重复 id 的 `<symbol>` 取第一个），请保持文件名全局唯一
 - 不需要子目录，扁平结构最清晰
 :::
 
@@ -131,11 +131,17 @@ export const themeConfig = defineThemeConfig({
 
 ### 第三步：验证
 
-启动 `pnpm dev`，对应位置的图标就会渲染为 SVG。SVG 图标会自动适配主题色（通过 `fill: currentColor`），无需为深浅色模式准备两份图标。
+启动 `pnpm dev`，对应位置的图标就会渲染为 SVG。
 
-::: tip SVG 文件要求
-- 建议使用单色 SVG（黑色或 `currentColor`），主题会通过 `fill` 控制颜色
-- 主题构建时会自动移除 `fill` 与 `stroke` 属性（通过 `vite-plugin-svg-icons` 的 `removeAttrs` 插件），让图标完全继承父元素颜色
+::: tip SVG 文件要求与颜色说明
+- 主题构建时会自动移除 SVG 自带的 `fill` 与 `stroke` 属性（通过 `vite-plugin-svg-icons` 的 `removeAttrs` 插件，**包括手写的 `fill="currentColor"` 也会一并移除**）
+- 移除后图标颜色由 CSS 控制：当前版本 `<SvgIcon>` 未内置 `fill` 样式，图标呈现为浏览器默认黑色，**不会自动跟随明暗主题切换**
+- 需要图标跟随文字颜色时，在自定义样式中加一行即可（见 [自定义样式](./custom-styles.md)）：
+
+```scss
+.svg-icon { fill: currentColor; }
+```
+
 - 保留 `viewBox` 属性以便自适应缩放
 - 多色 SVG 也能用，但颜色无法跟随主题切换
 :::

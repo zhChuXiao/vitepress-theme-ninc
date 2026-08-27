@@ -15,7 +15,7 @@
 博客的「身份证」：标题、描述、头像、logo、作者信息。这些信息出现在浏览器标签页、导航栏、页脚、RSS 订阅和搜索引擎结果中。
 
 - `avatar` 显示在侧边栏和关于页，`logo` 显示在导航栏站点名左侧
-- `site` 是完整域名，用于 RSS、SEO 和外链中转
+- `site` 是完整域名，用于 RSS、sitemap 与文章版权/分享链接的拼接
 - 图片放在 `public/images/` 下，路径以 `/` 开头
 
 完整字段说明见 [siteMeta 配置](/config/site-meta)。
@@ -27,7 +27,7 @@
 
 - `banner` 是首页的推荐横幅卡片，点击跳转指定链接
 - `category` 是快捷分类入口，点击直达对应页面
-- `creativity` 是技能图标数据，首页顶部和关于页面共用。图片缺失时自动显示名称首字母
+- `creativity` 是技能图标数据，首页顶部和关于页面共用。图片缺失时会隐藏该图标、仅保留 `color` 底色块（不会出现破碎图标志）
 
 详见 [homeTop 配置参考](/config/home-top)。
 
@@ -89,7 +89,7 @@
 | `toc` | 文章目录 |
 | `tags` | 标签云 |
 | `countDown` | 倒计时 |
-| `siteData` | 站点统计（文章数、标签数、建站天数） |
+| `siteData` | 站点统计（文章数、建站天数、访问量/访客数） |
 
 详见 [aside 配置参考](/config/aside)。
 
@@ -123,7 +123,7 @@
 
 ### search — 全站搜索
 
-基于 Algolia DocSearch 的全站搜索。
+基于 Algolia InstantSearch（`vue-instantsearch`）的全站搜索。
 
 需要在 [Algolia](https://www.algolia.com/) 申请账号并配置爬虫。详见 [search 配置参考](/config/search)。
 
@@ -200,11 +200,11 @@
 将站内外链转为中转跳转，避免直接暴露目标 URL。启用后主题会自动注入中转页（dev 拦截 `/redirect`、build 输出 `redirect.html`），无需手动创建任何路由文件。中转页内置域名白/黑名单：白名单站点显示「已信任」并自动跳转，黑名单站点显示危险警告。
 
 ::: tip 开发环境也可访问中转页
-中转页本身在 dev 与 build 均可直接访问 `/redirect?url=<base64>`。但链接的**自动改写**（把外链 href 替换为中转地址）仅在生产环境生效，开发环境保持原链接以便调试。
+中转页本身在 dev 与 build 均可直接访问 `/redirect?url=<base64>`。链接的**自动改写**分两层：构建期 `transformHtml` 静态改写（仅 build 生效）；Twikoo 评论加载完成后的客户端运行时改写（dev 与生产均生效，需 `comment.enable: true`）。详见 [jumpRedirect 配置参考](/config/jump-redirect)。
 :::
 
-::: warning exclude / whitelist / blacklist 会整体替换默认值
-由于 `defu` 对数组合并的策略，传入这三个数组时都会**整体替换**默认数组而非追加。新增项时务必把默认项一并写入，完整默认值见 [jumpRedirect 配置参考](/config/jump-redirect)。
+::: warning exclude / whitelist / blacklist 会与默认值 concat
+由于 `defu` 对数组的合并策略是**追加 concat**，传入这三个数组时会在默认值后面追加你提供的项，而不是整体替换。如果你只想保留自己定义的项，需要把默认项也一并写入并排除不想要的，完整默认值见 [jumpRedirect 配置参考](/config/jump-redirect)。
 :::
 
 详见 [jumpRedirect 配置参考](/config/jump-redirect)。

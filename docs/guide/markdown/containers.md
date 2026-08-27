@@ -253,7 +253,7 @@
 | `date` | `string` | 是 | — | 发布日期 |
 | `tags` | `string[]` | 否 | `[]` | 标签列表 |
 | `categories` | `string[]` | 否 | `[]` | 分类列表 |
-| `description` | `string` | 否 | 正文摘要 | 文章描述 |
+| `description` | `string` | 否 | 无 | 文章描述 |
 ````
 
 

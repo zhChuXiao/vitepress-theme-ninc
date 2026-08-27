@@ -112,7 +112,7 @@ const d = 4
 
 ## Emoji
 
-VitePress 内置 emoji 语法，用冒号包裹 emoji 名称即可渲染为对应字符。完整列表参考 [markdown-it-emoji 数据表](https://github.com/markdown-it/markdown-it-emoji/blob/master/lib/data/full.json)。
+VitePress 内置 emoji 语法，用冒号包裹 emoji 名称即可渲染为对应字符。完整列表参考 [markdown-it-emoji 数据表](https://github.com/markdown-it/markdown-it-emoji/blob/master/lib/data/full.mjs)。
 
 源码示例：
 
@@ -188,7 +188,7 @@ $$
 
 ## 代码组图标
 
-本主题集成了 `vitepress-plugin-group-icons`，在 `::: code-group` 代码组的标签上自动显示语言或文件类型图标，开箱即用，内置 58 种默认映射，并可通过 `defineConfig` 第三参数自定义追加。
+本主题集成了 `vitepress-plugin-group-icons`，在 `::: code-group` 代码组的标签上自动显示语言或文件类型图标，开箱即用，内置 48 种默认映射，并可通过 `defineConfig` 第三参数自定义追加。
 
 完整说明见 [代码组图标](../code-group-icons.md)。
 

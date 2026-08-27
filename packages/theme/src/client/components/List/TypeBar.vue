@@ -11,8 +11,8 @@
       </a>
       <a href="/" :class="['type-item', { choose: !currentTypeName }]">首页</a>
       <a
-        v-for="(_, key, index) in theme.categoriesData"
-        :key="index"
+        v-for="(_, key) in theme.categoriesData"
+        :key="key"
         :href="`/pages/categories/${key}`"
         :class="['type-item', { hidden: currentTypeName === key }]"
       >
@@ -31,8 +31,8 @@
         <span class="num">{{ theme.tagsData?.[currentTypeName]?.count || 0 }}</span>
       </a>
       <a
-        v-for="(item, key, index) in theme.tagsData"
-        :key="index"
+        v-for="(item, key) in theme.tagsData"
+        :key="key"
         :href="`/pages/tags/${key}`"
         :class="['type-item', { hidden: currentTypeName === key }]"
       >
@@ -49,7 +49,7 @@
 
 <script setup>
 const { theme, params } = useData();
-const props = defineProps({
+defineProps({
   // 显示类别
   type: {
     type: String,

@@ -24,10 +24,9 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 
-// 获取URL参数
-const urlParams = new URLSearchParams(window.location.search)
-const targetUrl = urlParams.get('url')
-const decodedUrl = ref(targetUrl || '')
+// 目标链接（onMounted 中解析，避免 SSR 阶段访问 window 崩溃）
+const targetUrl = ref('')
+const decodedUrl = ref('')
 
 // 倒计时
 const countdown = ref(5)
@@ -35,8 +34,8 @@ let timer = null
 
 // 继续跳转
 const continueRedirect = () => {
-  if (targetUrl) {
-    window.open(targetUrl, '_blank')
+  if (targetUrl.value) {
+    window.open(targetUrl.value, '_blank', 'noopener')
     goBack()
   }
 }
@@ -48,11 +47,29 @@ const goBack = () => {
 
 // 自动跳转
 onMounted(() => {
-  if (!targetUrl) {
+  const urlParams = new URLSearchParams(window.location.search)
+  const raw = urlParams.get('url')
+  if (!raw) {
     goBack()
     return
   }
-  
+  // 上游统一以 base64 写入（commonTools 的 jumpRedirect），此处解码；
+  // 解码失败或结果非 http/https 时按原值使用，兜底直接手拼链接的场景
+  let url = raw
+  try {
+    const decoded = decodeURIComponent(escape(atob(raw)))
+    if (/^https?:\/\//.test(decoded)) url = decoded
+  } catch {
+    // 非 base64，按原值使用
+  }
+  // 协议白名单：仅允许 http/https
+  if (!/^https?:\/\//.test(url)) {
+    goBack()
+    return
+  }
+  targetUrl.value = url
+  decodedUrl.value = url
+
   timer = setInterval(() => {
     countdown.value--
     if (countdown.value <= 0) {

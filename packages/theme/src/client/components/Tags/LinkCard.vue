@@ -1,10 +1,15 @@
 <!-- 链接卡片 -->
 <template>
-  <a :href="url" :target="isOutLink ? '_blank' : null" class="link-card s-card hover">
+  <a
+    :href="url"
+    :target="isOutLink ? '_blank' : null"
+    :rel="isOutLink ? 'noopener noreferrer' : null"
+    class="link-card s-card hover"
+  >
     <span v-if="isOutLink" class="link-tip">引用站外地址，请注意甄别链接安全性</span>
     <div class="link-data">
       <div class="link-icon">
-        <img v-if="icon" class="link-img" :src="icon" alt="link-img" />
+        <img v-if="icon && !iconError" class="link-img" :src="icon" alt="link-img" @error="iconError = true" />
         <img
           v-else-if="siteInfo?.iconUrl"
           :src="siteInfo.iconUrl"
@@ -55,6 +60,9 @@ const props = defineProps({
 
 // 站点数据
 const siteInfo = ref(null);
+// 用户显式配置的 icon 加载失败标记：失败回退到 icon-link 字体图标
+// （props 不可直接改，且存在 icon 时不会抓 siteInfo，回退链自然落到字体图标）
+const iconError = ref(false);
 
 // 是否为站内链接
 const isOutLink = computed(() => {

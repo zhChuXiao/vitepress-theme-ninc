@@ -1,6 +1,6 @@
 # navMore 左侧更多菜单
 
-配置左侧抽屉式「更多」菜单，以分组形式展示外部链接与站内资源入口，支持图片图标与 iconfont 图标两种类型。
+配置导航栏左侧「更多内容」菜单，以分组形式展示外部链接与站内资源入口，支持图片图标与 iconfont 图标两种类型。窄屏（≤512px）下该菜单按钮隐藏。
 
 ![左侧更多菜单配置文档页](/images/article/navmore.png)
 
@@ -20,19 +20,30 @@
 | 字段 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | `icon` | `IconField` | — | 图标字段。`iconType='img'` 时为图片 URL；否则支持三种写法（字符串 / `'svg:文件名'` / 对象），详见 [图标使用指南](../guide/icons.md) |
-| `iconType` | `'img' \| 'iconfont'?` | `'img'` | 图标类型。`'img'`=图片 URL，`'iconfont'`=字体图标或 SVG 图标（默认） |
+| `iconType` | `'img' \| 'iconfont'?` | `'iconfont'` | 图标类型。`'img'`=图片 URL；`'iconfont'`=字体图标或 SVG 图标（默认，省略时按此处理） |
 | `name` | `string` | — | 链接显示名称 |
 | `url` | `string` | — | 链接地址，可为外链或站内路径 |
 | `target` | `string?` | — | 打开方式，如 `'_blank'` 表示新标签页 |
 
-默认 `navMore` 值：
+::: tip 默认值说明
+主题包内置默认 `navMore: []`（空数组）。以下为 `npx vitepress-theme-ninc init` 脚手架生成的初始 `navMore` 配置（defu 对数组为 concat 合并，故脚手架需完整给出）：
+:::
 
 ```ts
 navMore: [
   {
     name: '博客',
     list: [
-      { icon: '/images/avatar.png', iconType: 'img', name: '我的主页', url: 'https://example.com', target: '_blank' }
+      { icon: 'article', iconType: 'iconfont', name: '文章归档', url: '/pages/archives' },
+      { icon: 'folder', iconType: 'iconfont', name: '全部分类', url: '/pages/categories' },
+      { icon: 'hashtag', iconType: 'iconfont', name: '全部标签', url: '/pages/tags' }
+    ]
+  },
+  {
+    name: '我的',
+    list: [
+      { icon: 'chat', iconType: 'iconfont', name: '留言板', url: '/pages/comments' },
+      { icon: 'contacts', iconType: 'iconfont', name: '关于本站', url: '/pages/about' }
     ]
   }
 ]
@@ -54,9 +65,9 @@ export const themeConfig = defineThemeConfig({
     {
       name: '社交',
       list: [
-        { icon: 'icon-github', iconType: 'iconfont', name: 'GitHub', url: 'https://github.com/your-name', target: '_blank' },
-        { icon: 'icon-weibo', iconType: 'iconfont', name: '微博', url: 'https://weibo.com/your-name', target: '_blank' },
-        { icon: 'icon-email', iconType: 'iconfont', name: '邮箱', url: 'mailto:you@example.com' }
+        { icon: 'github', iconType: 'iconfont', name: 'GitHub', url: 'https://github.com/your-name', target: '_blank' },
+        { icon: 'bilibili', iconType: 'iconfont', name: '哔哩哔哩', url: 'https://space.bilibili.com/your-id', target: '_blank' },
+        { icon: 'email', iconType: 'iconfont', name: '邮箱', url: 'mailto:you@example.com', target: '_blank' }
       ]
     },
     {
@@ -74,7 +85,7 @@ export const themeConfig = defineThemeConfig({
 
 ---
 
-`navMore` 渲染为左侧抽屉式面板，通过顶部「更多」按钮触发，展示效果：
+`navMore` 渲染为导航栏左侧「更多内容」按钮的悬浮卡片，鼠标悬浮按钮时展开（纯 CSS `:hover` 触发），展示效果：
 
 - **分组标题**：每个 `NavMoreGroup` 的 `name` 作为分组小标题，分隔不同类别。
 - **链接列表**：`list` 中每一项渲染为「图标 + 名称」的横向条目，点击按 `target` 决定打开方式。
@@ -94,11 +105,11 @@ export const themeConfig = defineThemeConfig({
 
 ::: tip iconType 区分图标类型
 `iconType` 用于区分图标来源（详见 [图标使用指南](../guide/icons.md)）：
-- `'img'`（默认）：`icon` 字段填写图片路径（如 `/images/avatar.png`），指向 `public` 目录
-- `'iconfont'`（或不填）：`icon` 字段支持三种写法 ——
-  - 字符串：iconfont 图标名（如 `'github'`、`'icon-github'`）
+- `'iconfont'`（默认，省略时按此处理）：`icon` 字段支持三种写法 ——
+  - 字符串：iconfont 图标名，**不含 `icon-` 前缀**（如 `'github'`、`'bilibili'`），主题渲染时自动拼接为 `icon-xxx`
   - `'svg:文件名'`：引用 `public/svg/` 下的 SVG 文件（如 `'svg:bilibili'`）
   - 对象：`{ type: 'svg' | 'font', name: 'xxx' }`
+- `'img'`：`icon` 字段填写图片路径（如 `/images/avatar.png`），指向 `public` 目录
 
 如需使用主题内置 iconfont 之外的图标，推荐用 SVG 写法，把 `.svg` 文件丢进 `public/svg/` 即可。
 :::
@@ -107,9 +118,14 @@ export const themeConfig = defineThemeConfig({
 
 ::: tip target 控制打开方式
 `target` 字段遵循 HTML 规范：
-- `'_blank'`：在新标签页打开
-- `'_self'`：在当前标签页打开（默认行为，省略时）
+- `'_blank'`：在新标签页打开（`window.open`）
+- `'_self'` 或省略：走**站内路由**（`router.go`）——仅适用于 `/` 开头的站内路径；对 `mailto:`/`tel:` 等协议类链接会跳转失败（见下方 warning）
+
 站内路径通常无需设置 `target`，外链建议设置为 `'_blank'`。
+:::
+
+::: warning 协议类链接（mailto:/tel:）必须加 `target: '_blank'`
+省略 `target` 时点击走**站内路由**（`router.go`），该路径仅适用于站内 `/` 开头的路径。`mailto:`、`tel:` 等协议类链接若省略 `target` 会被当作站内路径处理而跳转失败，必须显式设置 `target: '_blank'`（浏览器将调用系统邮件/拨号客户端）。
 :::
 
 ::: tip 内外链均可

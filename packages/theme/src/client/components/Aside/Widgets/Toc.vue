@@ -83,8 +83,9 @@ const activeTocItem = throttle(
       const rect = header.getBoundingClientRect()
       // 检查标题是否在视口中
       if (rect.top - bufferheight <= 0 && rect.bottom + bufferheight >= 0) {
-        // 高亮对应标题
+        // 高亮最靠上的命中标题（多个标题同时在视口时取第一个，与常规目录行为一致）
         activeHeader.value = header.id
+        break
       }
     }
   },
@@ -96,9 +97,10 @@ const activeTocItem = throttle(
 const scrollToHeader = id => {
   try {
     const headerDom = document.getElementById(id)
-    if (!headerDom || !postDom.value) return false
-    const headerTop = headerDom.offsetTop
-    const scrollHeight = headerTop + postDom.value.offsetTop - 80
+    if (!headerDom) return false
+    // offsetTop 相对最近的定位祖先，中间容器一旦带 position 就会算错；
+    // 改用 getBoundingClientRect + scrollY 直接得到文档绝对位置，与定位上下文无关
+    const scrollHeight = headerDom.getBoundingClientRect().top + window.scrollY - 80
     window.scroll({ top: scrollHeight, behavior: 'smooth' })
   } catch (error) {
     console.error('目录滚动失败：', error)

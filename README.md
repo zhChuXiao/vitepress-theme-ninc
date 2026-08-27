@@ -16,13 +16,13 @@
   <a href="https://theme.ninc.top" target="_blank">使用文档</a> ·
   <a href="https://blog.ninc.top" target="_blank">在线演示</a> ·
   <a href="https://github.com/zhChuXiao/vitepress-theme-ninc/issues" target="_blank">问题反馈</a> ·
-  <a href="CHANGELOG.md" target="_blank">更新日志</a>
+  <a href="https://github.com/zhChuXiao/vitepress-theme-ninc/releases" target="_blank">更新日志</a>
 </p>
 
 ---
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Version-1.0.42-CB3837?style=flat-square&logo=npm&logoColor=white" alt="version" />
+  <img src="https://img.shields.io/badge/Version-1.0.44-CB3837?style=flat-square&logo=npm&logoColor=white" alt="version" />
   <img src="https://img.shields.io/badge/License-MIT-blue?style=flat-square&logo=opensource&logoColor=white" alt="license" />
   <img src="https://img.shields.io/badge/Status-Active-brightgreen?style=flat-square" alt="status" />
   <img src="https://img.shields.io/badge/PRs-Welcome-brightgreen?style=flat-square&logo=github&logoColor=white" alt="PRs welcome" />
@@ -75,10 +75,10 @@ cd your-blog && pnpm install && pnpm dev
 | | |
 |---|---|
 | **评论系统** | Twikoo，支持表情、图片、邮件通知 |
-| **全站搜索** | Algolia DocSearch + 本地搜索双模式 |
-| **音乐播放器** | APlayer + MetingJS，挂网易云平台歌单 |
+| **全站搜索** | Algolia InstantSearch，导航栏按钮唤起弹窗实时匹配 |
+| **音乐播放器** | APlayer + Meting API，挂网易云平台歌单 |
 | **AI 文章摘要** | 接入 OpenAI 兼容 API，构建时自动生成摘要 |
-| **文章加密** | 密码保护指定文章，HMAC-SHA256 |
+| **文章加密** | 密码保护指定文章，AES 加密 + HMAC-SHA256 校验 |
 | **PWA 离线** | 自动生成 Service Worker，断网也能看 |
 | **图片灯箱** | Fancybox，点击放大、缩放、拖拽 |
 | **RSS 订阅** | 构建时自动生成 rss.xml |
@@ -144,7 +144,7 @@ export default defineConfig(
 )
 ```
 
-详细的配置说明在 [文档](https://theme.ninc.top) 里，从站点元信息到每个小组件的开关，一共 17 篇配置参考 + 12 篇使用指南。
+详细的配置说明在 [文档](https://theme.ninc.top) 里，从站点元信息到每个小组件的开关，每个字段都有说明。
 
 ## 环境要求
 
@@ -158,8 +158,7 @@ export default defineConfig(
 ├── packages/theme/    主题包源码（发布到 npm 的就是它）
 ├── docs/               使用文档站点
 ├── play/               开发调试用的示例站点
-├── blog/               我自己的博客（submodule，私有仓库）
-└── demo/              另一个示例
+└── blog/               我自己的博客（submodule，私有仓库）
 ```
 
 ## 贡献

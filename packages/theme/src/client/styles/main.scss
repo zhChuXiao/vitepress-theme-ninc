@@ -309,7 +309,7 @@ a {
     &::before {
       right: 0;
       left: 4px;
-      background: var(--main-scrolling-bar);
+      background: var(--main-scrollbar-bar);
       transition: background 0.3s, left 0.3s;
       cursor: var(--main-pointer-cursor);
     }

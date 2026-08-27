@@ -1,6 +1,6 @@
 # 工具页与全宽布局
 
-Steam 等级速查表、HTTP 状态码大全、键码值对照表这类内容，目标是「全宽展示、不被当作文章」；源码分析这类文章代码块很多，需要默认折叠。本页说明 `isPage`、`aside`、`fullWidth` 三个布局字段的组合使用，`cbx` 代码块折叠开关，以及 `posts/` 与 `pages/` 目录的取舍依据。
+Steam 等级速查表、HTTP 状态码大全、键码值对照表这类内容，目标是「全宽展示、不被当作文章」；源码分析这类文章代码块很多，会触发主题的自动折叠。本页说明 `isPage`、`aside`、`fullWidth` 三个布局字段的组合使用，`cbf` 代码块折叠开关，以及 `posts/` 与 `pages/` 目录的取舍依据。
 
 ## 工具页 / 速查表
 
@@ -52,11 +52,11 @@ articleGPT: 本文提供了全面的 Steam 徽章查询指南，详细介绍了 
 
 ## 代码密集型文章
 
-源码分析、完整配置文件讲解这类文章代码块很多，默认展开会让正文变得很长。通过 `cbx` 字段让所有代码块默认折叠，点击后展开。
+源码分析、完整配置文件讲解这类文章代码块很多。主题对文章页**高度超过 400px 的代码块默认自动折叠**（限高 + 遮罩 + 箭头按钮，点击展开），无需任何配置；若想关闭本文的自动折叠，设置 `cbf: false`。
 
 ### 推荐字段组合
 
-标准字段（见[标准文章](./standard.md)）+ `cbx: true`
+标准字段（见[标准文章](./standard.md)），按需追加 `cbf`
 
 ### 完整示例
 
@@ -66,7 +66,7 @@ title: Vite 构建流程源码分析
 tags: [Vite, 源码, Node]
 categories: [前端开发]
 date: 2025-03-20
-cbx: true
+cbf: false
 mainColor: '#6A7DA2'
 cover: /images/cover/vite-source.jpg
 description: 逐行分析 Vite 开发服务器启动流程，从 CLI 入口到中间件组装。
@@ -75,10 +75,9 @@ articleGPT: 本文从 Vite 的 CLI 入口出发，分析 dev server 的创建过
 
 # Vite 构建流程源码分析
 
-正文中的代码块会默认折叠：
+`cbf: false` 让本文代码块始终完整展示（默认超过 400px 会自动折叠）：
 
 ```ts
-// 这段代码默认折叠，点击「展开」查看完整内容
 export function createServer(config: InlineConfig): Promise<ViteDevServer> {
   // ...
 }
@@ -87,11 +86,11 @@ export function createServer(config: InlineConfig): Promise<ViteDevServer> {
 
 ### 字段在此场景的作用
 
-- **`cbx: true`**：该文章内所有代码块默认折叠，渲染为带「展开」按钮的折叠块，点击后展开显示完整内容。
-- 仅作用于当前文章，不影响其他文章的代码块渲染。
-- 适合代码示例多、单段代码长、不希望代码块占据过多版面的长文。
+- **默认行为**：超过 400px 的代码块自动折叠为限高块，底部箭头按钮点击展开/收起，短代码块不受影响。
+- **`cbf: false`**：关闭本文全部自动折叠。
+- **`cbf: [1, 3]`**：仅第 1、3 个代码块（从 1 数起）不折叠，其余仍折叠。
 
-`cbx` 是文章级开关。如果只想折叠某个代码块而非全文，参考 [Markdown 扩展语法 - 代码块默认折叠](../markdown/#代码块默认折叠)。
+折叠机制的完整说明见 [Frontmatter - 代码块默认折叠](../frontmatter.md#代码块默认折叠)。
 
 ## 文章与页面的取舍
 

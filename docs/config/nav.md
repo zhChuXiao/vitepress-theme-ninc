@@ -21,7 +21,9 @@
 | `link` | `string` | — | 站内路径，如 `/pages/archives` |
 | `icon` | `IconField?` | — | 图标字段，支持三种写法：字符串(iconfont 名) / `'svg:文件名'` / `{ type, name }`，详见 [图标使用指南](../guide/icons.md) |
 
-默认 `nav` 值：
+::: tip 默认值说明
+主题包内置默认 `nav: []`（空数组）。以下为 `npx vitepress-theme-ninc init` 脚手架生成的初始 `nav` 配置（defu 对数组为 concat 合并，故脚手架需完整给出）：
+:::
 
 ```ts
 nav: [
@@ -33,6 +35,15 @@ nav: [
       { text: '全部标签', link: '/pages/tags', icon: 'hashtag' }
     ]
   },
+  {
+    text: '专栏',
+    items: [
+      { text: '随笔笔记', link: '/pages/categories/随笔笔记', icon: 'article' },
+      { text: '技术教程', link: '/pages/categories/技术教程', icon: 'code' }
+    ]
+  },
+  // 脚手架初始化时若选择启用 NES 页面，还会插入「工具」分组：
+  // { text: '工具', items: [{ text: 'NES 模拟器', link: '/pages/nes', icon: 'game' }] },
   {
     text: '我的',
     items: [
@@ -68,7 +79,7 @@ export const themeConfig = defineThemeConfig({
     {
       text: '工具',
       items: [
-        { text: '在线工具集', link: '/pages/tools', icon: 'tool' },
+        { text: '在线工具集', link: '/pages/tools', icon: 'tools' },
         { text: '友情链接', link: '/pages/friends', icon: 'link' }
       ]
     }
@@ -82,9 +93,9 @@ export const themeConfig = defineThemeConfig({
 
 `nav` 渲染为顶部固定导航栏，交互细节如下：
 
-- **分组展示**：每个 `NavGroup` 渲染为一个可点击的菜单名（`text`），鼠标悬浮或点击触发下拉。
+- **分组展示**：每个 `NavGroup` 渲染为一个菜单名（`text`），鼠标悬浮触发下拉（纯 CSS `:hover` 实现，点击菜单名本身无跳转行为）。
 - **下拉项**：`items` 渲染为下拉面板中的列表项，`icon` 显示在文字左侧（可选），`link` 决定点击跳转的站内路径。
-- **响应式收起**：窄屏下顶部导航会折叠，部分分组进入 [`navMore`](./nav-more.md) 的抽屉菜单。
+- **响应式收起**：窄屏（≤768px）下顶部菜单收起，`nav` 分组改由移动端抽屉菜单（点击右上角菜单按钮打开）展示；[`navMore`](./nav-more.md) 为桌面端左侧独立的「更多内容」菜单，二者互不影响。
 
 ::: tip 常见配置组合
 - **内容型博客**：「文库」+「我的」两个分组，覆盖文章/分类/标签/留言/关于。

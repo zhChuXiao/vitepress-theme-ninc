@@ -1,11 +1,17 @@
 // 文档站配置
 // 使用 VitePress 默认主题（不引入 vitepress-theme-ninc），保持文档独立性
+import { readFileSync } from 'node:fs'
 import { defineConfig } from 'vitepress'
 import { groupIconVitePlugin, groupIconMdPlugin } from 'vitepress-plugin-group-icons'
 import { codeInspectorPlugin } from 'code-inspector-plugin'
 import groupIconConfig from './groupIconConfig.json'
 import markdownExtensions from './markdownExtensions.mjs'
 import { localIconsPlugin, getLocalIconSVG } from './local-icons'
+
+// 主题包版本号：构建时读取 packages/theme/package.json，注入导航栏版本徽标（发版后无需手动改文档站）
+const themeVersion: string = JSON.parse(
+  readFileSync(new URL('../../packages/theme/package.json', import.meta.url), 'utf-8')
+).version
 
 export default defineConfig({
   title: 'vitepress-theme-ninc',
@@ -20,8 +26,10 @@ export default defineConfig({
     // 防盗链
     ['meta', { name: 'referrer', content: 'no-referrer' }],
 
-    // ── 网站验证（保持已验证状态，请勿移除）──
+    // 主题色
     ['meta', { name: 'theme-color', content: '#3c8772' }],
+
+    // ── 网站验证（保持已验证状态，请勿移除）──
     ['meta', { name: 'msvalidate.01', content: 'B5E748CCE4066C5BC620DF47B8B7CFD0' }],             // Bing
     ['meta', { name: 'google-site-verification', content: 'j5zzxqII7Tz7FHIGA57uuNbAcjls-rbtYAXwAjS0i6g' }], // Google
     ['meta', { name: 'baidu-site-verification', content: 'codeva-M50ML3mOpG' }],                  // 百度
@@ -65,6 +73,10 @@ export default defineConfig({
     ]
   ],
   vite: {
+    define: {
+      // 注入客户端全局常量，供导航栏版本徽标组件使用（SSR 与客户端同值，无 hydration 差异）
+      __THEME_VERSION__: JSON.stringify(themeVersion)
+    },
     plugins: [
       // 本地图标插件：构建时从 @iconify-json/* 提取用到的图标，避免运行时在线请求
       localIconsPlugin(),

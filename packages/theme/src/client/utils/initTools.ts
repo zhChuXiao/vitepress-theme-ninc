@@ -60,6 +60,8 @@ const changeLoading = (option: { status?: boolean; always?: boolean } = {}): voi
   store.loadingStatus = status
   // 是否不结束
   if (always) return
+  // 启动新定时器前先清掉旧的，避免快速连续跳转时旧定时器提前结束本次加载动画
+  if (loadingTimer) clearTimeout(loadingTimer)
   // 随机延时结束
   loadingTimer = setTimeout(
     () => {

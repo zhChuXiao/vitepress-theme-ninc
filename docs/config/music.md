@@ -1,6 +1,6 @@
 # music 音乐
 
-配置基于 APlayer + MetingJS 的音乐播放器，通过 Meting API 解析各音乐平台的歌单/专辑/单曲并在站点展示播放器。
+配置基于 APlayer + Meting API 的音乐播放器，通过 Meting API 解析各音乐平台的歌单/专辑/单曲并在站点展示播放器。
 
 ![音乐播放器配置文档页](/images/article/music.png)
 
@@ -68,7 +68,7 @@ export const themeConfig = defineThemeConfig({
 
 ---
 
-`music` 基于 APlayer + MetingJS 渲染，启用后在页面中展示一个可折叠的音乐播放器：
+`music` 基于 APlayer + Meting API 渲染，启用后在页面中展示一个可折叠的音乐播放器：
 
 - **播放器卡片**：左侧为专辑封面（旋转动画），右侧为歌曲名、歌手、进度条与播放控制按钮。
 - **播放列表**：点击列表按钮展开歌单全部歌曲，支持切歌、循环模式切换。
@@ -87,7 +87,7 @@ export const themeConfig = defineThemeConfig({
 ## 注意事项
 
 ::: warning 默认 Meting API 为公共服务
-默认 `url` 指向 `https://api.injahow.cn/meting/`，这是一个公共服务，可能存在限流、不稳定或下线的风险。生产环境建议自建 Meting API，参考 [Meting 项目](https://github.com/metowolf/Meting) 与 [MetingJS 文档](https://github.com/metowolf/MetingJS)。
+默认 `url` 指向 `https://api.injahow.cn/meting/`，这是一个公共服务，可能存在限流、不稳定或下线的风险。生产环境建议自建 Meting API，参考 [Meting 项目](https://github.com/metowolf/Meting) 与 [Meting-API](https://github.com/metowolf/Meting-API)。
 :::
 
 ::: tip server 与平台对应关系
@@ -114,8 +114,8 @@ export const themeConfig = defineThemeConfig({
 受音乐平台版权策略影响，部分歌曲可能无法通过 Meting API 获取播放链接，表现为播放器列表显示但点击无法播放。建议选择公开、无版权限制的歌单。
 :::
 
-::: tip enable 关闭后不加载播放器
-当 `enable: false` 时，主题不会加载 APlayer 与 MetingJS 资源，避免引入不必要的网络请求。
+::: tip enable 关闭后播放器不渲染
+当 `enable: false` 时，播放器不会渲染，页面加载时也不会发起 Meting API 请求（APlayer 的 JS 仅在成功获取歌单后才按需动态加载）。
 :::
 
 ## 相关配置

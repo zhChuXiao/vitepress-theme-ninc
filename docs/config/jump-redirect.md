@@ -13,8 +13,13 @@
 
 中转页内置域名白/黑名单判断：白名单站点显示「已信任」并自动跳转，黑名单站点显示危险警告且不自动跳转，其余站点显示安全提示由用户确认。
 
-::: tip 链接自动改写仅生产环境生效
-中转页本身在 dev 与 build 均可直接访问 `/redirect?url=<base64>`。但链接的**自动改写**（把外链 href 替换为中转地址）仅在生产环境生效，开发环境保持原链接以便调试。开发期可手动构造 `/redirect?url=<base64编码的目标URL>` 来测试中转页。
+::: tip 链接改写的触发时机
+中转页本身在 dev 与 build 均可直接访问 `/redirect?url=<base64>`。链接**自动改写**分两层：
+
+- **构建期静态改写**：`pnpm build` 时通过 `transformHtml` 把全部页面 HTML 中的外链替换为中转地址（生产环境首屏全覆盖）。
+- **运行时补充改写**：Twikoo 评论加载完成后，客户端会对当前文档的外链再执行一次改写，覆盖 SPA 路由切换后由客户端渲染的新内容（dev 环境同样生效）。
+
+注意：SPA 路由切换后的运行时改写依赖评论系统（`comment.enable: true`）。若评论关闭，SPA 导航后的新页面外链将保持原始地址（首屏直开的页面仍被构建期改写覆盖）。开发期可手动构造 `/redirect?url=<base64编码的目标URL>` 测试中转页。
 :::
 
 ## 字段说明
@@ -88,13 +93,9 @@ import { defineThemeConfig } from 'vitepress-theme-ninc/defineThemeConfig'
 export const themeConfig = defineThemeConfig({
   jumpRedirect: {
     enable: true,
-    // 追加信任站点（注意：传入会整体替换默认数组）
+    // 追加信任站点（defu 数组合并为 concat：你的项会追加在默认项之后，默认规则仍生效）
     whitelist: [
-      'gitee.com', 'github.com', 'baidu.com', 'bing.cn', 'npmjs.com',
-      'cnblogs.com', 'csdn.net', 'jianshu.com', 'zhihu.com', 'juejin.cn',
-      'segmentfault.com', 'v2ex.com', 'google.com', 'google.cn',
-      'google.com.*', 'vuejs.org',
-      'my-trusted-site.com' // 新增自定义信任站点
+      'my-trusted-site.com' // 新增自定义信任站点（无需复制默认项，默认白名单仍保留）
     ]
   }
 })
@@ -109,10 +110,7 @@ export const themeConfig = defineThemeConfig({
   jumpRedirect: {
     enable: true,
     exclude: [
-      'cf-friends-link', 'upyun', 'icp', 'author', 'rss', 'cc', 'power',
-      'social-link', 'link-text', 'travellings', 'post-link', 'report',
-      'more-link', 'skills-item', 'right-menu-link', 'link-card',
-      'my-custom-link' // 新增自定义排除项
+      'my-custom-link' // 新增自定义排除项（concat 追加，默认排除项仍保留）
     ]
   }
 })
@@ -132,12 +130,12 @@ export const themeConfig = defineThemeConfig({
 
 ::: tip 常见配置组合
 - **默认启用**：开箱即用，默认 `exclude` / `whitelist` / `blacklist` 已覆盖常见场景。
-- **追加自定义排除**：在自定义组件中使用 `link-card` 等类名时，将类名追加到 `exclude`（注意必须保留默认项）。
+- **追加自定义排除**：在自定义组件中使用 `link-card` 等类名时，将类名追加到 `exclude`（concat 合并，默认项自动保留，无需复制）。
 - **完全关闭**：`enable: false` 适合纯内链站点或对中转页无需求的场景。
 :::
 
-::: warning 数组整体替换
-由于 `defu` 对数组合并的策略，传入 `exclude` / `whitelist` / `blacklist` 时会**整体替换**默认数组，而非追加。新增项时务必把默认项一并写入，否则会丢失默认规则。建议复制默认数组后再追加。
+::: warning 数组为 concat 追加而非整体替换
+由于 `defu` 对数组的合并策略是 **concat 追加**，传入 `exclude` / `whitelist` / `blacklist` 时你的项会**追加在默认项之后**（默认规则仍然生效，不会丢失）。如果你确实想**丢弃全部默认规则**、只保留自己定义的项，需要把默认项中想保留的部分一并写入（完整默认值见本页字段表或 [defaultThemeConfig 源码](https://github.com/zhChuXiao/vitepress-theme-ninc/blob/main/packages/theme/src/node/defaultThemeConfig.ts)）。
 :::
 
 ## 注意事项

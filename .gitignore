@@ -18,6 +18,8 @@ test.html
 .vitepress/dist
 .vitepress/cache
 deploy.js
+review
+
 
 # Editor directories and files
 .vscode/*

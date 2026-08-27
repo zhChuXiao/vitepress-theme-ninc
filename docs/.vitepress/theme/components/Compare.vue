@@ -49,10 +49,6 @@ const handleMouseMove = (e: MouseEvent) => {
   updateSlider(e.clientX)
 }
 
-const handleMouseEnter = () => {
-  // hover 模式下立即响应
-}
-
 const handleMouseLeave = () => {
   // 鼠标离开后回归初始位置（平滑动画）
   isInteracting.value = false
@@ -102,7 +98,6 @@ onUnmounted(() => {
     class="ninc-compare"
     :class="{ 'is-dragging': isInteracting }"
     @mousemove="handleMouseMove"
-    @mouseenter="handleMouseEnter"
     @mouseleave="handleMouseLeave"
     @mousedown="handleMouseDown"
     @touchmove="handleTouchMove"
@@ -288,61 +283,11 @@ onUnmounted(() => {
   font-size: 18px;
 }
 
-/* ===== 左右标签胶囊 ===== */
-.ninc-compare-tag {
-  position: absolute;
-  top: 16px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  pointer-events: none;
-  z-index: 5;
-}
-
-.ninc-compare-tag .iconify {
-  font-size: 14px;
-}
-
-.ninc-compare-tag-left {
-  left: 0;
-  background: rgba(255, 255, 255, 0.85);
-  color: #92400e;
-  border: 1px solid rgba(251, 191, 36, 0.3);
-}
-
-.ninc-compare-tag-right {
-  right: 0;
-  background: rgba(30, 30, 46, 0.85);
-  color: #c4b5fd;
-  border: 1px solid rgba(139, 92, 246, 0.4);
-}
-
 /* ===== 响应式 ===== */
 @media (max-width: 768px) {
   .ninc-compare {
     aspect-ratio: 4 / 3;
     border-radius: 12px;
-  }
-
-  .ninc-compare-tag {
-    top: 12px;
-    padding: 4px 10px;
-    font-size: 11px;
-  }
-
-  .ninc-compare-tag-left {
-    left: 12px;
-  }
-
-  .ninc-compare-tag-right {
-    right: 12px;
   }
 
   .ninc-compare-handle {

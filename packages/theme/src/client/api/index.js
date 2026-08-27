@@ -1,6 +1,6 @@
 /**
- * 获取一言
- * @param {string} [rule="updated"] - 文章的排序规则，可以是 "created" 或 "updated"
+ * 获取一言（hitokoto.cn，分类 c=i 诗词）
+ * @returns {Promise<{hitokoto: string, from: string, from_who: string}>}
  */
 export const getHitokoto = async () => {
   const result = await fetch('https://v1.hitokoto.cn?c=i', {

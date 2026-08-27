@@ -15,6 +15,9 @@ export const createRssFile = async (config, themeConfig, options = {}) => {
   // 配置信息
   const siteMeta = themeConfig.siteMeta;
   const hostLink = siteMeta.site;
+  // 版权起始年份取自 themeConfig.since（建站日期），解析失败时回退到默认建站年 2024
+  const sinceYear = new Date(themeConfig.since || "2024-01-01").getFullYear();
+  const copyrightYear = Number.isNaN(sinceYear) ? 2024 : sinceYear;
   // Feed 实例
   const feed = new Feed({
     title: siteMeta.title,
@@ -24,17 +27,16 @@ export const createRssFile = async (config, themeConfig, options = {}) => {
     language: "zh",
     generator: siteMeta.author.name,
     favicon: siteMeta.author.cover,
-    copyright: `Copyright © 2020-present ${siteMeta.author.name}`,
+    copyright: `Copyright © ${copyrightYear}-present ${siteMeta.author.name}`,
     updated: new Date(),
   });
   // 推导文章目录的相对路径（供 createContentLoader 使用，glob 模式相对于 VitePress srcDir）
   const cwd = process.cwd();
   const absPostsDir = options.postsDir || path.resolve(cwd, "posts");
   const relPostsDir = path.relative(cwd, absPostsDir);
-  // 加载文章
-  let posts = await createContentLoader(`${relPostsDir}/**/*.md`, {
-    render: true,
-  }).load();
+  // 加载文章（无需 render: true —— 下方仅使用 url 与 frontmatter，
+  // 关闭渲染可避免构建期把全部文章 Markdown 渲染为 HTML 的性能浪费）
+  let posts = await createContentLoader(`${relPostsDir}/**/*.md`).load();
   // 日期降序排序
   posts = posts.sort((a, b) => {
     const dateA = new Date(a.frontmatter.date);

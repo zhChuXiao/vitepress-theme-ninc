@@ -61,17 +61,17 @@ import { useRouter } from 'vitepress'
 // const LottieIcon = () => import('../../components/LottieIcon.vue')
 import arrowRight from '../../assets/lottie/arrow-right.json'
 // import cat from '../../assets/lottie/cat.json'
-import grayCat from '../../assets/lottie/gray_cat.json'
+// gray_cat 动画与上方模板中的两处 <LottieIcon grayCat> 同属被注释停用的装饰；
+// 保留 import 会把该 JSON 打进首页 chunk，保持与模板一致的注释状态
+// import grayCat from '../../assets/lottie/gray_cat.json'
 const { theme } = useData()
 
-// 推荐文章
+// 推荐文章（"随便逛逛"与 TopGroup 列表同一份数据，复用同一 computed 避免两次 filter）
 const recommendPost = computed(() => {
   return theme.value.postData.filter(item => item.recommend === true)
 })
 // 推荐
-const topGroupList = computed(() => {
-  return theme.value.postData.filter(item => item.recommend === true)
-})
+const topGroupList = recommendPost
 
 const creativityData = ref(
   theme.value.homeTop.creativity?.length
@@ -85,13 +85,20 @@ const isClient = ref(false)
 onMounted(() => {
   isClient.value = true
   const canvas = bannerGroupBg.value
+  if (!canvas) return
   const ctx = canvas.getContext('2d')
+  if (!ctx) return
   const img = new Image()
   img.src = '/images/cover/bg-hd.png'
   img.onload = () => {
     canvas.width = img.width
     canvas.height = img.height
     ctx.drawImage(img, 0, 0)
+  }
+  // 装饰图缺失时（如站点未在 public/images/cover/ 放置 bg-hd.png）隐藏 canvas，
+  // 避免 0×0 画布留白占位且无任何报错提示
+  img.onerror = () => {
+    canvas.style.display = 'none'
   }
 })
 </script>

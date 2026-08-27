@@ -33,11 +33,6 @@
 
 <script setup>
 import { mainStore } from '../store';
-import { ref, onMounted } from "vue";
-// const Banner = defineAsyncComponent(() =>
-//   import('../components/Banner.vue')
-// )
-import { useTitle } from "@vueuse/core";
 import Banner from '../components/Banner.vue'
 const { theme,frontmatter } = useData();
 const store = mainStore();

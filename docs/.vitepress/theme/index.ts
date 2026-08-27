@@ -7,6 +7,7 @@ import { Icon, addIcon } from '@iconify/vue'
 import 'virtual:group-icons.css'
 import './markdown-extensions.css'
 import CustomHome from './components/CustomHome.vue'
+import VersionBadge from './components/VersionBadge.vue'
 import { localIcons } from 'virtual:local-icons'
 
 export default {
@@ -14,7 +15,9 @@ export default {
   Layout: () => {
     return h(DefaultTheme.Layout, null, {
       // 在 home 布局的 hero 之前注入自定义首页内容
-      'home-hero-before': () => h(CustomHome)
+      'home-hero-before': () => h(CustomHome),
+      // 导航栏站点标题后追加版本徽标（版本号构建时自动注入）
+      'nav-bar-title-after': () => h(VersionBadge)
     })
   },
   enhanceApp({ app }) {

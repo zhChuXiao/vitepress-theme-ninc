@@ -351,13 +351,23 @@ export function generateRedirectHtml(themeConfig: ThemeConfig): string {
         try {
           const urlParams = new URLSearchParams(window.location.search)
           const encodedUrl = urlParams.get('url')
-          jumpLink = atob(encodedUrl)
-          urlDom.innerHTML = jumpLink
-          const urlHostname = new URL(jumpLink).hostname
+          // UTF-8 安全解码：编码端统一为 UTF-8 字节 base64（Buffer/btoa(unescape(encodeURIComponent()))），
+          // 裸 atob 解中文等多字节字符会得到 Latin1 乱码
+          jumpLink = decodeURIComponent(escape(atob(encodedUrl)))
+          // 安全：仅允许 http/https 协议，杜绝 javascript: 等伪协议经 location.replace 执行脚本
+          const parsedUrl = new URL(jumpLink)
+          if (parsedUrl.protocol !== 'http:' && parsedUrl.protocol !== 'https:') {
+            throw new Error('unsupported protocol')
+          }
+          // 安全：用 textContent 展示目标链接，杜绝 innerHTML 注入
+          urlDom.textContent = jumpLink
+          const urlHostname = parsedUrl.hostname
+          // 域名匹配：(^|\.)pattern$ —— 允许子域名，但 evilgithub.com 这类拼接域名不会命中
+          const domainToRegExp = (pattern) =>
+            new RegExp('(^|\\\\.)' + pattern.replace(/\\./g, '\\\\.').replace(/\\*/g, '.*') + '$')
           // 黑名单优先判断
           for (let i = 0; i < blacklist.length; i++) {
-            const blackPattern = blacklist[i].replace(/\\*/g, '.*')
-            if (urlHostname.match(blackPattern)) {
+            if (domainToRegExp(blacklist[i]).test(urlHostname)) {
               urlTip.innerHTML = tipText.danger
               jumpContent.className = 'danger'
               return true
@@ -365,8 +375,7 @@ export function generateRedirectHtml(themeConfig: ThemeConfig): string {
           }
           // 白名单判断
           for (let i = 0; i < whitelist.length; i++) {
-            const whitePattern = whitelist[i].replace(/\\*/g, '.*')
-            if (urlHostname.match(whitePattern)) {
+            if (domainToRegExp(whitelist[i]).test(urlHostname)) {
               urlTip.innerHTML = tipText.safe
               jumpContent.className = 'safe'
               autoJump()
@@ -376,7 +385,7 @@ export function generateRedirectHtml(themeConfig: ThemeConfig): string {
         } catch (error) {
           console.error(error)
           jumpContent.remove()
-          urlDom.innerHTML = '获取跳转链接失败'
+          urlDom.textContent = '获取跳转链接失败'
         }
       }
       document.addEventListener('keydown', function (event) {
@@ -394,7 +403,7 @@ export function generateRedirectHtml(themeConfig: ThemeConfig): string {
       urlDom.addEventListener('click', () => {
         if (navigator.clipboard) {
           navigator.clipboard
-            .writeText(urlDom.innerHTML)
+            .writeText(urlDom.textContent)
             .then(() => showToast('链接已复制到剪贴板', 'default'))
             .catch(() => showToast('复制失败，请手动复制', 'error'))
         } else {

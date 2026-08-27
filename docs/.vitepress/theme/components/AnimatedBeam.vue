@@ -6,6 +6,7 @@ import {
   computed,
   onMounted,
   nextTick,
+  useId,
 } from 'vue'
 
 interface AnimatedBeamProps {
@@ -43,7 +44,8 @@ const props = withDefaults(defineProps<AnimatedBeamProps>(), {
   endYOffset: 0,
 })
 
-const id = `beam-${Math.random().toString(36).substring(2, 10)}`
+// useId 在 SSR 与客户端生成一致，避免 Math.random 导致的 hydration 属性不匹配
+const id = `beam-${useId()}`
 const isVertical = ref(false)
 const isRightToLeft = ref(false)
 const isBottomToTop = ref(false)

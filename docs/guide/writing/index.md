@@ -1,6 +1,6 @@
 # 写作工作流
 
-[Frontmatter 字段](../frontmatter.md) 提供了 17 个字段的完整参考表，[文章管理](../posts.md) 讲了目录组织与各类文章的放置约定。但在实际写作中，多数困惑不是「某个字段是什么」，而是「我要写的这篇文章该用哪些字段、它们怎么配合」。
+[Frontmatter 字段](../frontmatter.md) 提供了 21 个字段的完整参考表，[文章管理](../posts.md) 讲了目录组织与各类文章的放置约定。但在实际写作中，多数困惑不是「某个字段是什么」，而是「我要写的这篇文章该用哪些字段、它们怎么配合」。
 
 本节从「我要写一篇文章」的视角出发，按典型场景给出 frontmatter 的组合用法。每个场景包含场景描述、推荐字段组合、可直接复制的完整示例，以及各字段在该场景下的作用说明。字段级的完整定义参考 [Frontmatter 字段](../frontmatter.md)，目录组织细节参考 [文章管理](../posts.md)，本节不重复这两部分内容。
 
@@ -57,7 +57,7 @@ posts/
 | 加密文章 | [encrypted.md](./encrypted.md) | `crypto` 字段加密正文，密钥文件 + 密码双重验证 |
 | 转载文章 | [reprint.md](./reprint.md) | `reprint` 字段标注原文信息，渲染来源卡片 |
 | 带参考资料的文章 | [references.md](./references.md) | `references` 字段在文末渲染参考资料区块 |
-| 工具页 / 速查表 | [tool-page.md](./tool-page.md) | `isPage`、`aside`、`fullWidth`、`cbx` 字段的组合使用 |
+| 工具页 / 速查表 | [tool-page.md](./tool-page.md) | `isPage`、`aside`、`fullWidth`、`cbf` 字段的组合使用 |
 
 ## 字段组合速查表
 
@@ -71,22 +71,22 @@ posts/
 | 转载文章 | `title` `date` `reprint` | `cover` `description` | — |
 | 带参考资料的文章 | `title` `date` `references` | `top` `recommend` | — |
 | 工具页 / 速查表 | `title` `date` | `cover` `description` | `isPage: true` `aside: false` `fullWidth: true` |
-| 代码密集型文章 | 标准字段 | — | `cbx: true` |
+| 代码密集型文章 | 标准字段 | `cbf` | 超过 400px 的代码块默认自动折叠 |
 
 各场景之间并非互斥。一篇加密的转载文章、一篇带参考资料的置顶文章、一篇全宽的代码密集型速查表，都是合法的组合。字段之间没有冲突，按需叠加即可。
 
 ## SEO 与分享优化
 
-frontmatter 中有四个字段直接影响文章在搜索引擎与社交平台的展示效果：
+frontmatter 中有四个字段与文章的对外展示和站内视觉直接相关：
 
-- **`description`**：写入 HTML `<meta name="description">`，用于搜索引擎结果摘要、文章列表卡片文案、社交分享卡片描述。未填写时回退到正文摘要。
+- **`description`**：写入 HTML `<meta name="description">`，用于搜索引擎结果摘要、文章列表卡片文案、社交分享卡片描述。未填写时列表卡片不显示摘要（主题不会自动截取正文）。
 - **`articleGPT`**：显示在文章页顶部作为摘要（主题仅模仿 GPT 摘要的展示样式，内容需手动填写，或开启 [aiSummary AI 文章摘要](../../config/ai-summary.md) 接入大模型自动生成），不写入 SEO meta，不影响搜索结果。
-- **`cover`**：作为社交分享卡片的图片（Open Graph `og:image`）。未设置时使用默认封面。
-- **`mainColor`**：控制列表卡片与封面的主色调，影响站内视觉，不影响 SEO。
+- **`cover`**：文章页顶部横幅与首页列表卡片的封面图。未设置时使用默认封面。注意：主题不会把 `cover` 自动生成为 Open Graph `og:image` 标签——如需分享卡片图，请在 [`inject.header`](../../config/inject.md) 中自行配置 og 标签。
+- **`mainColor`**：文章页顶部横幅的背景主色（未设置时从封面图自动提取），只影响文章页站内视觉，不影响首页列表卡片配色，也不影响 SEO。
 
 ::: tip description 与 articleGPT 的分工
-`description` 面向外部（搜索引擎、社交平台、列表卡片），`articleGPT` 面向读者（文章页顶部摘要）。两者职责不同，建议每篇文章都填写 `description`，需要单独的页内摘要时再填写 `articleGPT`。未填 `articleGPT` 时回退到 `description`，不会出现空白。
+`description` 面向外部（搜索引擎、社交平台、列表卡片），`articleGPT` 面向读者（文章页顶部摘要）。两者职责不同，建议每篇文章都填写 `description`，需要单独的页内摘要时再填写 `articleGPT`。未填 `articleGPT` 且未启用 `aiSummary` 时摘要卡片不显示，不会出现空白卡片。
 :::
 
-推荐做法：每篇文章都填写 `description` 与 `cover`。`description` 控制在 80-120 字，概括文章主题；`cover` 使用与内容相关的图片，提升列表与分享卡片的辨识度。
+推荐做法：每篇文章都填写 `description` 与 `cover`。`description` 控制在 80-120 字，概括文章主题；`cover` 使用与内容相关的图片，提升列表卡片与文章页横幅的辨识度。
 

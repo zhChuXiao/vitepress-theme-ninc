@@ -564,6 +564,42 @@ export function defineConfig(
     // 所以采用 defu 后再用展开运算符覆盖关键字段
     const mergedConfig: UserConfig = defu(userConfig, themeDefaults)
 
+    // 7.5 函数组合：以下四个钩子若用户自传，defu 会让用户函数整体顶替主题函数，
+    // 导致主题 markdown 扩展/RSS/外链中转/AI 摘要注入静默失效。
+    // 这里改为「主题函数先执行、用户函数后执行」的组合，两者都生效：
+    const userMarkdownConfig = (userConfig as any).markdown?.config
+    if (userMarkdownConfig) {
+      const themeMdConfig = (themeDefaults.markdown as any).config
+      ;(mergedConfig.markdown as any).config = (md: any) => {
+        themeMdConfig(md)
+        userMarkdownConfig(md)
+      }
+    }
+    const userTransformPageData = (userConfig as any).transformPageData
+    if (userTransformPageData) {
+      const themeTransformPageData = (themeDefaults as any).transformPageData
+      ;(mergedConfig as any).transformPageData = async (pageData: any) => {
+        await themeTransformPageData(pageData)
+        return userTransformPageData(pageData)
+      }
+    }
+    const userBuildEnd = (userConfig as any).buildEnd
+    if (userBuildEnd) {
+      const themeBuildEnd = (themeDefaults as any).buildEnd
+      ;(mergedConfig as any).buildEnd = async (cfg: any) => {
+        await themeBuildEnd(cfg)
+        await userBuildEnd(cfg)
+      }
+    }
+    const userTransformHtml = (userConfig as any).transformHtml
+    if (userTransformHtml) {
+      const themeTransformHtml = (themeDefaults as any).transformHtml
+      ;(mergedConfig as any).transformHtml = async (html: string, id: string, ctx: any) => {
+        const after = await themeTransformHtml(html, id, ctx)
+        return userTransformHtml(after, id, ctx)
+      }
+    }
+
     // 8. 确保 themeConfig 中包含文章数据（defu 可能因 userConfig.themeConfig 存在而绕过默认）
     // 这里强制重新注入，避免用户传入空 themeConfig 导致数据丢失
     const finalThemeConfig = defu(

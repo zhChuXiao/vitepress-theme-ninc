@@ -33,17 +33,16 @@ YAML 中字段的书写顺序不影响解析结果，可按个人习惯排列。
 | `date` | `string` | :done: | — | 发布日期，格式 `YYYY-MM-DD`，用于排序与归档 |
 | `top` | `boolean` | :fail: | `false` | 是否置顶，置顶文章排在列表最前 |
 | `recommend` | `boolean` | :fail: | `false` | 是否在「推荐文章」区域展示 |
-| `mainColor` | `string` | :fail: | 随机 | 封面主色，如 `#dda3bf`，控制封面渐变背景 |
+| `mainColor` | `string` | :fail: | 封面提取 | 文章页顶部横幅背景主色，如 `#dda3bf`；未设置时文章页从封面图自动提取主色调 |
 | `cover` | `string` | :fail: | 默认封面 | 封面图路径，未设置时从 `cover.showCover.defaultCover` 随机选取 |
-| `description` | `string` | :fail: | 正文摘要 | 文章描述，用于 SEO、列表卡片与分享卡片 |
-| `articleGPT` | `string` | :fail: | `description` | 文章页顶部摘要（主题仅模仿 GPT 摘要的展示样式，内容需手动填写，可自行二开接入大模型 API 自动生成） |
-| `cbx` | `boolean` | :fail: | `false` | 是否默认折叠该文章所有代码块，点击后展开 |
-| `cbf` | `boolean` | :fail: | `false` | 是否折叠**单个代码块**（仅作用于当前块，与 `cbx` 全文折叠互补） |
+| `description` | `string` | :fail: | 无 | 文章描述，用于 SEO、列表卡片与分享卡片；未填写时列表卡片不显示摘要（主题不会自动截取正文） |
+| `articleGPT` | `string` | :fail: | 无 | 文章页顶部摘要，手动填写；也可开启 `aiSummary` 由主题在构建期自动生成（见 [AI 文章摘要](./ai-summary.md)）。未填写且未启用 `aiSummary` 时摘要卡片不显示 |
+| `cbf` | `boolean \| number[]` | :fail: | `true` | 代码块折叠开关：`false` 关闭本文全部折叠；数组 `[1, 3]` 表示第 N 个代码块（从 1 数起）**不折叠**，其余仍折叠 |
 | `reprint` | `object` | :fail: | — | 转载信息，见下方转载文章示例 |
 | `crypto` | `object` | :fail: | — | 文章加密配置，见下方加密文章示例 |
 | `references` | `array` | :fail: | `[]` | 参考资料，每项为 `{ title, url }` |
 | `copyright` | `boolean` | :fail: | `true` | 是否在文章页显示版权声明组件 |
-| `aside` | `boolean` | :fail: | `true` | 是否显示侧边栏，`false` 隐藏 |
+| `aside` | `boolean` | :fail: | 见说明 | 文章页（posts/）：默认显示侧边栏，`false` 隐藏；普通页面（pages/）：默认不显示，`true` 才显示 |
 | `isPage` | `boolean` | :fail: | `false` | 是否按「普通页面」渲染（不视为文章，不计入列表/归档） |
 | `fullWidth` | `boolean` | :fail: | `false` | 是否启用全宽布局，配合 `aside: false` 用于工具页/速查表 |
 | `card` | `boolean` | :fail: | `false` | 是否启用卡片背景样式，常用于纯文字页面（版权/隐私等） |
@@ -92,7 +91,7 @@ categories: [经验分享]
 date: 2025-05-14
 top: false
 recommend: true
-mainColor: #dda3bf
+mainColor: '#dda3bf'
 cover: /images/cover/bem-cover.jpg
 description: 这篇文章详细介绍了 BEM 命名规范在 Vue 组件开发中的应用，从基本概念到实际工具封装。
 articleGPT: 本文是一份全面的 BEM 规范指南，专注于在 Vue 组件开发中的实践应用。
@@ -198,27 +197,30 @@ references:
 
 ## 代码块默认折叠
 
-如果某篇文章代码量较大，可在 frontmatter 中设置 `cbx: true` 让**所有代码块**默认折叠：
+文章页中**高度超过 400px 的代码块会自动折叠**（限高 400px + 渐变遮罩 + 底部箭头按钮，点击展开/收起），无需任何配置。不超过 400px 的短代码块不受影响。
+
+如果某篇文章想关闭自动折叠，在 frontmatter 中设置 `cbf: false`：
 
 ```md
 ---
-title: 大量代码示例的文章
-cbx: true
+title: 不想折叠代码块的文章
+cbf: false
 date: 2025-06-01
 ---
 
-正文中的代码块会默认折叠，点击「展开」按钮查看完整内容。
+正文中的代码块将始终完整展示。
 ```
 
-如果只想折叠**某一个代码块**，用 `cbf`：
+如果只想让**某几个代码块不折叠**（其余仍自动折叠），把它们的序号写进数组（从 1 数起）：
 
-````
-```js{cbf=true}
-// 仅这个代码块默认折叠
-console.log('folded')
+```md
+---
+title: 部分代码块不折叠
+cbf: [1, 3]
+date: 2025-06-01
+---
+
+第 1、3 个代码块完整展示，其余超过 400px 的仍折叠。
 ```
-````
-
-`cbx` 控制全文级折叠，`cbf` 控制单块级折叠，二者互补。
 
 ![代码块默认折叠](/images/article/cbx.png)

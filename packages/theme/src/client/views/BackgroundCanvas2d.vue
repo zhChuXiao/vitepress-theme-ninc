@@ -192,9 +192,9 @@ function animateStars() {
   
   const ctx = universeRef.value.getContext('2d');
   
-  // 只在深色模式下绘制
-  
-  if (isDarkMode) {
+  // 只在深色模式下绘制（isDarkMode 是 computed，需取 .value）
+
+  if (isDarkMode.value) {
     drawStars(ctx);
   }
   
@@ -220,8 +220,10 @@ onMounted(() => {
   // 监听窗口大小
   window.addEventListener('resize', resizeCanvas);
   
-  // 开始动画
-  animationId = window.requestAnimationFrame(animateStars);
+  // 开始动画（仅深色模式：浅色下 animateStars 不绘制任何内容，空跑 rAF 浪费性能）
+  if (isDarkMode.value) {
+    animationId = window.requestAnimationFrame(animateStars);
+  }
 });
 
 onUnmounted(() => {
@@ -229,18 +231,23 @@ onUnmounted(() => {
   window.removeEventListener('resize', resizeCanvas);
   if (animationId) {
     window.cancelAnimationFrame(animationId);
+    // 置空标记，保证 watch 中 if (!animationId) 的重启判断语义正确
+    animationId = null;
   }
 });
 
 
 
 watch(isDarkMode, (newValue) => {
-  // console.log('isDarkMode', newValue);
   if (newValue) {
     // 如果切换到深色模式，确保动画运行
     if (!animationId) {
       animationId = window.requestAnimationFrame(animateStars);
     }
+  } else if (animationId) {
+    // 切回浅色模式时停掉空跑的帧循环（animateStars 在浅色下不绘制）
+    window.cancelAnimationFrame(animationId);
+    animationId = null;
   }
 });
 </script>

@@ -24,7 +24,6 @@ const playerDom = ref(null);
 const getMusicListData = async () => {
   try {
     const musicList = await getMusicList(url, id, server, type);
-    // console.log(musicList);
     initAPlayer(musicList?.length ? musicList : []);
   } catch (error) {
     $message.error("获取播放列表失败，请重试");
@@ -47,18 +46,15 @@ const initAPlayer = async (list) => {
       order: "random",
       audio: playlist,
     });
-    // console.info("🎵 播放器挂载完成", player.value);
     // 播放器事件
     player.value?.on("canplay", () => {
       // 更新信息
       getMusicData();
     });
     player.value?.on("play", () => {
-      // console.log("开始播放");
       playState.value = true;
     });
     player.value?.on("pause", () => {
-      // console.log("暂停播放");
       playState.value = false;
     });
     getMusicData();
@@ -77,7 +73,6 @@ const getMusicData = () => {
     // 歌曲信息
     const songName = songInfo.querySelector(".aplayer-title").innerText;
     const songArtist = songInfo.querySelector(".aplayer-author").innerText.replace(" - ", "");
-    // console.log(songName, songArtist);
     // 更新信息
     playerData.value = {
       name: songName || "未知曲目",
@@ -115,7 +110,12 @@ const initMediaSession = (title, artist) => {
 watch(
   () => playerShow.value,
   (val) => {
-    if (!val) return false;
+    // 关闭开关：暂停播放（v-if 仅隐藏 DOM，APlayer 实例的 audio 仍在后台响，需显式暂停）
+    if (!val) {
+      player.value?.pause();
+      playState.value = false;
+      return false;
+    }
     player.value?.destroy();
     getMusicListData();
   },

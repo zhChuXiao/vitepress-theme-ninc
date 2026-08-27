@@ -15,7 +15,7 @@
 | `name`     | `string`              | —            | 按钮名称。hover 时显示在站点标题位（与默认按钮一致的提示效果），同时作为 `title` 鼠标提示                                           |
 | `iconType` | `'iconfont' \| 'img'` | `'iconfont'` | 图标类型：`iconfont` 走字体图标或 SVG 图标，`img` 走图片 URL                                                                        |
 | `icon`     | `IconField`           | —            | 图标字段。`iconType='img'` 时为图片 URL；否则支持三种写法（字符串 / `'svg:文件名'` / 对象），详见 [图标使用指南](../guide/icons.md) |
-| `url`      | `string`              | —            | 跳转链接。站内路径（以 `/` 开头）走路由跳转，外链走 `window.open`                                                                   |
+| `url`      | `string`              | —            | 跳转链接。打开方式由 `target` 决定：`'_blank'` 走 `window.open`，`'_self'` 走站内路由跳转                                        |
 | `target`   | `'_blank' \| '_self'` | `'_blank'`   | 链接打开方式。默认 `_blank` 新窗口打开                                                                                              |
 
 默认 `navButtons` 值为 `[]`（空数组，不渲染任何自定义按钮）。
@@ -72,7 +72,7 @@ navButtons: [
   {
     name: '在线工具',
     iconType: 'iconfont',
-    icon: 'tool',
+    icon: 'tools',
     url: '/pages/tools',
     target: '_self'
   }
@@ -103,7 +103,7 @@ navButtons: [
 :::
 
 ::: warning 不会自动合并默认值
-`navButtons` 默认值是空数组 `[]`。你在 `themeConfig` 中写入的数组会**整体替换**默认值，不会拼接。这是设计上的取舍：右侧按钮是个性化的，没有「默认该有」的按钮。
+`navButtons` 默认值是空数组 `[]`。defu 对数组的合并策略是 concat 追加，由于默认值为空，你写入的数组即为完整生效列表（效果等同整体替换），默认项不会残留。
 :::
 
 ::: tip 与 nav 区分

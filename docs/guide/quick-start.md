@@ -42,7 +42,12 @@ mkdir my-blog && cd my-blog
 npx vitepress-theme-ninc init
 ```
 
-命令会以交互方式（↑↓ 箭头选择）询问初始化模式、站点标题、描述、URL、作者等信息，并自动生成以下文件：
+命令会以交互方式（↑↓ 箭头选择）先询问**初始化模式**，再询问站点标题、描述、URL、作者等信息：
+
+- **基础博客配置**（推荐）：生成完整博客站点——全部页面（关于/留言/归档/赞赏/分类/标签/隐私/版权/Cookies/分页等）、示例文章、占位图，开箱即用
+- **极简配置**：仅生成可运行的核心文件（config + 首页 + 占位图），不含页面与示例文章，适合从零逐条搭建
+
+「基础博客配置」模式自动生成以下文件：
 
 ```text
 my-blog/
@@ -51,14 +56,24 @@ my-blog/
 │  ├─ theme/
 │  │  └─ index.ts         ← 主题入口
 │  └─ themeConfig.ts      ← 主题配置（含你输入的站点信息）
+├─ pages/                 ← 全部功能页（关于/留言/归档/赞赏/分类/标签/隐私/版权/Cookies 等）
+│  ├─ about.md
+│  ├─ comments.md
+│  ├─ archives.md
+│  ├─ categories/[name].md  ← 分类动态路由（含 .paths.mjs）
+│  └─ tags/[name].md        ← 标签动态路由（含 .paths.mjs）
+├─ page/[num].md          ← 文章分页（含 .paths.mjs）
 ├─ posts/
 │  └─ articles/
-│     └─ hello-world.md   ← 示例文章
+│     ├─ welcome.md         ← 示例文章（置顶）
+│     ├─ features.md        ← 示例文章（推荐）
+│     └─ markdown-guide.md  ← 示例文章（Markdown 语法指南）
 ├─ public/
 │  ├─ images/
 │  │  ├─ avatar.svg       ← 占位头像
 │  │  ├─ logo.svg         ← 占位 Logo
 │  │  └─ cover.svg        ← 占位封面
+│  ├─ svg/example.svg     ← SVG 图标示例
 │  └─ favicon.svg         ← 站点图标
 ├─ index.md               ← 首页
 └─ package.json           ← 含 dev/build/preview 脚本与全部依赖
@@ -95,7 +110,7 @@ pnpm dev
 
 ### 2. 补齐自定义页面
 
-init 只生成了首页和示例文章，**分类、标签、归档、分页**等页面还需要你按 [自定义页面](./pages.md) 补齐对应的 `.md` 和 `.paths.mjs`，否则点击导航中的这些链接会 404。
+「基础博客配置」模式已生成全部功能页（分类/标签/归档/分页/关于/留言等），可直接使用；若选择「极简配置」或后续想新增其他页面（如装备页、友链页），按 [自定义页面](./pages.md) 补齐对应的 `.md` 和 `.paths.mjs`，否则点击对应链接会 404。
 
 ### 3. 开始写文章
 
@@ -205,8 +220,11 @@ pnpm vitepress init
 ```
 
 按提示操作：
-- **Language** → 选择 `zh-CN`（中文）
+- **Site title / Site description** → 填你的站点名称与描述
+- **Use TypeScript for config and theme files?** → 建议选 `Yes`（本主题的配置文件均为 TS/MTS 格式）
 - 其他选项回车使用默认值即可
+
+生成后打开 `.vitepress/config.mts`，把 `lang` 改为 `'zh-CN'`（VitePress 默认生成 `en-US`；下一步接入主题时还会再调整此文件）。
 
 ### 2.2 进入项目并安装依赖
 
@@ -564,7 +582,7 @@ pnpm dev
 
 
 ::: tip 至此你已经完成
-你的博客已经可以正常访问。下一步可以根据 [配置导航栏](#配置导航栏) 添加菜单，或继续完善其他页面。
+你的博客已经可以正常访问。下一步可以根据 [配置导航栏](../config/nav.md) 添加菜单，或继续完善其他页面。
 :::
 
 ---
@@ -573,7 +591,7 @@ pnpm dev
 
 ### Q: 终端出现 `ERR_PNPM_IGNORED_BUILDS` 红字
 
-**这是 pnpm v10+ 的安全策略**，不是错误，博客仍可正常启动。详见 [2.3 关于 `ERR_PNPM_IGNORED_BUILDS` 红字提示](#关于-err-pnpm-ignored-builds-红字提示)。
+**这是 pnpm v10+ 的安全策略**，不是错误，博客仍可正常启动。详见 [2.3 关于 `ERR_PNPM_IGNORED_BUILDS` 红字提示](#_2-3-关于-err-pnpm-ignored-builds-红字提示)。
 
 快速解决：
 

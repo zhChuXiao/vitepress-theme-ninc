@@ -2,7 +2,7 @@
 <template>
   <div v-if="showCard" class="article-gpt s-card">
     <div class="title">
-      <span class="name" @click="router.go('/posts/2024/0218')">
+      <span class="name">
         <i class="iconfont icon-robot"></i>
         文章摘要
         <i class="iconfont icon-up"></i>
@@ -24,6 +24,7 @@
     </div>
     <div class="meta">
       <span class="tip">{{ tipText }}</span>
+      <!-- 占位装饰：javascript:void(0) 死链接，未接任何功能；保留与否待产品决策（35 号 A10） -->
       <a href="javascript:void(0)" class="report">投诉</a>
     </div>
     <canvas id="articleGPT-bg" class="articleGPT-bg" ref="articleGPTBg"></canvas>
@@ -34,7 +35,6 @@
 import TextGenerateEffect from "../../TextGenerateEffect.vue";
 
 const { frontmatter, theme, page } = useData();
-const router = useRouter();
 
 // AI 摘要配置（themeConfig.aiSummary，构建期已剔除 apiKey 等敏感字段）
 const aiSummary = computed(() => theme.value?.aiSummary || {});
@@ -89,6 +89,9 @@ const isUnmounted = ref(false);
 let runtimeAbort = null;
 
 // 摘要渐入动画由 <TextGenerateEffect> 组件接管（逐字 blur+opacity 渐入），
+// 模拟思考延迟的随机时长（2.5s ~ 3.8s）
+const randomDelay = () => Math.random() * (3800 - 2500) + 2500;
+
 // 不再用递归 setTimeout 打字机；失败兜底文案也走渐入或直接显示
 // 初始化摘要：模拟思考延迟后，把完整摘要交给渐入组件一次性展示
 const initAbstract = () => {
@@ -99,7 +102,7 @@ const initAbstract = () => {
       animate.value = true;
       // loading 由 <TextGenerateEffect @done> 关闭
     },
-    Math.random() * (3800 - 2500) + 2500,
+    randomDelay(),
   );
 };
 
@@ -244,7 +247,7 @@ const initRuntimeAbstract = () => {
         // 卸载中断等场景，静默处理
       }
     },
-    Math.random() * (3800 - 2500) + 2500,
+    randomDelay(),
   );
 };
 
@@ -292,6 +295,10 @@ onMounted(() => {
     canvas.width = img.width
     canvas.height = img.height
     ctx.drawImage(img, 0, 0)
+  }
+  // 装饰图缺失时（如站点未在 public/images/cover/ 放置 bg-hd.png）隐藏 canvas，避免留白占位
+  img.onerror = () => {
+    canvas.style.display = 'none'
   }
 })
 

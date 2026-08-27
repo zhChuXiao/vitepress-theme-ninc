@@ -1,6 +1,6 @@
 # 部署指南
 
-本页介绍如何将基于 `vitepress-theme-ninc` 构建的博客部署到 Vercel、Netlify 或自有服务器（Nginx）。同时涵盖 PWA 缓存、自定义域名与环境变量等部署期注意事项。
+本页介绍如何将基于 `vitepress-theme-ninc` 构建的博客部署到 Vercel、Netlify、GitHub Pages、阿里云 ESA 或自有服务器（Nginx）。同时涵盖 PWA 缓存、自定义域名与环境变量等部署期注意事项。
 
 ## 构建命令
 
@@ -82,6 +82,121 @@ Vercel 默认 Node 版本可能低于主题要求的 `>= 20`。请在项目根�
   NODE_VERSION = "20"
 ```
 :::
+
+## 部署到 GitHub Pages
+
+GitHub Pages 免费托管静态站点，配合 GitHub Actions 可实现推送后自动构建部署。
+
+### Step 1：设置 base 路径
+
+部署在子路径的项目站（`用户名.github.io/仓库名/`）**必须**设置 `base`，否则样式与资源全部 404。本主题推荐在 `themeConfig.siteMeta.base` 中设置——主题会把它自动同步为 VitePress `base` 与 PWA `start_url`，一处配置两处生效：
+
+```ts
+// .vitepress/themeConfig.ts
+siteMeta: {
+  base: '/仓库名/', // 项目站必填；个人站（仓库名为 用户名.github.io）用 '/' 即可
+  // ...
+}
+```
+
+你也可以改在 `defineConfig` 第一参数中设置 `base: '/仓库名/'`（VitePress 原生方式，会覆盖 `siteMeta.base` 的同步值），但此时需把 `siteMeta.base` 改为相同值，否则 PWA `start_url` 与站点实际路径不一致。
+
+### Step 2：创建 GitHub Actions 工作流
+
+在项目根目录新建 `.github/workflows/deploy.yml`：
+
+```yaml
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 20
+          cache: pnpm
+      - uses: actions/configure-pages@v4
+      - run: pnpm install
+      - run: pnpm build
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .vitepress/dist
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
+```
+
+### Step 3：开启 Pages
+
+仓库 **Settings → Pages → Source** 选择 **GitHub Actions**（不要选 Deploy from a branch），推送 main 分支即自动部署。
+
+::: tip 动态路由无需 SPA 回退
+VitePress 是 SSG——`/page/2`、`/pages/categories/xxx` 等路由在构建时都生成了真实的 HTML 文件，GitHub Pages 可直接命中，不存在刷新 404 问题。未命中的路径会由 VitePress 构建出的 `404.html` 接管。
+:::
+
+## 部署到阿里云 ESA
+
+阿里云 ESA（边缘安全加速）的 **Pages** 功能提供静态站点托管，国内访问速度优于 GitHub Pages，免费套餐含不限量流量（边缘函数另有每日 10 万次请求额度）。
+
+### Step 1：添加 esa.jsonc
+
+在项目根目录新建 `esa.jsonc`（该文件的配置**优先级高于控制台**，存在时控制台对应配置不生效）：
+
+```json
+{
+  "name": "my-blog",
+  "installCommand": "pnpm install",
+  "buildCommand": "pnpm run build",
+  "assets": {
+    "directory": "./.vitepress/dist"
+  }
+}
+```
+
+::: tip notFoundStrategy 通常不需要
+与 GitHub Pages 同理，VitePress 的每个路由都有真实 HTML 文件，默认路由模式即可命中。若希望未命中路径返回 `404.html` 及 404 状态码，可追加 `"notFoundStrategy": "404Page"`。
+:::
+
+### Step 2：控制台导入仓库
+
+1. 登录 ESA 控制台，进入 **边缘计算和 AI → 函数和 Pages**，点击 **创建**。
+2. 选择 **导入 GitHub 仓库** 并完成授权，选中你的博客仓库。
+3. 确认构建信息（`esa.jsonc` 存在时以其为准），点击 **开始部署**。
+
+::: warning Node 版本
+ESA 构建的 Node 版本可在控制台「高级配置」中指定；项目 `package.json` 的 `engines.node` 声明（主题要求 `>= 20`）优先级更高，建议保留该声明。
+:::
+
+### Monorepo 部署
+
+在控制台「高级配置 → Root Directory」中填写子目录（如 `/blog`），构建命令将在该目录下执行。
 
 ## 部署到自有服务器（Nginx）
 
@@ -177,6 +292,14 @@ PWA 站点更新后用户可能仍看到旧内容，这是 Service Worker 预缓
 
 在域名服务商将 `xxx.xxx.com` 解析到服务器 IP，Nginx 配置 `server_name xxx.xxx.com` 并配合 Certbot 签发证书。
 
+### GitHub Pages
+
+仓库 **Settings → Pages → Custom domain** 填入域名，并在域名服务商添加 `CNAME` 记录指向 `用户名.github.io`。使用自定义域名后 `base` 应改回 `'/'`。
+
+### 阿里云 ESA
+
+在 ESA 项目的域名管理中添加自定义域名并按提示配置 DNS 解析，ESA 自动签发 HTTPS 证书。
+
 ::: tip 配置站点地址
 无论使用哪种平台，请确保 `themeConfig.siteMeta.site` 与 `defineConfig` 中 `sitemap.hostname` 都填写为最终线上域名（如 `https://xxx.xxx.com`），以保证 RSS、sitemap、Open Graph 等链接正确。
 :::
@@ -240,4 +363,4 @@ VitePress 是**构建期**注入配置，环境变量在 `pnpm build` 时被读�
 -  HTTPS 已启用（PWA 必需）
 -  `sw.js` 未被强缓存
 -  敏感密钥通过环境变量注入，未硬编码
--  动态路由刷新不报 404（SPA 回退已配置）
+-  动态路由刷新不报 404（Vercel/Netlify/Nginx 需配置 SPA 回退；GitHub Pages/ESA 每个路由均有真实 HTML，无需回退）

@@ -25,7 +25,7 @@ import { defineConfig } from 'vitepress-theme-ninc/defineConfig'
 
 ### `defineThemeConfig` — 决定「长什么样、有什么功能」
 
-放在 `.vitepress/themeConfig.ts` 里，负责外观与功能层：导航、评论、搜索、音乐、侧边栏等。你传入的配置会与主题内置的默认配置defu，只写想改的字段即可。
+放在 `.vitepress/themeConfig.ts` 里，负责外观与功能层：导航、评论、搜索、音乐、侧边栏等。你传入的配置会与主题内置的默认配置深合并（defu），只写想改的字段即可。
 
 ```ts
 // .vitepress/themeConfig.ts
@@ -55,7 +55,7 @@ import { defineThemeConfig } from 'vitepress-theme-ninc/defineThemeConfig'
 │                                             │
 │   defineThemeConfig({                       │
 │     siteMeta, nav, comment, search, ...     │
-│   })  ← 与 defaultThemeConfig 深合并defu   │
+│   })  ← 与 defaultThemeConfig 深合并（defu） │
 └─────────────────────────────────────────────┘
 ```
 
@@ -268,12 +268,12 @@ export const themeConfig = defineThemeConfig({
 | 配置项 | 默认值 | 说明 |
 |--------|--------|------|
 | `build.minify` | `'terser'` | 使用 terser 压缩 |
-| `terserOptions.drop_console` | `true` | 生产构建移除 console |
-| `terserOptions.drop_debugger` | `true` | 生产构建移除 debugger |
-| `optimizeDeps.include` | `['vue', 'pinia', 'element-plus', 'lodash-es', 'dayjs']` | 预构建依赖 |
+| `terserOptions.compress.pure_funcs` | `['console.log', 'console.info', 'console.debug']` | 生产构建移除 log/info/debug 输出（**保留** `console.error`/`console.warn`，供运行时错误处理与降级提示使用） |
+| `terserOptions.compress.drop_debugger` | `true` | 生产构建移除 debugger |
+| `optimizeDeps.include` | `['vue', 'vitepress-theme-ninc > pinia', '> element-plus', '> lodash-es', '> dayjs', '> crypto-js', '> nprogress', '> vue-instantsearch/vue3/es', ...]` | 预构建依赖；`vitepress-theme-ninc > dep` 为 pnpm 嵌套解析语法（依赖不提升到顶层时也能从主题包内解析） |
 
 ::: warning 生产构建移除 console
-生产构建会自动移除 `console.log` 和 `debugger` 语句。如果需要在生产环境调试，可临时在 `defineConfig` 第一参数中覆盖 `build.minify` 配置。
+生产构建会自动移除 `console.log`/`console.info`/`console.debug` 与 `debugger` 语句（`console.error`/`console.warn` 会保留）。如果需要在生产环境调试，可临时在 `defineConfig` 第一参数中覆盖 `build.minify` 配置。
 :::
 
 ### RSS 自动生成
@@ -301,7 +301,7 @@ RSS 默认包含最近 10 篇非加密文章，按 frontmatter `date` 降序排�
 
 - `posts/` 下的非加密文章（含 `posts/demo/` 组件 demo 文章）
 - `pages/nes`、`pages/utils/` 下的工具页
-- 根级页面（如 `/`、`/about`）
+- 根级页面（如首页 `/`、根级 `about.md` 对应的 `/about`；注意 `pages/about.md` 等 `pages/` 下页面按上述规则被排除）
 
 ### PWA 默认配置
 
@@ -379,7 +379,7 @@ RSS 默认包含最近 10 篇非加密文章，按 frontmatter `date` 降序排�
 ```ts
 interface PluginSwitches {
   alias?: false         // 路径别名插件（@ → 主题 client 目录）
-  vueJsx?: false        // @vitejs/plugin-vue-jsx（JSX/TSX 支持，主题内部未使用 JSX）
+  vueJsx?: false        // @vitejs/plugin-vue-jsx（JSX/TSX 支持，⚠️ 主题 TopGroup.vue 有一处 JSX，关闭后该文件编译失败）
   vueMcp?: false        // Vue MCP 开发工具
   groupIcons?: false    // 代码组图标（关闭后由内置 stub 兜底，不影响构建）
   codeInspector?: false // code-inspector 点击定位
@@ -399,17 +399,17 @@ interface PluginSwitches {
 | `compression` | 不生成 `.gz` / `.br` 压缩文件 |
 | `codeInspector` | 开发模式下无法点击组件跳转到编辑器 |
 | `vueMcp` | 开发模式下无法使用 Vue MCP 调试工具 |
-| `vueJsx` | 无法在 Markdown / Vue 中使用 JSX 语法（主题内部不依赖） |
 | `alias` | `@` 别名不可用（需手动使用完整导入路径） |
 | `groupIcons` | 代码组不显示图标（虚拟 CSS 由 stub 提供，构建不受影响） |
 | `svgIcons` | `<SvgIcon>` 组件不渲染图标（虚拟模块由 stub 提供，构建不受影响） |
 
 ### 不可关闭的硬依赖
 
-以下两个插件是主题运行的基石，**关闭后会导致构建失败或页面报错**：
+以下三个插件是主题运行的基石，**关闭后会导致构建失败或页面报错**：
 
 - **`autoImport`**：主题的 `.vue` 文件未显式 `import { ref, computed, onMounted, useRoute, ... } from 'vue'/'vitepress'`，完全依赖此插件自动注入。关闭后所有使用 Vue API 的组件都会抛出 `ReferenceError`。
 - **`components`**：主题的 `App.vue` 等文件通过标签名直接使用 `<Background />`、`<Nav />`、`<Post />` 等组件而不显式导入，依赖此插件自动注册。关闭后这些组件无法解析。
+- **`vueJsx`**：主题 `views/home_top/TopGroup.vue` 的「今日卡片」提示使用了 JSX 语法（`$vmessage.info(<div ...>…</div>)`）。关闭后该文件在编译期即报语法错误，构建失败。
 
 示例：关闭压缩与 code-inspector 以加快本地开发：
 
@@ -426,15 +426,15 @@ defineConfig(
 )
 ```
 
-::: warning autoImport 与 components 不可关闭
-`autoImport` 和 `components` 是主题硬依赖，关闭后构建必然失败。`svgIcons` 和 `groupIcons` 已有内置 stub 兜底，可安全关闭。其余插件按需关闭即可。
+::: warning autoImport / components / vueJsx 不可关闭
+`autoImport`、`components`、`vueJsx` 是主题硬依赖，关闭后构建必然失败。`svgIcons` 和 `groupIcons` 已有内置 stub 兜底，可安全关闭。其余插件按需关闭即可。
 :::
 
 ## PWA 降级机制
 
 PWA 能力依赖可选依赖 `@vite-pwa/vitepress`。本主题采用「自动降级」策略：
 
-1. **已安装 `@vite-pwa/vitepress`**：`defineConfig` 会自动用 `withPWA` 包装 VitePress 配置，生成 Service Worker 与 Manifest。
+1. **已安装 `@vite-pwa/vitepress`**：`defineConfig` 会自动用 `withPwa` 包装 VitePress 配置，生成 Service Worker 与 Manifest。
 2. **未安装 `@vite-pwa/vitepress`**：主题不会抛出错误，而是在构建时打印一条警告，并跳过 PWA 包装，其余功能不受影响。
 3. **显式关闭**：若你确定不需要 PWA，可在 `options` 中设置 `pwa: false` 以关闭警告：
 

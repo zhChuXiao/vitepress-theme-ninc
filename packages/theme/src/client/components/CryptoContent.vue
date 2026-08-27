@@ -105,8 +105,6 @@ const secretKey = ref("");
 const MAX_ATTEMPTS = 5;
 const LOCK_TIME = 30; // 锁定时间，单位秒
 
-// 固定盐值，用于增强密码安全性
-const SALT_PREFIX = "VitePress-ninc-Theme-Salt-";
 const PEPPER_SUFFIX = "-Secure-Pepper-Key";
 
 // 添加一个额外的签名密钥
@@ -139,23 +137,6 @@ const verifySignature = (data, signature) => {
   return calculatedSignature === signature;
 };
 
-// 生成加强版的密钥，使用 PBKDF2 算法
-const generateStrongKey = (passwordStr, salt) => {
-  // 结合固定盐值和可变盐值
-  const combinedSalt = SALT_PREFIX + salt + PEPPER_SUFFIX;
-
-  // 使用 PBKDF2 进行密钥派生，迭代次数为 10000，增强安全性
-  const derivedKey = CryptoJS.PBKDF2(passwordStr, combinedSalt, {
-    keySize: 8, // 256 bits
-    iterations: 10000,
-  }).toString();
-
-  return {
-    key: CryptoJS.enc.Hex.parse(derivedKey.substring(0, 32)),
-    iv: CryptoJS.enc.Hex.parse(derivedKey.substring(32, 64)),
-  };
-};
-
 // 生成指纹信息，用于验证用户环境
 const generateFingerprint = () => {
   const userAgent = navigator.userAgent;
@@ -170,18 +151,28 @@ const generateFingerprint = () => {
   ).toString();
 };
 
-// 倒计时函数
-const startCountdown = () => {
-  lockCountdown.value = LOCK_TIME;
-  const timer = setInterval(() => {
+// 倒计时函数（单例定时器：重复启动会先清旧，组件卸载时清理）
+let countdownTimer = null;
+const startCountdown = (initial = LOCK_TIME) => {
+  if (countdownTimer) clearInterval(countdownTimer);
+  lockCountdown.value = initial;
+  countdownTimer = setInterval(() => {
     lockCountdown.value--;
     if (lockCountdown.value <= 0) {
-      clearInterval(timer);
+      clearInterval(countdownTimer);
+      countdownTimer = null;
       isLocked.value = false;
       attemptCount.value = 0; // 重置尝试次数
     }
   }, 1000);
 };
+
+onBeforeUnmount(() => {
+  if (countdownTimer) {
+    clearInterval(countdownTimer);
+    countdownTimer = null;
+  }
+});
 
 // 安全地保存数据到 sessionStorage
 const secureStoreSave = (key, data) => {
@@ -347,8 +338,7 @@ const loadAttemptCount = () => {
       const remaining =
         LOCK_TIME - Math.floor((now - attemptData.timestamp) / 1000);
       if (remaining > 0) {
-        lockCountdown.value = remaining;
-        startCountdown();
+        startCountdown(remaining);
       } else {
         // 锁定已过期，重置尝试次数
         attemptCount.value = 0;
@@ -360,17 +350,6 @@ const loadAttemptCount = () => {
     console.error("解析尝试次数数据失败:", e);
     localStorage.removeItem(`${storageKey.value}_attempts`);
   }
-};
-
-// 退出加密状态
-const logout = () => {
-  decrypted.value = false;
-  password.value = "";
-  sessionStorage.removeItem(storageKey.value);
-  // 同时清除尝试次数记录
-  localStorage.removeItem(`${storageKey.value}_attempts`);
-  localStorage.removeItem(`${storageKey.value}_lock`);
-  attemptCount.value = 0;
 };
 
 // 触发文件选择
@@ -408,7 +387,7 @@ const processFile = (file) => {
     .toLowerCase();
 
   if (!validExtensions.includes(fileExtension)) {
-    keyError.value = "不支持的文件格式，请上传 .key、.txt或.json文件";
+    keyError.value = "不支持的文件格式，请上传 .key、.txt 或 .json 文件";
     return;
   }
 
@@ -583,8 +562,7 @@ const checkStoredPassword = () => {
 
       if (elapsed < remaining) {
         isLocked.value = true;
-        lockCountdown.value = remaining - elapsed;
-        startCountdown();
+        startCountdown(remaining - elapsed);
         return;
       } else {
         // 锁定已过期，清除锁定状态
@@ -696,45 +674,6 @@ const decrypt = (useStoredPassword = false) => {
     error.value = "解密过程出错，请重试";
     password.value = "";
   }
-};
-
-// 加密文本的方法
-const encryptText = (text, passwordStr, salt = "") => {
-  if (!salt) {
-    salt = CryptoJS.lib.WordArray.random(16).toString();
-  }
-
-  const { key, iv } = generateStrongKey(passwordStr, salt);
-
-  const encrypted = CryptoJS.AES.encrypt(text, key, {
-    iv: iv,
-    mode: CryptoJS.mode.CBC,
-    padding: CryptoJS.pad.Pkcs7,
-  });
-
-  // 返回格式：salt:iv:密文
-  return salt + ":" + encrypted.toString();
-};
-
-// 解密文本的方法
-const decryptText = (encryptedData, passwordStr) => {
-  const parts = encryptedData.split(":");
-  if (parts.length < 2) {
-    throw new Error("加密数据格式不正确");
-  }
-
-  const salt = parts[0];
-  const ciphertext = parts.slice(1).join(":");
-
-  const { key, iv } = generateStrongKey(passwordStr, salt);
-
-  const decrypted = CryptoJS.AES.decrypt(ciphertext, key, {
-    iv: iv,
-    mode: CryptoJS.mode.CBC,
-    padding: CryptoJS.pad.Pkcs7,
-  });
-
-  return decrypted.toString(CryptoJS.enc.Utf8);
 };
 
 // 监听锁定状态变化
@@ -1043,20 +982,6 @@ onMounted(() => {
       .iconfont {
         margin-right: 0.5rem;
         color: var(--main-color);
-      }
-
-      .logout-btn {
-        padding: 4px 12px;
-        background-color: var(--main-color-bg);
-        color: var(--main-color);
-        border: 1px solid var(--main-color);
-        border-radius: 4px;
-        cursor: pointer;
-
-        &:hover {
-          background-color: var(--main-color);
-          color: white;
-        }
       }
     }
   }

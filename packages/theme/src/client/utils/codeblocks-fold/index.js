@@ -1,5 +1,12 @@
 import { nextTick, watch } from 'vue'
 let themeChangeObserve = null
+// 每个代码块元素上的 MutationObserver 登记处：
+// SPA 换页时旧页面 DOM 被替换，若不 disconnect，旧观察者会持有已分离元素成为僵尸并逐页累积
+let foldObservers = []
+const clearFoldObservers = () => {
+  foldObservers.forEach(o => o.disconnect())
+  foldObservers = []
+}
 /**
  * 设置代码块折叠功能
  * @param frontmatter 前言
@@ -7,6 +14,8 @@ let themeChangeObserve = null
  * @param height 高度
  */
 const cbf = (frontmatter, defaultAllFold, height) => {
+  // 先回收上一页代码块的观察者（SPA 换页后旧元素已分离，观察已无意义）
+  clearFoldObservers()
   // 获取前言值
   let fm = true
   if (frontmatter.value && frontmatter.value.cbf !== undefined) {
@@ -61,16 +70,18 @@ const cbf = (frontmatter, defaultAllFold, height) => {
  * @param height 限制高度
  */
 const observer = (el, height) => {
-  new MutationObserver(mutations => {
+  const mo = new MutationObserver(mutations => {
     mutations.forEach(mutation => {
       const _el = mutation.target
       if (mutation.attributeName === 'class' && _el.classList.contains('active') && _el.offsetHeight > height) {
         fold(el, height)
       }
     })
-  }).observe(el, {
+  })
+  mo.observe(el, {
     attributeFilter: ['class']
   })
+  foldObservers.push(mo)
 }
 /**
  * 判断是否是代码块组中未显示的代码块

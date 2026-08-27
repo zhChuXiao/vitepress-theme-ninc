@@ -12,6 +12,7 @@
         :key="index"
         :href="item.link"
         target="_blank"
+        rel="noopener noreferrer"
         class="social-link"
       >
         <ThemeIcon :icon="item.icon" size="20px" />
@@ -24,6 +25,7 @@
         :key="index"
         :href="item.link"
         target="_blank"
+        rel="noopener noreferrer"
         class="social-link"
       >
         <ThemeIcon :icon="item.icon" size="20px" />
@@ -38,6 +40,7 @@
             :key="linkIndex"
             :href="link.link"
             :target="link.newTab ? '_blank' : null"
+            :rel="link.newTab ? 'noopener noreferrer' : null"
             class="link-text"
           >
             {{ link.text }}
@@ -54,7 +57,7 @@ import ThemeIcon from './ThemeIcon.vue';
 
 const { theme, site } = useData();
 const { footer, siteMeta } = theme.value;
-const props = defineProps({
+defineProps({
   // 显示底栏
   showBar: {
     type: Boolean,

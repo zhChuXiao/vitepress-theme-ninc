@@ -27,7 +27,6 @@
     "build:theme": "pnpm -F vitepress-theme-ninc build",
     "preview:blog": "pnpm -C blog preview",
     "preview:play": "pnpm -C play preview",
-    "preview:demo3": "pnpm -C demo3 preview",
     "preview:docs": "pnpm -C docs preview"
   },
   "devDependencies": {

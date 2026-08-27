@@ -3,13 +3,13 @@
     <div v-for="(item, index) in topGroupList" :key="index" ref="recentPostItemRef" class="recent-post-item"
       @click="navigateTo(item.regularPath)">
       <div class="post_cover left_radius">
-        <a :href="item.path" :title="item.title">
+        <a :href="item.regularPath" :title="item.title">
           <span class="recent-post-top-text">荐</span>
           <img class="post_bg" :src="item.cover" alt="cover" @error="handleImageError" />
         </a>
       </div>
       <div class="recent-post-info">
-        <a class="article-title" :href="item.path" :title="item.title">{{ item.title }}</a>
+        <a class="article-title" :href="item.regularPath" :title="item.title">{{ item.title }}</a>
       </div>
     </div>
     <a id="todayCard" class="todayCard" ref="todayCardRef" @click="todayCardClick" style="z-index: 1">
@@ -29,60 +29,6 @@
   </div>
 </template>
 
-<!-- <script>
-import { useRouter } from 'vitepress'
-export default {
-  name: 'TopGroup',
-  setup() {
-    const router = useRouter()
-    return {
-      router
-    }
-  },
-  props: {
-    topGroupList: {
-      type: Array,
-      default: () => []
-    },
-    topGroupBannerTips: String,
-    topGroupBannerTitle: String,
-    topGroupBannerImage: String,
-    topGroupBannerLink: String
-  },
-  methods: {
-    navigateTo(path) {
-      // 使用 pjax 进行导航
-      pjax.loadUrl(path)
-    },
-    handleImageError(event) {
-      event.target.src = this.$themeConfig.error_img.post_page
-    },
-    // 隐藏今日卡片
-    hideTodayCard: function () {
-      if (this.$refs.todayCardRef) {
-        this.$refs.todayCardRef.classList.add('hide')
-        const topGroup = document.querySelector('.topGroup')
-        const recentPostItems = topGroup.querySelectorAll('.recent-post-item')
-        recentPostItems.forEach(item => {
-          item.style.display = 'flex'
-        })
-      }
-    },
-    showTodayCard: function () {
-      if (this.$refs.todayCardRef) {
-        this.$refs.todayCardRef.classList.remove('hide')
-        this.$refs.todayCardRef.style.zIndex = 1
-      }
-    },
-    todayCardClick: function (event) {
-      if(this.topGroupBannerLink === '/') {
-        event.preventDefault()
-        this.$router.push('/')
-      }
-    }
-  }
-}
-</script> -->
 <script setup lang="jsx">
 import { ref, h, computed } from 'vue'
 import { useRouter, useData } from 'vitepress'
@@ -95,11 +41,7 @@ const props = defineProps({
     type: Array,
     default: () => []
   },
-  bannerDetails: Object,
-  topGroupBannerTips: String,
-  topGroupBannerTitle: String,
-  topGroupBannerImage: String,
-  topGroupBannerLink: String
+  bannerDetails: Object
 })
 
 const router = useRouter()
@@ -155,7 +97,7 @@ const todayCardClick = event => {
     )
     return
   }
-  isNewTab ? window.open(path) : router.go(path)
+  isNewTab ? window.open(path, '_blank', 'noopener') : router.go(path)
 }
 </script>
 

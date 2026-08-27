@@ -3,16 +3,16 @@
     <div class="footer-content">
       <div class="copyright">
         <span class="time">@ {{ startYear }} - {{ thisYear }} By </span>
-        <a :href="theme.siteMeta.author.link" class="author link" target="_blank">
+        <a :href="theme.siteMeta.author.link" class="author link" target="_blank" rel="noopener noreferrer">
           {{ theme.siteMeta.author.name }}
         </a>
-        <a v-if="theme.icp" class="icp link" href="https://beian.miit.gov.cn/" target="_blank">
+        <a v-if="theme.icp" class="icp link" href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer">
           <i class="iconfont icon-safe" />
           {{ theme.icp }}
         </a>
       </div>
       <div class="meta">
-        <a class="power link" href="https://vitepress.dev/" target="_blank">
+        <a class="power link" href="https://vitepress.dev/" target="_blank" rel="noopener noreferrer">
           <span class="by">Powered by</span>
           <span class="name">
             <!-- VitePress logo：内联 SVG，避免硬编码 /images/icon/vitepress.svg 导致 SSR build 解析失败 -->
@@ -34,7 +34,7 @@
             <span class="name-text">VitePress</span>
           </span>
         </a>
-        <a class="cc link" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank">
+        <a class="cc link" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank" rel="noopener noreferrer">
           <i class="iconfont icon-line" />
           <i class="iconfont icon-by-line" />
           <i class="iconfont icon-nc-line" />
@@ -74,7 +74,7 @@ const isShowFooter = () => {
   if (observer.value) observer.value?.disconnect()
   observer.value = new IntersectionObserver(entries => {
     entries.forEach(entry => {
-      footerIsShow.value = entry.isIntersecting ? true : false
+      footerIsShow.value = entry.isIntersecting
     })
   })
   // 添加监视器

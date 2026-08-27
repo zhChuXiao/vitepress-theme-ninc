@@ -1,11 +1,17 @@
 <!-- 链接卡片 -->
 <template>
   <div class="link-card-container">
-    <a :href="redirectUrl" :original-href="url" :target="isOutLink ? '_blank' : null" class="link-card s-card hover">
+    <a
+      :href="redirectUrl"
+      :original-href="url"
+      :target="isOutLink ? '_blank' : null"
+      :rel="isOutLink ? 'noopener noreferrer' : null"
+      class="link-card s-card hover"
+    >
       <span v-if="isOutLink" class="link-tip">Tip：本文为转载文章，原文来自于：</span>
       <div class="link-data">
         <div class="link-icon">
-          <img v-if="icon" class="link-img" :src="icon" alt="link-img" />
+          <img v-if="icon && !iconError" class="link-img" :src="icon" alt="link-img" @error="iconError = true" />
           <img
             v-else-if="siteInfo?.iconUrl"
             :src="siteInfo.iconUrl"
@@ -58,6 +64,8 @@ const props = defineProps({
 
 // 站点数据
 const siteInfo = ref(null)
+// 用户显式配置的 icon 加载失败标记：失败回退到 icon-link 字体图标（与 LinkCard 同款）
+const iconError = ref(false)
 
 // 是否为站内链接
 const isOutLink = computed(() => {
@@ -69,7 +77,9 @@ const isOutLink = computed(() => {
 
 const redirectUrl = computed(() => {
   if (isOutLink.value) {
-    const encodedHref = btoa(props.url)
+    // UTF-8 安全 base64（与 Redirect.vue 的 decodeURIComponent(escape(atob())) 解码配套）；
+    // 外层 encodeURIComponent 防 base64 中的 '+' 在 query 解析时变空格
+    const encodedHref = encodeURIComponent(btoa(unescape(encodeURIComponent(props.url))))
     const redirectPage = '/redirect'
     return `${redirectPage}.html?url=${encodedHref}`
   }

@@ -17,7 +17,7 @@ equipment = {
   tip: '分组提示文字',
   good_things: [
     {
-      name: '小分组标题',
+      title: '小分组标题',
       description: '小分组描述',
       equipment_list: [
         {
@@ -57,7 +57,7 @@ equipment = {
 
 | 字段 | 类型 | 说明 |
 | --- | --- | --- |
-| `name` | `string` | 小分组标题 |
+| `title` | `string` | 小分组标题（注意：字段名为 `title`，不是 `name`） |
 | `description` | `string` | 小分组描述 |
 | `equipment_list` | `EquipmentItem[]` | 该小分组下的设备列表 |
 
@@ -66,10 +66,10 @@ equipment = {
 | 字段 | 类型 | 说明 |
 | --- | --- | --- |
 | `name` | `string` | 设备名称 |
-| `specification` | `string` | 规格；含 `|` 时按「左 | 右」两段展示 |
+| `specification` | `string` | 规格；含 `\|` 时按「左 \| 右」两段展示 |
 | `description` | `string` | 设备描述 |
 | `image` | `string` | 设备图片路径 |
-| `link` | `string` | 详情链接；外链在新标签打开，站内路径在当前页跳转 |
+| `link` | `string` | 详情链接；无论外链还是站内路径，均在新标签页打开（`target="_blank"` + `rel="noopener noreferrer"`） |
 | `large` | `boolean?` | 是否大图 |
 | `largeHeight` | `boolean?` | 是否大高度 |
 | `full` | `boolean?` | 是否铺满 |
@@ -88,7 +88,7 @@ export const themeConfig = defineThemeConfig({
     tip: '仅供参考，按需选择',
     good_things: [
       {
-        name: '输入设备',
+        title: '输入设备',
         description: '键盘与鼠标',
         equipment_list: [
           {
@@ -109,7 +109,7 @@ export const themeConfig = defineThemeConfig({
         ]
       },
       {
-        name: '音频设备',
+        title: '音频设备',
         description: '耳机',
         equipment_list: [
           {
@@ -133,17 +133,17 @@ export const themeConfig = defineThemeConfig({
 `equipment` 渲染为「我的装备」页面：
 
 - **顶部封面**：`top_background` 作为整页封面背景，叠加 `class_name`、`description`、`subDescription`、`tip`。
-- **装备分组**：`good_things` 每一项渲染为一个区块，标题为 `name`，描述为 `description`。
+- **装备分组**：`good_things` 每一项渲染为一个区块，标题为 `title`，描述为 `description`。
 - **设备卡片**：`equipment_list` 每一项渲染为一张卡片，展示 `image`、`name`、`specification`、`description`，点击名称可复制，`link` 渲染为「详情」入口。
 
 ## 注意事项
 
-::: warning 默认为空对象
-`defaultThemeConfig.equipment` 默认值为 `{}`。若不配置 `equipment`，`<Equipment />` 页面不会渲染任何装备内容。
+::: warning 未配置时渲染内置演示数据
+`defaultThemeConfig.equipment` 默认值为 `{}`，但 `Equipment.vue` 内置了一份**完整演示装备清单**（作者的设备示例：Mac/iPad/外设等 30+ 件，合并方式 `{ ...内置演示, ...你的 equipment }` 浅合并）。**你不配置 `equipment` 时，页面会渲染这份内置清单**，且清单里的 `/images/*.png` 设备图并未随主题包分发——你的站点若没有同名图片会显示破图。正式使用前请务必完整配置自己的 `equipment`（`good_things` 为你的分组清单，浅合并会整体顶替内置分组）。
 :::
 
 ::: tip 与导航配合
-在 [`nav`](./nav.md) 中添加指向 `/pages/equipment` 的入口，并在 `pages/equipment.md` 中显式导入 `Equipment` 组件，才能访问装备页。详见 [自定义页面 - 装备页](../guide/pages.md#装备页equipment)。
+在 [`nav`](./nav.md) 中添加指向 `/pages/equipment` 的入口，并在 `pages/equipment.md` 中显式导入 `Equipment` 组件，才能访问装备页。详见 [自定义页面 - 装备页](../guide/pages.md#装备页-equipment)。
 :::
 
 > 配置会与默认值深合并，只需填写想修改的字段，详见 [主题配置详解 - defu 深合并机制](../guide/theme-config#defu-深合并机制)。

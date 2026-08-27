@@ -19,7 +19,7 @@
 | --- | --- | --- | --- |
 | `enable` | `boolean` | `true` | 是否启用封面显示 |
 | `coverLayout` | `'left' \| 'right' \| 'both'` | `'both'` | 封面布局方向：左/右/双向 |
-| `defaultCover` | `string[]` | `[]` | 默认封面图数组，需用户自行提供；为空且文章未配置 `cover` 时不显示默认封面 |
+| `defaultCover` | `string[]` | `[]` | 默认封面图数组，需用户自行提供；为空且文章未配置 `cover` 时，渲染主题内置的 HTML 占位封面（低饱和度渐变 + 标题首字 + 分类名），不显示图片 |
 
 默认 `cover` 值：
 
@@ -58,7 +58,7 @@ export const themeConfig = defineThemeConfig({
 ```
 
 ::: warning 默认不内置封面图片
-`defaultCover` 默认为空数组。若希望未填写 `frontmatter.cover` 的文章也显示封面，请将图片放到 `public/images/cover/`，并像上例一样显式配置 `defaultCover`。图片路径不包含 `public` 前缀。
+`defaultCover` 默认为空数组。未填写 `frontmatter.cover` 的文章会渲染主题内置的 HTML 占位封面（基于分类色的低饱和度渐变 + 标题首字 + 分类名）；若希望改为自己的图片封面，请将图片放到 `public/images/cover/`，并像上例一样显式配置 `defaultCover`。图片路径不包含 `public` 前缀。
 :::
 
 关闭封面显示的示例：
@@ -88,10 +88,10 @@ export const themeConfig = defineThemeConfig({
 - **`right`**：封面固定在卡片右侧，文字摘要在左，适合先阅读标题再浏览配图。
 - **`both`（默认）**：封面在左右两侧交替排布，形成上下错落的视觉节奏，信息密度最高。
 
-`twoColumns` 开启时卡片双栏并排，关闭后单栏铺满，长图文阅读体验更佳。
+`twoColumns` 开启时卡片双栏并排（**此模式下 `coverLayout` 不生效**，实现上布局类型优先取双栏网格）；关闭后单栏展示，此时 `coverLayout` 才决定封面方向，长图文阅读体验更佳。窄屏（≤768px）下所有布局统一退化为封面在上、文字在下的垂直卡片。
 
 ::: tip 常见配置组合
-- **图文并茂型**：`twoColumns: true` + `coverLayout: 'both'`，首屏信息量最大，适合更新频繁的博客。
+- **图文并茂型**：`twoColumns: true`（双栏网格下 `coverLayout` 无需设置），首屏信息量最大，适合更新频繁的博客。
 - **极简阅读型**：`twoColumns: false` + `coverLayout: 'right'`，单栏 + 右侧封面，突出正文摘要。
 - **纯文字型**：`showCover.enable: false` + `twoColumns: false`，去除封面聚焦内容，加载更快。
 :::
@@ -114,7 +114,7 @@ export const themeConfig = defineThemeConfig({
 :::
 
 ::: tip twoColumns 双栏布局
-`twoColumns` 控制文章列表是否双栏并排展示。开启后可在首屏展示更多文章，适合文章数量较多的站点；关闭后采用单栏布局，更适合图文并茂的长文章。
+`twoColumns` 控制文章列表是否双栏并排展示。开启后可在首屏展示更多文章，适合文章数量较多的站点；关闭后采用单栏布局，更适合图文并茂的长文章。注意 `coverLayout` 仅在 `twoColumns: false` 时生效。
 :::
 
 > 图片路径以 `/` 开头，对应 `public/` 下的文件，如 `/images/xxx.png` 对应 `public/images/xxx.png`。

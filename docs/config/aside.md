@@ -32,7 +32,7 @@ hello 卡片底部右侧的 GitHub 图标与邮箱图标**不在 `aside.hello` �
 - `siteMeta.author.email` → 邮箱图标的 `mailto:` 链接
 - 未配置时图标仍会展示但为空链接，建议替换为真实地址
 
-hello 卡片中的 Clock 动画中心头像通过 [`siteMeta.author.cover`](./site-meta.md#author-子表) 配置，未配置时回退到 [`siteMeta.avatar`](./site-meta.md#site-meta-主表)，两者默认使用主题作者提供的网络图片，开箱即用，替换方法见 [siteMeta 文档](./site-meta.md#author-子表)。
+hello 卡片中的 Clock 动画中心头像通过 [`siteMeta.author.cover`](./site-meta.md#author-子表) 配置，未配置时回退到 [`siteMeta.avatar`](./site-meta.md#sitemeta-主表)，两者默认使用主题作者提供的网络图片，开箱即用，替换方法见 [siteMeta 文档](./site-meta.md#author-子表)。
 
 这样设计是为了避免作者社交入口在多处重复配置，站点作者信息集中维护在 `siteMeta.author` 中即可。
 :::
@@ -54,29 +54,20 @@ hello 卡片中的 Clock 动画中心头像通过 [`siteMeta.author.cover`](./si
 | `text2` | `string` | `'本站采用 <strong>VitePress</strong> 搭建'` | 欢迎语第二行，支持 HTML |
 | `text3` | `string` | `'使用 vitepress-theme-ninc 主题'` | 欢迎语第三行，支持 HTML |
 | `email` | `string` | `'you@example.com'` | 联系邮箱 |
-| `address` | `[number, number] \| []` | `[]` | 经纬度坐标 `[lng, lat]`，为空时不渲染地图 |
-| `ipLocation` | `object?` | 见下表 | 访客 IP 定位服务配置，不填则使用主题内置接口 |
+| `address` | `[number, number] \| []` | `[]` | 经纬度坐标 `[lng, lat]`，为空时距离显示为 0 公里 |
+| `ipLocation` | `object?` | 见下表 | 访客 IP 定位服务配置（`ipApi` 与 `locationApi` 均需填写；主题不内置默认接口，未配置时访客位置功能不生效） |
 
 #### welcome.ipLocation 子表
 
-欢迎卡片默认会调用主题内置的 IP 查询与归属地接口，向访客展示其所在的省市信息。接口有调用频率限制，如有自建接口可在此覆盖。
+欢迎卡片需要调用 IP 查询与归属地接口，向访客展示其所在的省市信息。**主题不内置默认接口**，必须在此配置两个接口地址后功能才会生效；未配置时不会发起任何请求，控制台会输出一条提示警告，访客位置区域不展示。
 
 | 字段 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
-| `ipApi` | `string?` | 见下方 | 访客 IP 查询接口（GET，返回 JSON，需含 `data.ip` 字段） |
-| `locationApi` | `string?` | 见下方 | IP 归属地查询接口模板，`${ip}` 为占位符会被自动替换（GET，返回 JSON，需含 `data` 字段） |
+| `ipApi` | `string?` | 无（必填） | 访客 IP 查询接口（GET，返回 JSON，需含 `data.ip` 字段） |
+| `locationApi` | `string?` | 无（必填） | IP 归属地查询接口模板，`${ip}` 为占位符会被自动替换（GET，返回 JSON，需含 `data` 字段） |
 
-:::: tip 默认值
-
-```ts
-ipApi: 'https://www.mxnzp.com/api/ip/self?app_id=r9iwwighsmbtewxr&app_secret=yQ9jlmboL7sA57pzNvGZQNmSEoP3JtVd'
-locationApi: 'https://v1.nsuuu.com/api/ipip?ip=${ip}&key=bf7164e3a2e82a6c'
-```
-
-::::
-
-::: warning 默认接口为共享资源
-内置的两条接口来源于第三方公共服务，主题使用者共享同一份 `app_id`、`app_secret` 与 `key`，遇到调用高峰期可能超限。建议自行申请接口或部署代理后通过 `ipLocation` 覆盖，避免因共享限额导致访客位置展示失败。
+::: warning 必须自行配置接口
+当前版本主题不附带任何默认 IP 接口。你需要自行申请（如 mxnzp、nsuuu 等公共服务）或自建接口后填入。注意：接口凭据（app_id、app_secret、key 等）会随前端代码公开，请选择允许客户端暴露的公共服务，或通过自建代理转发以隐藏凭据。
 :::
 
 ::: tip 自建接口示例
@@ -186,11 +177,11 @@ export const themeConfig = defineThemeConfig({
 
 - **hello 站点简介**：一段支持 HTML 的简介文本，常用于站点定位说明。卡片底部右侧展示作者社交入口（GitHub / 邮箱图标），链接来自 [`siteMeta.author.link`](./site-meta.md#author-子表) 与 [`siteMeta.author.email`](./site-meta.md#author-子表)，未配置时为空链接。
 - **wechat 微信二维码**：默认显示 `face`（微信头像），悬浮翻转展示 `back`（二维码图片）。
-- **welcome 欢迎信息**：三行欢迎语 + 联系邮箱 + 经纬度地图标记。
+- **welcome 欢迎信息**：三行欢迎语 + 联系邮箱 + 经纬度直线距离计算。
 - **toc 文章目录**：自动读取当前文章的标题层级，生成可点击跳转的目录树，滚动时高亮当前章节。
-- **tags 标签云**：聚合站点所有标签，按文章数量调整字号，点击跳转到对应标签页。
+- **tags 标签云**：聚合站点所有标签，每项以角标数字显示文章数，点击跳转到对应标签页。
 - **countDown 倒计时**：展示距 `data.date` 的剩余天数，适合节日、纪念日、版本发布倒计时。
-- **siteData 站点统计**：展示文章数、分类数、标签数等汇总数据。
+- **siteData 站点统计**：展示文章总数、建站天数，以及总访问量 / 总访客数（后两项来自不蒜子，需 [`tongji.busuanzi`](./tongji.md) 启用）。
 
 ::: tip 常见配置组合
 - **内容型博客**：开启 `hello` + `toc` + `tags` + `siteData`，关闭 `wechat` 与 `countDown`，聚焦阅读辅助。
@@ -214,8 +205,8 @@ export const themeConfig = defineThemeConfig({
 
 > 图片路径以 `/` 开头，对应 `public/` 下的文件，如 `/images/xxx.png` 对应 `public/images/xxx.png`。
 
-::: tip welcome.address 用于地图定位
-`welcome.address` 是 `[经度, 纬度]` 形式的坐标数组，会用于在侧边栏渲染地图标记。可通过 [拾取坐标系统](https://lbs.qq.com/getPoint/) 获取所需经纬度。
+::: tip welcome.address 用于直线距离计算
+`welcome.address` 是 `[经度, 纬度]` 形式的坐标数组，会用于计算并显示访客位置与博主位置的直线距离（如「当前位置距博主的直线距离约：XXX 公里」）。可通过 [拾取坐标系统](https://lbs.qq.com/getPoint/) 获取所需经纬度。
 :::
 
 ::: warning countDown.date 使用标准日期格式
@@ -223,7 +214,7 @@ export const themeConfig = defineThemeConfig({
 :::
 
 ::: tip siteData 站点统计
-`siteData` 用于在侧边栏展示文章数、分类数、标签数等站点统计数据，统计内容由主题自动收集，无需额外配置字段。
+`siteData` 用于在侧边栏展示文章总数、建站天数、总访问量与总访客数等站点统计数据，统计内容由主题自动收集，无需额外配置字段（访问量/访客数依赖 [`tongji.busuanzi`](./tongji.md)）。
 :::
 
 ## 相关配置

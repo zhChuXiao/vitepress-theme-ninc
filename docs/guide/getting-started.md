@@ -50,7 +50,7 @@
 
 ## 它长什么样
 
-本主题提供了一套完整的示例站点（play），包含首页、文章列表、分类、标签、归档、关于、留言板、友链、工具页等全部页面类型。你可以把它当作参考模板，也可以直接复制来修改。
+本主题提供了一套完整的示例站点（play），包含首页、文章列表、分类、标签、归档、关于、留言板、NES 工具页、赞赏名单、版权/隐私等页面类型（装备页的完整示例见 [blog.ninc.top](https://blog.ninc.top/pages/equipment) 在线演示）。你可以把它当作参考模板，也可以直接复制来修改。
 
 ::: tip 想先看看效果？
 你可以直接访问 [blog.ninc.top](https://blog.ninc.top) 在线预览主题实际效果，或者跳到 [从零开始](./quick-start.md) 跟着教程走，5 分钟就能在本地看到效果。
@@ -92,7 +92,7 @@ npm install -g pnpm
 
 ```ts
 import { defineConfig } from 'vitepress-theme-ninc/defineConfig'
-import { themeConfig } from '../themeConfig'
+import { themeConfig } from './themeConfig'
 
 export default defineConfig({}, themeConfig)
 ```

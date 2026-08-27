@@ -10,7 +10,7 @@
         :src="backgroundUrl"
         id="background-cover"
         class="cover"
-        alt="background"
+        alt=""
         @error="coverError"
         @load="coverLoaded"
       />

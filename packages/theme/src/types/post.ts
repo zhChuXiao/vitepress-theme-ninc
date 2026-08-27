@@ -17,8 +17,8 @@ export interface CryptoInfo {
 
 /** 单篇文章数据 */
 export interface PostData {
-  /** 文章唯一 ID（由文件路径生成） */
-  id: string
+  /** 文章唯一 ID（由文件路径生成的数字哈希，见 getPostData.mjs generateId） */
+  id: number
   /** 文章标题 */
   title: string
   /** 发布时间（时间戳） */

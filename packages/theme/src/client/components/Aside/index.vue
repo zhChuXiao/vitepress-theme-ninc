@@ -15,7 +15,7 @@
 <script setup>
 import WeiXinCard from './Widgets/WeiXinCark.vue'
 const { theme } = useData();
-const props = defineProps({
+defineProps({
   // 显示目录
   showToc: {
     type: Boolean,

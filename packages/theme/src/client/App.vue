@@ -66,7 +66,10 @@ import { storeToRefs } from "pinia";
 import { mainStore } from './store';
 import { calculateScroll, specialDayGray } from './utils/helper';
 import ScrollProgress from "./components/ScrollProgress.vue";
-import BackgroundCanvas from "./views/BackgroundCanvas.vue";
+// BackgroundCanvas（three.js 3D 星空）当前未启用（上方模板已注释），
+// 静态 import 会把 three.js 全量打进客户端 bundle；保持与模板一致的注释状态，
+// 如需重新启用 3D 星空，同时取消此处与模板的注释即可
+// import BackgroundCanvas from "./views/BackgroundCanvas.vue";
 import BackgroundCanvas2d from "./views/BackgroundCanvas2d.vue";
 const route = useRoute();
 const isProd = import.meta.env.PROD;
@@ -209,7 +212,10 @@ onMounted(() => {
   // 检测开发者工具
   detectDevTools();
   // 获取用户位置（支持通过 aside.welcome.ipLocation 自定义接口）
-  store.getUserLocation(theme.value?.aside?.welcome?.ipLocation)
+  // 未配置接口时 store 会抛出带说明的错误，此处捕获避免未处理的 Promise rejection
+  store.getUserLocation(theme.value?.aside?.welcome?.ipLocation).catch((err) => {
+    console.warn(err?.message || err);
+  });
   // 更改主题类别
   changeSiteThemeType();
   // 切换系统字体样式

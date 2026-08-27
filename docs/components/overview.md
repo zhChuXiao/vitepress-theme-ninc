@@ -47,6 +47,9 @@ import Home from '@/views/Home.vue'
 | CommentsView | `views/CommentsView.vue` | 留言板页 |
 | About | `views/About.vue` | 关于页 |
 | Project | `views/Project.vue` | 项目展示页 |
+| Thanks | `views/Thanks.vue` | 赞赏名单页（数据来自 `rewardData.list`） |
+| NesGame | `views/NesGame.vue` | NES 模拟器页（随主题包分发，见下方「工具页视图」） |
+| BackgroundCanvas / BackgroundCanvas2d | `views/BackgroundCanvas.vue` / `views/BackgroundCanvas2d.vue` | 背景画布视图：2d 版由 App.vue 直接挂载（暗色模式星空）；three.js 3D 版当前在 App.vue 中注释未启用 |
 
 ## 首页顶部
 
@@ -54,9 +57,9 @@ import Home from '@/views/Home.vue'
 
 | 组件 | 文件路径 | 说明 |
 |------|----------|------|
-| HomeTop | `views/home_top/HomeTop.vue` | 顶部区域容器（标题 + 横幅 + 快捷分类） |
+| HomeTop | `views/home_top/HomeTop.vue` | 顶部区域容器（标题区 + 技能图标 + 随便逛逛 + 快捷分类） |
 | TopGroup | `views/home_top/TopGroup.vue` | 顶部横幅推荐站点 |
-| TagsGroupAll | `views/home_top/TagsGroupAll.vue` | 快捷分类入口标签组 |
+| TagsGroupAll | `views/home_top/TagsGroupAll.vue` | 技能图标滚动组（数据来自 `homeTop.creativity`，首页与关于页共用） |
 
 ## 导航与菜单
 
@@ -86,15 +89,13 @@ import Home from '@/views/Home.vue'
 | Countdown | `components/Aside/Widgets/Countdown.vue` | 倒计时 |
 | SiteData | `components/Aside/Widgets/SiteData.vue` | 站点统计 |
 | Clock | `components/Aside/Widgets/Clock.vue` | 时钟 |
-| Date | `components/Aside/Widgets/Date.vue` | 日期 |
-| ArticleGPT | `components/Aside/Widgets/ArticleGPT.vue` | 文章摘要（模仿 GPT 样式，内容手动填写） |
+| ArticleGPT | `components/Aside/Widgets/ArticleGPT.vue` | 文章 AI 摘要（构建期生成 / 手动填写 articleGPT / 运行时代理流式） |
 | WeiXinCark | `components/Aside/Widgets/WeiXinCark.vue` | 微信二维码卡片 |
 
 ## 文章相关
 
 | 组件 | 文件路径 | 说明 |
 |------|----------|------|
-| PostHeader | `views/PostHeader.vue` | 文章头部（标题 + 元信息 + 封面） |
 | Copyright | `components/Copyright.vue` | 版权声明 |
 | References | `components/References.vue` | 参考资料 |
 | CryptoContent | `components/CryptoContent.vue` | 加密文章内容（密码验证后显示） |
@@ -122,7 +123,7 @@ import Home from '@/views/Home.vue'
 
 | 组件 | 文件路径 | 说明 |
 |------|----------|------|
-| Player | `components/Player.vue` | 音乐播放器（APlayer + MetingJS） |
+| Player | `components/Player.vue` | 音乐播放器（APlayer + Meting API） |
 | LottieIcon | `components/LottieIcon.vue` | Lottie 动画图标 |
 | SvgIcon | `components/SvgIcon.vue` | SVG 雪碧图图标 |
 | Banner | `components/Banner.vue` | 横幅广告位 |
@@ -149,11 +150,12 @@ import Home from '@/views/Home.vue'
 | Control | `components/Control.vue` | 控制面板 |
 | LazyLoader | `components/LazyLoader.vue` | 懒加载容器 |
 | Loading | `components/Loading.vue` | 加载动画 |
-| LoadingCapsule | `components/LoadingCapsule.vue` | 胶囊加载动画 |
 | MacCard | `components/MacCard.vue` | Mac 风格卡片 |
 | Message | `components/Message.vue` | 全局消息提示 |
 | Modal | `components/Modal.vue` | 模态框 |
 | SafariMockUp | `components/SafariMockUp.vue` | Safari 浏览器模型框 |
+| ThemeIcon | `components/ThemeIcon.vue` | 图标解析组件（将 `IconField` 三种写法统一渲染为 iconfont/SVG 图标） |
+| TextGenerateEffect | `components/TextGenerateEffect.vue` | 文字生成动效组件 |
 | UtilPageTitle | `components/UtilPageTitle.vue` | 工具页标题 |
 
 ## 标签与卡片
@@ -167,10 +169,14 @@ import Home from '@/views/Home.vue'
 | Checkbox | `components/Tags/Checkbox.vue` | 复选框标签 |
 | Slider | `components/Tags/Slider.vue` | 滑块标签 |
 
-## 工具页视图（不随主题包分发）
+## 工具页视图（部分随主题包分发）
 
-::: warning 工具页不在主题包内
-以下工具页（NES 模拟器、代码对比、键码速查、KMS、妙控键盘、SCSS 转 CSS）**不随主题包分发**，仅作为本仓库 `blog/` 站点的演示内容存在。它们依赖的 `nes-vue`、`v-code-diff`、`sass.js`、`codejar` 等扩展依赖也未列入主题包。
+::: tip NES 模拟器已内置主题
+**NES 模拟器已随主题包分发**：主题包内置 `views/NesGame.vue` 与 `nes-vue` 依赖，通过 `themeConfig.nes` 配置 ROM 即可使用，`vitepress-theme-ninc init` 还会自动复制示例 ROM 并生成 `pages/nes.md`（详见 [NES 模拟器指南](/guide/nes)）。
+:::
+
+::: warning 以下工具页不在主题包内
+其余工具页（代码对比、键码速查、KMS、妙控键盘、SCSS 转 CSS）**不随主题包分发**，仅作为本仓库 `blog/` 站点的演示内容存在。它们依赖的 `v-code-diff`、`sass.js`、`codejar` 等扩展依赖也未列入主题包。
 
 若你希望实现类似功能，可参考 `blog/.vitepress/theme/views/util-pages/` 下的实现：在 `.vitepress/theme/views/` 下自行创建扩展页面组件，按需安装对应依赖，并在 Markdown 中显式导入使用。详见 [安装 - 关于扩展页面与小工具](../guide/installation.md#关于扩展页面与小工具)。
 :::
@@ -183,7 +189,6 @@ import Home from '@/views/Home.vue'
 | CodeCompare | `blog/.vitepress/theme/views/util-pages/CodeCompare.vue` | 代码对比工具 |
 | KmsWindows | `blog/.vitepress/theme/views/util-pages/KmsWindows.vue` | KMS 激活密钥查询 |
 | MagicKeyboard | `blog/.vitepress/theme/views/util-pages/MagicKeyboard.vue` | Magic Keyboard 键位图 |
-| NesGame | `blog/.vitepress/theme/views/util-pages/NesGame.vue` | NES 游戏模拟器 |
 | SassToCssContainer | `blog/.vitepress/theme/views/util-pages/SassToCssContainer.vue` | SCSS 转 CSS 工具 |
 
 ## 404 页面

@@ -4,7 +4,6 @@ import { Icon } from '@iconify/vue'
 import Compare from './Compare.vue'
 import AnimatedBeam from './AnimatedBeam.vue'
 import ParticlesBg from './effects/ParticlesBg.vue'
-import SplitText from './effects/SplitText.vue'
 import NumberCount from './effects/NumberCount.vue'
 import MagneticButton from './effects/MagneticButton.vue'
 import TiltCard from './effects/TiltCard.vue'
@@ -18,9 +17,9 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 const features = [
   { icon: 'lucide:message-circle', title: '评论系统', desc: '内置 Twikoo 评论系统，开箱即用，支持邮件通知、表情、反垃圾等完整能力。' },
-  { icon: 'lucide:search', title: '全站搜索', desc: '内置本地搜索与 Algolia DocSearch 集成，毫秒级响应，支持中文分词。' },
+  { icon: 'lucide:search', title: '全站搜索', desc: '内置 Algolia InstantSearch 集成，导航栏按钮唤起弹窗实时匹配，毫秒级响应。' },
   { icon: 'lucide:smartphone', title: 'PWA 离线', desc: '自动生成 Service Worker，支持离线访问与可安装到手机桌面。' },
-  { icon: 'lucide:music', title: '音乐播放器', desc: 'APlayer + MetingJS 驱动，支持网易云、QQ 音乐等多平台歌单。' },
+  { icon: 'lucide:music', title: '音乐播放器', desc: 'APlayer + Meting API 驱动，支持网易云、QQ 音乐等多平台歌单。' },
   { icon: 'lucide:mouse-pointer-click', title: '自定义光标', desc: '内置精致鼠标光标，默认、链接、文本三种状态分别适配，明暗主题自动切换。' },
   { icon: 'lucide:image', title: '图片灯箱', desc: 'Fancybox 灯箱，点击图片自动放大，支持相册浏览、缩放、旋转。' },
   { icon: 'lucide:rss', title: 'RSS 订阅', desc: '自动生成 RSS 订阅源，读者可通过 RSS 阅读器订阅更新。' },
@@ -85,10 +84,10 @@ const highlights = [
     icon: 'lucide:settings-2',
     title: '配置即一切',
     desc: '基于 defu 深合并机制，只需声明想改的字段，其余自动沿用默认值。无需复制整个配置文件，themeConfig 让你精准控制每一个细节。',
-    points: ['17 个配置模块', 'defu 深合并', 'TypeScript 类型提示', '热更新支持'],
+    points: ['26 个配置模块', 'defu 深合并', 'TypeScript 类型提示', '热更新支持'],
     codeLang: 'ts',
     code: `// themeConfig.ts
-import { defineThemeConfig } from 'vitepress-theme-ninc'
+import { defineThemeConfig } from 'vitepress-theme-ninc/defineThemeConfig'
 
 export const themeConfig = defineThemeConfig({
   siteMeta: {
@@ -98,8 +97,7 @@ export const themeConfig = defineThemeConfig({
   },
   comment: { enable: true, twikoo: { envId: '...' } },
   // 只需声明想改的字段，其余自动补全
-  pwa: { enable: true },
-  nav: { enable: true }
+  postSize: 10
 })`
   },
   {
@@ -107,20 +105,19 @@ export const themeConfig = defineThemeConfig({
     title: 'Markdown 扩展',
     desc: '在标准 Markdown 之上扩展了 timeline、radio、button、card 四种容器，并重写表格渲染规则，让你的内容更生动。',
     points: ['时间线容器', '任务清单', '按钮卡片', '表格自动包裹'],
-    codeLang: 'ts',
-    code: `// .vitepress/config.mts
-import { defineConfig } from 'vitepress-theme-ninc/defineConfig'
+    codeLang: 'md',
+    code: `// 在 .md 中直接使用扩展容器，开箱即用无需配置
+::: timeline 2026-08-24
+今天发布了第一篇文章
+:::
 
-export default defineConfig({}, themeConfig, {
-  markdown: {
-    timeline: true,           // 时间线容器
-    checkbox: true,           // 任务清单 ✓ ✗
-    container: ['button', 'card'], // 容器类型
-    tableWrap: true           // 表格自动包裹
-  },
-  // 在 .md 中使用 ::: type 语法即可
-  // 例: ::: timeline 2025 年 ... :::
-})`
+::: button primary
+立即开始
+:::
+
+::: radio checked
+已完成的事项
+:::`
   },
   {
     icon: 'lucide:wifi-off',
@@ -131,14 +128,15 @@ export default defineConfig({}, themeConfig, {
     code: `// .vitepress/config.mts
 import { defineConfig } from 'vitepress-theme-ninc/defineConfig'
 
+// PWA 默认开启，这里展示如何覆盖 manifest
 export default defineConfig({}, themeConfig, {
-  pwa: true,  // 一键开启 PWA
   pwaManifest: {
     name: '我的博客',
     short_name: '博客',
     theme_color: '#42b883',
     display: 'standalone'
   }
+  // 想关掉 PWA？传 pwa: false 即可
 })`
   },
   {
@@ -237,11 +235,16 @@ const setTechRef = (el: unknown, i: number) => {
 }
 
 const copied = ref(false)
+let copyTimer: ReturnType<typeof setTimeout> | null = null
 const copyInstall = async () => {
   try {
     await navigator.clipboard.writeText('npx vitepress-theme-ninc init')
     copied.value = true
-    setTimeout(() => (copied.value = false), 2000)
+    if (copyTimer) clearTimeout(copyTimer)
+    copyTimer = setTimeout(() => {
+      copied.value = false
+      copyTimer = null
+    }, 2000)
   } catch {
     // clipboard 不可用时静默失败
   }
@@ -249,6 +252,8 @@ const copyInstall = async () => {
 
 let scrollHandler: (() => void) | null = null
 let lenisInstance: Lenis | null = null
+// 持有 ticker 回调引用，确保卸载时 remove 的是同一个函数（匿名函数 remove 会失败导致泄漏）
+let lenisRafCallback: ((time: number) => void) | null = null
 
 onMounted(() => {
   // 注册 GSAP ScrollTrigger 插件
@@ -266,7 +271,8 @@ onMounted(() => {
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
     })
     lenis.on('scroll', ScrollTrigger.update)
-    gsap.ticker.add((time) => lenis.raf(time * 1000))
+    lenisRafCallback = (time: number) => lenis.raf(time * 1000)
+    gsap.ticker.add(lenisRafCallback)
     gsap.ticker.lagSmoothing(0)
     lenisInstance = lenis
 
@@ -305,10 +311,19 @@ onUnmounted(() => {
     window.removeEventListener('scroll', scrollHandler)
     scrollHandler = null
   }
+  if (copyTimer) {
+    clearTimeout(copyTimer)
+    copyTimer = null
+  }
   if (lenisInstance) {
-    gsap.ticker.remove((time) => lenisInstance!.raf(time * 1000))
+    if (lenisRafCallback) {
+      gsap.ticker.remove(lenisRafCallback)
+      lenisRafCallback = null
+    }
     lenisInstance.destroy()
     lenisInstance = null
+    // 恢复 GSAP 默认滞后平滑，避免污染站内其他动画
+    gsap.ticker.lagSmoothing(500, 33)
   }
 })
 </script>

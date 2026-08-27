@@ -21,7 +21,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, h } from 'vue'
+import { ref, onMounted } from 'vue'
 
 // 消息数据
 const messageType = ref("info");
@@ -105,11 +105,15 @@ onMounted(() => {
   window.$message = message;
   window.$vmessage = vmessage;
 });
+
+// 组件卸载（如带 toast 跳页）时清理未决的定时器，避免卸载后回调 func 产生意外副作用
+onBeforeUnmount(() => {
+  clearTimeout(messageTimeOut.value);
+});
 </script>
 
 <style lang="scss" scoped>
 .message {
-  position: relative;
   position: fixed;
   top: 0;
   left: 0;
@@ -117,7 +121,6 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   height: 60px;
-  width: 100%;
   width: 100vw;
   background-color: var(--main-color);
   z-index: 3000;

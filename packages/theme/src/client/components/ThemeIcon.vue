@@ -1,7 +1,7 @@
 <template>
   <!-- 字体图标：渲染为 <i class="iconfont icon-xxx"> -->
   <i v-if="resolved?.type === 'font'" :class="`iconfont icon-${resolved.name}`" />
-  <!-- SVG 图标：用 SvgIcon 渲染 <svg><use xlink:href="#icon-xxx" /></svg> -->
+  <!-- SVG 图标：用 SvgIcon 渲染 <svg><use href="#icon-xxx" /></svg> -->
   <SvgIcon
     v-else-if="resolved?.type === 'svg'"
     :name="resolved.name"

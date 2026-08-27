@@ -12,8 +12,8 @@
     </div>
     <div v-if="type === 'categories'" class="type-lists">
       <a
-        v-for="(item, key, index) in theme.categoriesData"
-        :key="index"
+        v-for="(item, key) in theme.categoriesData"
+        :key="key"
         :href="`/pages/categories/${key}`"
         class="type-item s-card"
       >
@@ -24,8 +24,8 @@
     </div>
     <div v-else class="type-lists">
       <a
-        v-for="(item, key, index) in theme.tagsData"
-        :key="index"
+        v-for="(item, key) in theme.tagsData"
+        :key="key"
         :href="`/pages/tags/${key}`"
         class="type-item s-card"
       >
@@ -39,7 +39,7 @@
 
 <script setup>
 const { theme } = useData();
-const props = defineProps({
+defineProps({
   // 页面类型
   type: {
     type: String,

@@ -35,7 +35,7 @@ const router = useRouter()
 // 异步导入Twikoo组件
 const Twikoo = defineAsyncComponent(() => import('./Twikoo.vue'))
 
-const props = defineProps({
+defineProps({
   // 填充评论区
   fill: {
     type: [Boolean, String],
@@ -58,7 +58,9 @@ const scrollToComments = () => {
   if (!mainCommentRef.value) return false
   const elementRect = mainCommentRef.value.getBoundingClientRect()
   const elementTop = elementRect.top + window.scrollY
-  window.scrollBy({ top: elementTop - 80, behavior: 'smooth' })
+  // scrollTo 而非 scrollBy：elementTop 已是文档绝对坐标，
+  // scrollBy 会把它当作相对增量再叠加当前 scrollY，落点成倍偏移
+  window.scrollTo({ top: elementTop - 80, behavior: 'smooth' })
 }
 
 const addRandomCommentInfo = () => {
@@ -127,8 +129,11 @@ const addRandomCommentInfo = () => {
 
   dr_js_autofill_commentinfos()
   var input = document.getElementsByClassName('el-textarea__inner')[0]
-  input.focus()
-  input.setSelectionRange(-1, -1)
+  // Twikoo 尚未渲染完成时元素不存在，判空防止抛错
+  if (input) {
+    input.focus()
+    input.setSelectionRange(-1, -1)
+  }
 }
 
 defineExpose({ scrollToComments })

@@ -148,7 +148,9 @@ export const getAllPosts = async (postsDir, cryptoSecretKey, options = {}) => {
             tags,
             categories,
             description,
-            regularPath: `/${item.replace(".md", ".html")}`,
+            // 锚定结尾替换扩展名：目录名中也可能出现 ".md" 子串（如 posts/tutorials.md/foo.md），
+            // 用非锚定的 replace(".md", ...) 会误改路径中段，生成错误的 regularPath
+            regularPath: `/${item.replace(/\.md$/, ".html")}`,
             top,
             cover,
             recommend,
@@ -215,21 +217,21 @@ export const getAllType = (postData) => {
 /**
  * 获取所有分类及其相关文章的统计信息
  * @param {Object[]} postData - 包含文章信息的数组
- * @returns {Object} - 包含标签统计信息的对象
+ * @returns {Object} - 包含分类统计信息的对象
  */
 export const getAllCategories = (postData) => {
   const catData = {};
   // 遍历数据
   postData.map((item) => {
     if (!item.categories || item.categories.length === 0) return;
-    // 处理标签
+    // 处理分类
     if (typeof item.categories === "string") {
       // 以逗号分隔
       item.categories = item.categories.split(",");
     }
-    // 遍历文章的每个标签
+    // 遍历文章的每个分类
     item.categories.forEach((tag) => {
-      // 初始化标签的统计信息，如果不存在
+      // 初始化分类的统计信息，如果不存在
       if (!catData[tag]) {
         catData[tag] = {
           count: 1,

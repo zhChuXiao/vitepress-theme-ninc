@@ -17,7 +17,7 @@
   <a href="https://theme.ninc.top" target="_blank">使用文档</a> ·
   <a href="https://blog.ninc.top" target="_blank">在线演示</a> ·
   <a href="https://github.com/zhChuXiao/vitepress-theme-ninc/issues" target="_blank">问题反馈</a> ·
-  <a href="https://github.com/zhChuXiao/vitepress-theme-ninc/blob/main/CHANGELOG.md" target="_blank">更新日志</a>
+  <a href="https://github.com/zhChuXiao/vitepress-theme-ninc/releases" target="_blank">更新日志</a>
 </p>
 
 ---
@@ -72,10 +72,10 @@ cd your-blog && pnpm install && pnpm dev
 | | |
 |---|---|
 | **评论系统** | Twikoo，支持表情、图片、邮件通知 |
-| **全站搜索** | Algolia DocSearch + 本地搜索双模式 |
-| **音乐播放器** | APlayer + MetingJS，挂网易云平台歌单 |
+| **全站搜索** | Algolia InstantSearch，导航栏按钮唤起弹窗实时匹配 |
+| **音乐播放器** | APlayer + Meting API，挂网易云平台歌单 |
 | **AI 文章摘要** | 接入 OpenAI 兼容 API，构建时自动生成摘要 |
-| **文章加密** | 密码保护指定文章，HMAC-SHA256 |
+| **文章加密** | 密码保护指定文章，AES 加密 + HMAC-SHA256 校验 |
 | **PWA 离线** | 自动生成 Service Worker，断网也能看 |
 | **图片灯箱** | Fancybox，点击放大、缩放、拖拽 |
 | **RSS 订阅** | 构建时自动生成 rss.xml |
@@ -83,7 +83,7 @@ cd your-blog && pnpm install && pnpm dev
 | **NES 模拟器** | 内置红白机模拟器页面，init 自带超级马里奥（对，真的能玩） |
 | **代码组图标** | 按语言自动配图标 |
 | **外链中转** | 自动转换外链为中转页跳转，保护隐私、提升 SEO |
-| **装备编年史** | 数据可视化页面，ECharts 驱动 |
+| **装备编年史** | 装备展示页面，悬停查看设备详情、图片灯箱 |
 | **等等等...** | 更多功能请看 [使用文档](https://theme.ninc.top) |
 
 <details>
@@ -209,15 +209,16 @@ description: 我的第一篇文章
 
 | 子路径 | 用途 |
 | --- | --- |
-| `vitepress-theme-ninc` | 主题入口（默认导出 Theme 对象） |
-| `vitepress-theme-ninc/defineConfig` | VitePress 配置工厂 |
-| `vitepress-theme-ninc/defineThemeConfig` | 主题配置工厂（defu 深合并） |
-| `vitepress-theme-ninc/node` | Node 侧工具聚合 |
-| `vitepress-theme-ninc/utils` | Node 侧 utils（getAllPosts 等） |
-| `vitepress-theme-ninc/views` | 客户端视图组件（NesGame 等） |
-| `vitepress-theme-ninc/components` | 客户端组件 |
-| `vitepress-theme-ninc/store` | Pinia store |
-| `vitepress-theme-ninc/styles` | 全局样式入口（scss） |
+| `vitepress-theme-ninc` | 主题入口（默认导出 Theme 对象，指向客户端源码） |
+| `vitepress-theme-ninc/client` | 主题入口的显式别名（同 `.`） |
+| `vitepress-theme-ninc/defineConfig` | VitePress 配置工厂（Node 侧，预构建为 `dist/defineConfig.js`） |
+| `vitepress-theme-ninc/defineThemeConfig` | 主题配置工厂（defu 深合并，预构建为 `dist/defineThemeConfig.js`） |
+| `vitepress-theme-ninc/node` | Node 侧工具聚合（预构建为 `dist/index.js`） |
+| `vitepress-theme-ninc/utils` | Node 侧 utils（getAllPosts 等，预构建为 `dist/utils.js`） |
+| `vitepress-theme-ninc/views` | 客户端视图组件（NesGame 等，源码直发） |
+| `vitepress-theme-ninc/components` | 客户端组件（源码直发） |
+| `vitepress-theme-ninc/store` | Pinia store（源码直发） |
+| `vitepress-theme-ninc/styles` | 全局样式入口（scss 源码直发） |
 | `vitepress-theme-ninc/types` | TypeScript 类型声明 |
 
 ## 环境要求
@@ -242,7 +243,7 @@ description: 我的第一篇文章
 
 几个关键决定：
 
-- **直接发布源码**：不预构建，VitePress 在用户项目通过 Vite 处理 `.ts / .mjs / .vue`。主题入口面向 VitePress / Vite 构建链，不支持在纯 Node.js 20 里直接执行源码。
+- **客户端源码直发 + Node 侧预构建**：客户端（`.vue / store / styles`）不预构建，VitePress 在用户项目通过 Vite 处理 `.ts / .vue`；Node 侧工厂函数（`defineConfig / defineThemeConfig / utils / node`）由 `scripts/build-node.mjs` 预构建为 `dist/*.js`，保证在纯 Node 环境（配置文件、CLI）可直接运行。
 - **defu 深合并**：用 `defu` 替代 `Object.assign`，嵌套配置不会被整体覆盖，用户只填想改的字段就行。
 - **双工厂函数**：`defineConfig` 管 VitePress 配置，`defineThemeConfig` 管主题配置，两边解耦。
 - **patch-package**：对 `nes-vue` 的运行时补丁通过 `postinstall` 自动应用，安装即可使用 NES 模拟器。
@@ -262,7 +263,7 @@ description: 我的第一篇文章
 - [imsyy/vitepress-theme-curve](https://github.com/imsyy/vitepress-theme-curve) — 本主题的前身，感谢 imsyy 的开源
 - [Twikoo](https://twikoo.js.org/) — 评论系统
 - [APlayer](https://aplayer.js.org/) — 音乐播放器
-- [nes-vue](https://github.com/huangye217/nes-vue) — NES 模拟器组件
+- [nes-vue](https://github.com/taiyuuki/nes-vue) — NES 模拟器组件
 
 ## License
 

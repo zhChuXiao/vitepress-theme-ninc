@@ -7,9 +7,12 @@
 ```
 [文本](链接){target=_blank}
 # 标题 {.my-class}
-![图片](src){width=200}
 一段文本 {.highlight}
 ```
+
+::: tip 图片元素上的属性：白名单透传
+主题重写了 Markdown 图片渲染规则（用于 fancybox 灯箱与 `loading="lazy"`），渲染时会透传白名单属性：**`class`、`id`、`width`、`height`**。例如 `![图片](src){width=200 .rounded}` 会把 `width="200"` 与 `class="rounded"` 写到 `<img>` 上（fancybox 开启时自定义 class 会并入 `post-img` 一同生效）。白名单以外的键（如 `onerror` 等事件属性）会被安全丢弃，防止注入。
+:::
 
 ## 渲染效果与源码
 
@@ -44,6 +47,6 @@
 
 - 给元素添加自定义 class，配合 [自定义样式](../custom-styles.md) 实现特殊视觉效果
 - 链接添加 `target=_blank`、`rel=noopener`
-- 图片添加 `width`、`height` 等尺寸属性
 - 锚点跳转所需的 id
+- 图片添加尺寸/样式属性（`width`、`height`、`class`、`id` 白名单内生效，见上方说明）
 

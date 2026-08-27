@@ -108,13 +108,32 @@ const markdownConfig = (md, themeConfig) => {
   // 图片
   md.renderer.rules.image = (tokens, idx) => {
     const token = tokens[idx];
-    const src = token.attrs[token.attrIndex("src")][1];
-    const alt = token.content;
-    if (!themeConfig.fancybox.enable) {
-      return `<img src="${src}" alt="${alt}" loading="lazy">`;
+    // src/alt 都来自 markdown 原文，可能含引号/尖括号（如 ![他说"hi"](x.png)），
+    // 直接拼进 HTML 会产生畸形属性甚至注入；escapeHtml 同时覆盖属性与文本两个插值位。
+    // 对不含特殊字符的正常内容，转义前后输出逐字节一致。
+    const src = md.utils.escapeHtml(token.attrs[token.attrIndex("src")][1]);
+    const alt = md.utils.escapeHtml(token.content);
+    // 白名单透传 markdown-it-attrs 附加的属性（id/width/height/class），
+    // 其余键（如 onerror 等事件属性）一律丢弃，防注入；所有值同样过 escapeHtml。
+    const attrWhitelist = ["id", "width", "height"];
+    let extraClass = "";
+    const extraParts = [];
+    for (const [key, value] of token.attrs || []) {
+      if (key === "class") {
+        extraClass = value;
+      } else if (attrWhitelist.includes(key)) {
+        extraParts.push(` ${key}="${md.utils.escapeHtml(value)}"`);
+      }
     }
+    const extra = extraParts.join("");
+    const classAttr = extraClass ? ` class="${md.utils.escapeHtml(extraClass)}"` : "";
+    if (!themeConfig.fancybox.enable) {
+      return `<img src="${src}" alt="${alt}" loading="lazy"${extra}${classAttr}>`;
+    }
+    // fancybox 模式：自定义 class 并入 post-img，避免与灯箱样式冲突
+    const fancyImgClass = extraClass ? `post-img ${md.utils.escapeHtml(extraClass)}` : "post-img";
     return `<a class="img-fancybox" href="${src}" data-fancybox="gallery" data-caption="${alt}">
-                <img class="post-img" src="${src}" alt="${alt}" loading="lazy" />
+                <img class="${fancyImgClass}" src="${src}" alt="${alt}" loading="lazy"${extra} />
                 <span class="post-img-tip">${alt}</span>
               </a>`;
   };

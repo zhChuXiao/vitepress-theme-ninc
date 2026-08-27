@@ -41,13 +41,21 @@
 
 ### 未启用 fancybox
 
-当 `fancybox.enable` 为 `false`（默认）时，仅渲染普通 `<img>`：
+当 `fancybox.enable` 为 `false` 时（默认开启，此处指手动关闭后），仅渲染普通 `<img>`：
 
 ```html
 <img src="图片地址" alt="alt 文本" loading="lazy">
 ```
 
 此时图片不会显示下方说明文字，也不支持点击放大。
+
+### 图片属性透传
+
+配合 [属性语法](./attrs.md)，写在图片上的白名单属性（`class`、`id`、`width`、`height`）会透传到 `<img>` 标签上，两种渲染模式均生效（fancybox 模式下自定义 class 会并入 `post-img`）。白名单以外的键会被安全丢弃：
+
+```md
+![示意图](/images/demo.png){width=200 .rounded}
+```
 
 ### 渲染效果
 
@@ -84,7 +92,7 @@ export const themeConfig = defineThemeConfig({
 
 ## 代码块默认折叠
 
-在文章 frontmatter 中设置 `cbx: true`，该文章内所有代码块默认折叠，点击「展开」按钮后查看完整内容。代码块折叠的 frontmatter 字段（cbx/cbf）详见 [Frontmatter - 代码块默认折叠](../frontmatter.md#代码块默认折叠)。
+文章页中高度超过 400px 的代码块会**默认自动折叠**（限高 + 渐变遮罩 + 底部箭头按钮），点击按钮展开/收起，无需任何配置。如需关闭本文的自动折叠或指定个别代码块不折叠，可用 frontmatter `cbf` 字段，详见 [Frontmatter - 代码块默认折叠](../frontmatter.md#代码块默认折叠)。
 
 ![代码块默认折叠](/images/article/cbx.png)
 ## 其他集成
@@ -92,5 +100,5 @@ export const themeConfig = defineThemeConfig({
 除上述扩展外，主题还集成了以下能力，详情见对应文档：
 
 - **vitepress-demo-plugin** — 在 Markdown 中嵌入可交互的 Vue 组件 demo，详见 [文章管理 - 组件 Demo 文章](../posts.md#组件-demo-文章)。
-- **代码块默认折叠** — 通过 frontmatter `cbx` 字段控制，详见 [Frontmatter 字段 - 代码块默认折叠](../frontmatter.md#代码块默认折叠)。
+- **代码块默认折叠** — 超过 400px 自动折叠、frontmatter `cbf` 字段可调，详见 [Frontmatter 字段 - 代码块默认折叠](../frontmatter.md#代码块默认折叠)。
 

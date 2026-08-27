@@ -25,8 +25,8 @@ cover: {
 }
 ```
 
-::: warning 数组整体替换
-`defaultCover` 是数组字段，会与默认值整体替换而非拼接。请确保写入你需要的完整列表，详见 [配置详解](../configuration.md#options-字段表)。
+::: warning 写入完整列表
+`defaultCover` 是数组字段，主题默认值为空数组 `[]`（defu 数组合并为 concat，空默认值不会产生重复项），因此你写入的列表即为完整生效列表，请确保包含所需的全部图片，详见 [配置详解](../configuration.md#options-字段表)。
 :::
 
 ## 文章封面
@@ -61,7 +61,7 @@ fancybox: {
 }
 ```
 
-未启用时，图片仅渲染为普通 `<img loading="lazy">`。灯箱字段的完整说明见 [主题配置 - fancybox](../theme-config.md#fancybox)，渲染细节见 [Markdown 扩展 - 图片](../markdown/#图片渲染与灯箱)。
+未启用时，图片仅渲染为普通 `<img loading="lazy">`。灯箱字段的完整说明见 [配置参考 - fancybox](../../config/fancybox.md)，渲染细节见 [Markdown 扩展 - 图片](../markdown/#图片渲染与灯箱)。
 
 ![图片灯箱](/images/article/fancybox.png)
 

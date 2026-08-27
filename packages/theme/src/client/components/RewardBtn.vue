@@ -16,15 +16,16 @@
     >
       <div class="reward-card">
         <span class="thank">🙏 感谢您赐予我前进的力量</span>
-        <div class="qr">
-          <a :href="wechatSrc" class="qr-img" target="_blank">
+        <!-- 仅渲染已配置的收款码；单码时切换为单列居中布局 -->
+        <div v-if="wechatSrc || alipaySrc" class="qr" :class="{ single: !wechatSrc || !alipaySrc }">
+          <a v-if="wechatSrc" :href="wechatSrc" class="qr-img" target="_blank" rel="noopener noreferrer">
             <img :src="wechatSrc" alt="微信" />
             <span class="tip">
               <i class="iconfont icon-wechat-pay" />
               微信
             </span>
           </a>
-          <a :href="alipaySrc" class="qr-img" target="_blank">
+          <a v-if="alipaySrc" :href="alipaySrc" class="qr-img" target="_blank" rel="noopener noreferrer">
             <img :src="alipaySrc" alt="支付宝" />
             <span class="tip">
               <i class="iconfont icon-alipay" />
@@ -32,6 +33,7 @@
             </span>
           </a>
         </div>
+        <span v-else class="thank qr-empty">博主暂未配置收款码</span>
         <div v-if="showJump" class="all-list s-card hover" @click="toRewardList">
           <span class="title">全部赞赏者名单</span>
           <span class="tip">
@@ -53,7 +55,7 @@ const { rewardData } = theme.value;
 const wechatSrc = rewardData?.wechat || ''
 const alipaySrc = rewardData?.alipay || ''
 
-const props = defineProps({
+defineProps({
   showJump: {
     type: Boolean,
     default: true,
@@ -109,10 +111,21 @@ const toRewardList = () => {
     color: var(--main-color);
     font-weight: bold;
   }
+  .qr-empty {
+    font-size: 14px;
+    font-weight: normal;
+    opacity: 0.6;
+  }
   .qr {
     display: grid;
     gap: 1rem;
     grid-template-columns: 1fr 1fr;
+    // 只配置了一个收款码时：单列居中，避免半格空白
+    &.single {
+      grid-template-columns: 1fr;
+      max-width: 240px;
+      margin: 0 auto;
+    }
     .qr-img {
       display: flex;
       flex-direction: column;

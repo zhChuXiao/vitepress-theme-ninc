@@ -468,10 +468,15 @@
       margin: 0;
       line-height: normal;
       font-size: 0.95rem;
+      margin-top: 6px;
+      // 空段落不占位(如 github-alert 结构中标题即内容时尾随的空 p)
+      &:empty {
+        display: none;
+      }
       &.custom-block-title {
         font-size: 14px;
         font-weight: bold;
-        margin-bottom: 6px;
+        margin-top: 0;
       }
     }
   }

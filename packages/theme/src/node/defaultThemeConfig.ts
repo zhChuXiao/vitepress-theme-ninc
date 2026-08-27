@@ -9,7 +9,7 @@ export const defaultThemeConfig: ThemeConfig = {
     description: 'powered by ninc',
     // 站点头像默认使用主题作者提供的网络图片，开箱即用
     // 替换为自己的头像：把图片放到 public/images/ 下，改为 '/images/your-avatar.jpg'
-    avatar: 'http://blog.ninc.top/images/cxLogo/avatar2.jpg',
+    avatar: 'https://blog.ninc.top/images/cxLogo/avatar2.jpg',
     logo: '',
     site: 'https://example.com',
     base: '/',
@@ -18,7 +18,7 @@ export const defaultThemeConfig: ThemeConfig = {
       name: 'Your Name',
       // 作者头像（侧边栏 Clock 中心头像优先使用此字段，未配置时回退到 siteMeta.avatar）
       // 替换方法同上：放到 public/images/ 下，改为 '/images/your-avatar.jpg'
-      cover: 'http://blog.ninc.top/images/cxLogo/avatar2.jpg',
+      cover: 'https://blog.ninc.top/images/cxLogo/avatar2.jpg',
       email: 'you@example.com',
       link: ''
     }
@@ -33,7 +33,7 @@ export const defaultThemeConfig: ThemeConfig = {
       title: 'Example Site',
       // 推荐站点封面图默认使用主题作者提供的网络图片，开箱即用
       // 替换为自己的图：放到 public/images/ 下，改为 '/images/your-banner.jpg'
-      image: 'http://blog.ninc.top/images/cover/003405.jpeg',
+      image: 'https://blog.ninc.top/images/cover/003405.jpeg',
       darkImage: '',
       recommendUrl: 'https://example.com/',
       newTab: true

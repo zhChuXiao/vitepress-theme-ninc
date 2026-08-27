@@ -71,8 +71,8 @@ export const themeConfig = defineThemeConfig({
 - **极致加速**：将 Fancybox 资源下载到 `public` 目录，`js`/`css` 改为本地路径，完全脱离 CDN 依赖。
 :::
 
-::: warning 与打赏码弹窗的协同
-[`rewardData`](./reward.md) 的打赏弹窗内图片也会被 Fancybox 接管，点击二维码可二次放大。若不希望打赏码被灯箱处理，需在打赏组件中排除对应选择器（需修改组件实现）。
+::: tip 与打赏码弹窗的关系
+[`rewardData`](./reward.md) 打赏弹窗内的二维码图片**不会**被 Fancybox 接管——灯箱仅委托绑定带 `data-fancybox` 属性的元素（文章正文图片由 markdown 渲染器自动附加），打赏码链接点击后在新标签页打开原图。
 :::
 
 ## 注意事项
@@ -100,5 +100,5 @@ export const themeConfig = defineThemeConfig({
 ## 相关配置
 
 - [`aside` 侧边栏](./aside.md) — 侧边栏模块配置
-- [`rewardData` 打赏](./reward.md) — 打赏码图片也可通过灯箱放大
+- [`rewardData` 打赏](./reward.md) — 打赏码弹窗内的图片不走灯箱，点击在新标签页打开原图
 - [`comment` 评论](./comment.md) — 文章页评论系统配置

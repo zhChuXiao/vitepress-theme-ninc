@@ -28,8 +28,8 @@
           <Transition name="fade" mode="out-in">
             <div v-if="formatSearchData(items)?.length" class="search-list">
               <div
-                v-for="(item, index) in formatSearchData(items)"
-                :key="index"
+                v-for="item in formatSearchData(items)"
+                :key="item.url"
                 class="search-item s-card hover"
                 @click="jumpSearch(item.url)"
               >
@@ -57,7 +57,7 @@
               本次用时 {{ processingTimeMS }} 毫秒
             </span>
           </div>
-          <a class="power" href="https://www.algolia.com/" target="_blank">
+          <a class="power" href="https://www.algolia.com/" target="_blank" rel="noopener noreferrer">
             <i class="iconfont icon-algolia" />
             <span class="name">Algolia</span>
           </a>
@@ -70,7 +70,7 @@
 <script setup>
 import { mainStore } from '../store';
 import { liteClient } from "algoliasearch/lite";
-import { onActivated, onDeactivated, onMounted, h, defineComponent } from "vue";
+import { h, defineComponent } from "vue";
 import { AisConfigure } from "vue-instantsearch/vue3/es";
 
 // 包装 AisConfigure：阻止 code-inspector-plugin 注入的 data-insp-path 通过 $attrs
@@ -112,16 +112,13 @@ const formatSearchData = (data) => {
   // 遍历搜索结果
   for (let i = 0; i < data.length; i++) {
     const search = data[i];
-    // 若无 anchor
-    // if (search.anchor === "" || search.anchor === "app") continue;
     // 获取数据
     const url = search?.url;
-    const type = search.type === "lvl1" ? "post" : "content";
     const title = search.hierarchy?.lvl1;
     const anchor = search.anchor;
     const content = search._highlightResult?.content?.value;
     // 生成搜索数据
-    const searchData = { url, type, title, anchor, content };
+    const searchData = { url, title, anchor, content };
     results.push(searchData);
   }
   return results;

@@ -121,7 +121,10 @@ export const jumpRedirect = (_html: string, themeConfig: any, isDom = true): boo
         }
         const linkHref = link.getAttribute('href')
         if (linkHref && !linkHref.includes(redirectPage)) {
-          const encodedHref = btoa(linkHref)
+          // UTF-8 安全 base64（与 Redirect.vue 的 decodeURIComponent(escape(atob())) 解码配套；
+          // 直接 btoa 原始字符串遇中文等非 Latin1 字符会抛 InvalidCharacterError）
+          // 外层 encodeURIComponent 防 base64 中的 '+' 在 query 解析时变空格
+          const encodedHref = encodeURIComponent(btoa(unescape(encodeURIComponent(linkHref))))
           const redirectLink = `${redirectPage}?url=${encodedHref}`
           link.setAttribute('original-href', linkHref)
           link.setAttribute('href', redirectLink)

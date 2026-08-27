@@ -6,25 +6,26 @@
 
 主题包内置以下字体文件，位于 `packages/theme/src/client/styles/fonts/`：
 
-| 文件 | 字体名 | 用途 |
+| 文件 | `@font-face` 字体名 | 用途 |
 | --- | --- | --- |
-| `title.ttf` | 自定义标题字体 | 站点标题、Hero 区域 |
-| `galvji-bold.ttf` | Galvji Bold | 装饰性标题 |
-| `DingTalk-JinBuTi.woff2` | 钉钉进步体 | 中文展示字体 |
+| `DingTalk-JinBuTi.woff2` | `JinBuTi` | 中文展示字体（全站默认字体，中控台可切换「进步体」/系统字体） |
+| `title.ttf` | `Site Title` | 已声明但当前版本未在任何样式中引用（预留，浏览器不会下载） |
+| `galvji-bold.ttf` | `galv-bold` | 已声明但当前版本未在任何样式中引用（预留，浏览器不会下载） |
 
 字体声明集中在 `packages/theme/src/client/styles/font.scss`，通过 `@font-face` 引用：
 
 ```scss
 @font-face {
-  font-family: 'DingTalk-JinBuTi';
-  src: url('./fonts/DingTalk-JinBuTi.woff2') format('woff2');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
+  font-family: 'JinBuTi';
+  src: url('./fonts/DingTalk-JinBuTi.woff2');
 }
 ```
 
 `url()` 使用相对路径（`./fonts/...`），发布到 npm 后字体文件随包体一起分发，无需用户额外下载或配置，开箱即用。
+
+::: tip 浏览器按需下载
+`@font-face` 声明本身不会触发字体文件下载——只有当页面元素实际使用该 `font-family` 时浏览器才会拉取对应字体文件。因此主题同时声明多套字体不会造成额外的首屏流量。
+:::
 
 ## 自定义字体
 
@@ -96,5 +97,5 @@ inject: {
 }
 ```
 
-关于字体变量覆盖的更多细节（如 `--main-font-family` 在明暗主题下的差异），见 [自定义样式 - 字体变量](../custom-styles.md#字体变量)。
+关于字体变量覆盖的更多细节（如 `--main-font-family` 在明暗主题下的差异），见 [自定义样式 - 常用变量速查](../custom-styles.md#常用变量速查)。
 

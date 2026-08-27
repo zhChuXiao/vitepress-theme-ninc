@@ -25,13 +25,13 @@ pnpm 是一个"包管理器"，可以理解为电脑上的"软件管家"。一�
 
 之所以推荐 pnpm 而不是 npm 或 yarn，是因为它速度快、节省磁盘空间，并且本主题的配置是基于 pnpm 制作和测试的，使用 pnpm 能最大程度避免环境问题。
 
-安装 pnpm 见 [安装指南 - 安装 pnpm](/guide/installation#安装-pnpm)。
+安装 pnpm 见 [安装指南 - 精简安装（pnpm）](/guide/installation#精简安装-pnpm)。
 
 ### Q: 什么是 Markdown？在哪里学？
 
 Markdown 是一种用纯文本编写格式化文档的语法，博客文章就是用 Markdown 写的。它的语法非常简单，比如用 `#` 表示标题、用 `**` 包裹文字表示加粗、用 `-` 表示列表项。
 
-Markdown 基础语法见 [快速上手 - Markdown 基础](/guide/quick-start#markdown-基础)。
+Markdown 基础语法见 [快速上手 - 创建第一篇文章](/guide/quick-start#_5-2-创建第一篇文章)。
 
 ### Q: 文章写在哪里？怎么写？
 
@@ -59,7 +59,7 @@ tags:
 1. **保存文件**：确认配置文件已经保存（编辑器标题栏没有"未保存"的小圆点）
 2. **重启 dev server**：在终端按 `Ctrl + C` 停止当前运行的 `pnpm dev`，然后重新执行 `pnpm dev`
 3. **清除浏览器缓存**：按 `Ctrl + Shift + R`（Mac 为 `Command + Shift + R`）强制刷新页面
-4. **检查文件位置**：配置应写在 `.vitepress/config.ts` 或 `.vitepress/theme/` 下，确认路径正确
+4. **检查文件位置**：配置应写在 `.vitepress/config.mts` 或 `.vitepress/theme/` 下，确认路径正确
 5. **检查语法**：配置文件中的引号、逗号、括号是否成对出现，有没有拼写错误
 
 如果仍然无效，可以在终端查看是否有报错信息，对照本文档其他章节排查。
@@ -96,20 +96,27 @@ pnpm install
 
 **原因**：补丁基于 nes-vue 1.8.2 制作，但安装了其他版本。
 
-**解决**：确保 `packages/theme/package.json` 中 `"nes-vue": "1.8.2"`（精确版本，非 `^1.8.2`），然后重新安装。
+**解决**：确保你的项目 `package.json` 中 `"nes-vue": "1.8.2"`（精确版本，非 `^1.8.2`；CLI `init` 生成的项目默认即为精确版本），然后重新安装。
 
-### Q: `pnpm.onlyBuiltDependencies` 报错
+### Q: 提示 `ERR_PNPM_IGNORED_BUILDS` / 依赖构建脚本被拦截
 
-**原因**：pnpm 要求在 workspace 根 `package.json` 声明需要构建的原生依赖。
+**原因**：pnpm v10 起默认拦截所有依赖的构建脚本（postinstall 等，防供应链攻击），需要显式放行才能执行。
 
-**解决**：在根 `package.json` 添加：
-```json
-{
-  "pnpm": {
-    "onlyBuiltDependencies": ["v-code-diff"]
-  }
-}
+**解决**：
+
+1. CLI `init` 生成的项目已内置 `pnpm-workspace.yaml` 放行清单（esbuild、vue-demi 等），通常无需处理
+2. 若仍出现提示，在项目根目录执行 `pnpm approve-builds`，按提示勾选需要放行的包，pnpm 会自动写入 `pnpm-workspace.yaml`
+3. 手动写法（pnpm v10+）：在 `pnpm-workspace.yaml` 中添加：
+
+```yaml
+onlyBuiltDependencies:
+  - esbuild
+  - vue-demi
 ```
+
+::: warning v10 不再读取 package.json 的 pnpm 字段
+pnpm v10 起项目级配置只认 `pnpm-workspace.yaml`，写在根 `package.json` 的 `pnpm.onlyBuiltDependencies` 中**不会生效**（该写法仅适用于 pnpm v9）。排查时请勿改错文件。
+:::
 
 ### Q: Mac 上提示 `command not found: pnpm` 怎么办？
 
@@ -302,8 +309,9 @@ crypto:
 
 **可能原因**：
 1. 文章不在 `posts/` 目录下（默认扫描 `<cwd>/posts/`，可通过 `options.postsDir` 自定义）
-2. 文章文件名或目录名以 `_` 开头（VitePress 会忽略）
-3. 文章缺少 `date` frontmatter 字段（按日期排序需要）
+2. 文件扩展名不是 `.md`（主题仅扫描 Markdown 文件）
+3. 构建时 frontmatter 解析出错——主题对单篇文章的处理失败会抛出错误并中断构建，终端会有对应报错，请先修复
+4. `date` 缺失不会导致文章不显示，但会让排序与归档异常，建议每篇文章都显式填写
 
 ### Q: 文章封面不显示
 
@@ -383,7 +391,7 @@ export default Theme
 ```scss
 :root {
   --main-color: #your-color;            /* 主色 */
-  --main-color-light: #your-color-light; /* 主色浅色变体 */
+  --main-color-bg: #your-color-with-alpha; /* 主色半透明背景变体 */
 }
 
 html.dark {
@@ -457,7 +465,7 @@ Vercel 配置详见 [部署指南](/guide/deployment)。
 
 ### Q: 如何贡献代码？
 
-欢迎在 [GitHub](https://github.com/your-username/vitepress-theme-ninc) 提交 Issue 或 Pull Request。
+欢迎在 [GitHub](https://github.com/zhChuXiao/vitepress-theme-ninc) 提交 Issue 或 Pull Request。
 
 ## 相关文档
 

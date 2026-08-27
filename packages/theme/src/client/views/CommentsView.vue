@@ -9,10 +9,10 @@
     <div class="comments-container">
       <div id="maincontent">
         <div id="form-wrap" ref="formWrap">
-          <img id="beforeimg" class="no-lightbox" :src="beforeimg" ref="beforeimgRef" />
+          <img id="beforeimg" class="no-lightbox" :src="beforeimg" ref="beforeimgRef" alt="" />
           <div id="envelope" ref="envelope">
             <div class="formmain" ref="formmain">
-              <img class="headerimg no-lightbox" :src="cover" ref="headerImg" />
+              <img class="headerimg no-lightbox" :src="cover" ref="headerImg" alt="" />
               <div class="comments-main" ref="commentsMain">
                 <div class="title3" ref="title">来自{{ author }}的留言:</div>
                 <div class="comments" ref="comments">
@@ -26,13 +26,13 @@
                   </div>
                 </div>
                 <div class="bottomcontent" ref="bottomcontent">
-                  <img class="bottomimg no-lightbox" :src="line" />
+                  <img class="bottomimg no-lightbox" :src="line" alt="" />
                 </div>
                 <div class="bottomhr" ref="bottomhr">{{ bottom }}</div>
               </div>
             </div>
           </div>
-          <img id="afterimg" class="no-lightbox" :src="afterimg" ref="afterimgRef" />
+          <img id="afterimg" class="no-lightbox" :src="afterimg" ref="afterimgRef" alt="" />
         </div>
       </div>
     </div>
@@ -88,7 +88,6 @@ onMounted(() => {
   const tl = gsap.timeline({
     defaults: { ease: 'power3.out' },
     onComplete: () => {
-      // console.log('动画完成')
       // 收起信封的动画
       gsap.to(formWrap.value, {
         height: '447px',
@@ -107,39 +106,12 @@ onMounted(() => {
     .to(comments.value, { opacity: 1, y: 0, duration: 0.5 }, '-=0.2')
     .to([bottomcontent.value, bottomhr.value], { opacity: 1, y: 0, duration: 0.5 }, '-=0.2')
 
-  // 添加信封抖动效果
-  // setTimeout(() => {
-  //   shakeEnvelope()
-  // }, 3000)
-
   // 监听鼠标移入移出
   if (formWrap.value) {
     formWrap.value.addEventListener('mouseenter', handleEnvelopeHover)
     formWrap.value.addEventListener('mouseleave', handleEnvelopeLeave)
   }
 })
-
-// // 信封抖动效果
-// const shakeEnvelope = () => {
-//   if (!envelope.value) return
-
-//   gsap.to(envelope.value, {
-//     rotation: -2,
-//     duration: 0.1,
-//     onComplete: () => {
-//       gsap.to(envelope.value, {
-//         rotation: 2,
-//         duration: 0.2,
-//         onComplete: () => {
-//           gsap.to(envelope.value, {
-//             rotation: 0,
-//             duration: 0.1
-//           })
-//         }
-//       })
-//     }
-//   })
-// }
 
 // 信封悬停效果
 const handleEnvelopeHover = () => {
@@ -367,8 +339,6 @@ const handleEnvelopeLeave = () => {
     background: var(--main-color) !important;
     transform-origin: center;
   }
-}
-.comments-container {
 }
 
 /* 夜间模式 */

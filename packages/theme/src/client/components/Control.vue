@@ -46,15 +46,21 @@
 
 <script setup>
 import { mainStore } from '../store';
+import { onKeyStroke } from '@vueuse/core';
 
 const store = mainStore();
 
+// Esc 键关闭中控台（仅开启时响应）
+onKeyStroke('Escape', () => {
+  if (store.controlShow) store.changeShowStatus('controlShow');
+});
+
 const closeControlRef = ref(null);
 
-// 更正关闭按钮位置
+// 更正关闭按钮位置（触发按钮引用由 Nav.vue 注册到 store，替代原 #open-control id 查询）
 const changeCloseStyle = () => {
   nextTick().then(() => {
-    const controlOpenDom = document.querySelector("#open-control");
+    const controlOpenDom = store.controlTriggerEl;
     if (controlOpenDom && closeControlRef.value) {
       const { top, left } = controlOpenDom.getBoundingClientRect();
       closeControlRef.value.style.top = `${top}px`;

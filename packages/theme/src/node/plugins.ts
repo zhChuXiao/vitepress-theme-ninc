@@ -2,17 +2,25 @@
 // 用户可通过 defineConfig 的 options.plugins 关停某些插件
 import path from 'path'
 import { fileURLToPath } from 'url'
-import alias from '@rollup/plugin-alias'
-import vueJsx from '@vitejs/plugin-vue-jsx'
-import { VueMcp } from 'vite-plugin-vue-mcp'
-import { codeInspectorPlugin } from 'code-inspector-plugin'
-import viteCompression from 'vite-plugin-compression'
-import { groupIconVitePlugin } from 'vitepress-plugin-group-icons'
-import AutoImport from 'unplugin-auto-import/vite'
-import Components from 'unplugin-vue-components/vite'
-import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import type { PluginOption } from 'vite'
 import { defaultGroupIconConfig } from './defaultGroupIconConfig'
+
+/**
+ * 动态加载可选插件包
+ *
+ * 本文件用到的全部插件包均为 optionalDependencies：
+ * 若顶层静态 import，用户未安装（如 --no-optional）时模块求值即抛错，
+ * 整个 defineConfig 直接崩溃，开关设为 false 也救不了。
+ * 动态 import 在运行时解析，缺失时告警并返回 null，调用点按「插件关闭」处理。
+ */
+const loadOptionalPlugin = async (pkgName: string): Promise<any | null> => {
+  try {
+    return await import(pkgName)
+  } catch {
+    console.warn(`[vitepress-theme-ninc] 可选插件包 ${pkgName} 未安装，对应插件已跳过。如需启用请执行 pnpm add -D ${pkgName}`)
+    return null
+  }
+}
 
 /** 插件开关（值为 false 时关停该插件） */
 export interface PluginSwitches {
@@ -108,128 +116,161 @@ export async function createVitePlugins(options: CreateVitePluginsOptions = {}):
 
   // alias
   if (switches.alias !== false) {
-    plugins.push(alias())
+    const mod = await loadOptionalPlugin('@rollup/plugin-alias')
+    if (mod) plugins.push((mod.default ?? mod)())
   }
 
   // vueJsx
   if (switches.vueJsx !== false) {
-    plugins.push(vueJsx())
+    const mod = await loadOptionalPlugin('@vitejs/plugin-vue-jsx')
+    if (mod) plugins.push((mod.default ?? mod)())
   }
 
   // vueMcp
   if (switches.vueMcp !== false) {
-    try {
-      plugins.push(VueMcp())
-    } catch (e) {
-      // vueMcp 仅开发期使用，缺失时跳过
+    const mod = await loadOptionalPlugin('vite-plugin-vue-mcp')
+    if (mod?.VueMcp) {
+      try {
+        plugins.push(mod.VueMcp())
+      } catch (e) {
+        // vueMcp 仅开发期使用，构造失败时跳过
+      }
     }
   }
 
-  // groupIcons
-  if (switches.groupIcons !== false) {
-    plugins.push(groupIconVitePlugin({ customIcon: { ...defaultGroupIconConfig, ...groupIconConfig } }))
+  // groupIcons（包缺失时按关闭处理，走文件底部的 stub 兜底逻辑）
+  let groupIconsActive = switches.groupIcons !== false
+  if (groupIconsActive) {
+    const mod = await loadOptionalPlugin('vitepress-plugin-group-icons')
+    if (mod?.groupIconVitePlugin) {
+      plugins.push(mod.groupIconVitePlugin({ customIcon: { ...defaultGroupIconConfig, ...groupIconConfig } }))
+    } else {
+      groupIconsActive = false
+    }
   }
 
   // codeInspector
   if (switches.codeInspector !== false) {
-    try {
-      plugins.push(codeInspectorPlugin({ bundler: 'vite' }))
-    } catch (e) {
-      // code-inspector 可选
+    const mod = await loadOptionalPlugin('code-inspector-plugin')
+    if (mod?.codeInspectorPlugin) {
+      try {
+        plugins.push(mod.codeInspectorPlugin({ bundler: 'vite' }))
+      } catch (e) {
+        // code-inspector 可选
+      }
     }
   }
 
   // compression
   if (switches.compression !== false) {
-    try {
-      // gzip
-      plugins.push(
-        viteCompression({
-          verbose: true,
-          disable: false,
-          threshold: 10240,
-          algorithm: 'gzip',
-          ext: '.gz',
-          deleteOriginFile: false
-        })
-      )
-      // brotli
-      plugins.push(
-        viteCompression({
-          verbose: true,
-          disable: false,
-          threshold: 10240,
-          algorithm: 'brotliCompress',
-          ext: '.br',
-          deleteOriginFile: false
-        })
-      )
-    } catch (e) {
-      // compression 可选
+    const mod = await loadOptionalPlugin('vite-plugin-compression')
+    const viteCompression = mod?.default ?? mod
+    if (viteCompression) {
+      try {
+        // gzip
+        plugins.push(
+          viteCompression({
+            verbose: true,
+            disable: false,
+            threshold: 10240,
+            algorithm: 'gzip',
+            ext: '.gz',
+            deleteOriginFile: false
+          })
+        )
+        // brotli
+        plugins.push(
+          viteCompression({
+            verbose: true,
+            disable: false,
+            threshold: 10240,
+            algorithm: 'brotliCompress',
+            ext: '.br',
+            deleteOriginFile: false
+          })
+        )
+      } catch (e) {
+        // compression 可选
+      }
     }
   }
 
   // autoImport
   if (switches.autoImport !== false) {
-    plugins.push(
-      AutoImport({
-        imports: ['vue', 'vitepress'],
-        dts: autoImportDtsPath,
-        // 默认 exclude 含 [\\/]node_modules[\\/]，会跳过 npm 安装场景下的主题源码，
-        // 导致主题 .vue 中使用的 useRoute/ref/computed 等无法被自动注入（ReferenceError）。
-        // 使用负向先行断言：排除 node_modules 下除 vitepress-theme-ninc 外的其他包，
-        // 避免误处理第三方包（如 vue-instantsearch 内部变量 h 与自动注入的 h 冲突）。
-        exclude: [
-          /[\\/]node_modules[\\/](?!.*vitepress-theme-ninc)/,
-          /[\\/]\.git[\\/]/,
-          /[\\/]\.nuxt[\\/]/
-        ]
-      })
-    )
+    const mod = await loadOptionalPlugin('unplugin-auto-import/vite')
+    const AutoImport = mod?.default ?? mod
+    if (AutoImport) {
+      plugins.push(
+        AutoImport({
+          imports: ['vue', 'vitepress'],
+          dts: autoImportDtsPath,
+          // 默认 exclude 含 [\\/]node_modules[\\/]，会跳过 npm 安装场景下的主题源码，
+          // 导致主题 .vue 中使用的 useRoute/ref/computed 等无法被自动注入（ReferenceError）。
+          // 使用负向先行断言：排除 node_modules 下除 vitepress-theme-ninc 外的其他包，
+          // 避免误处理第三方包（如 vue-instantsearch 内部变量 h 与自动注入的 h 冲突）。
+          exclude: [
+            /[\\/]node_modules[\\/](?!.*vitepress-theme-ninc)/,
+            /[\\/]\.git[\\/]/,
+            /[\\/]\.nuxt[\\/]/
+          ]
+        })
+      )
+    }
   }
 
   // components
   if (switches.components !== false) {
-    plugins.push(
-      Components({
-        dirs: componentDirs,
-        extensions: ['vue', 'md'],
-        include: [/\.vue$/, /\.vue\?vue/, /\.md$/],
-        // 同 autoImport，排除 node_modules 下除 vitepress-theme-ninc 外的其他包
-        exclude: [
-          /[\\/]node_modules[\\/](?!.*vitepress-theme-ninc)/,
-          /[\\/]\.git[\\/]/,
-          /[\\/]\.nuxt[\\/]/
-        ],
-        dts: componentsDtsPath
-      })
-    )
-  }
-
-  // svgIcons
-  if (switches.svgIcons !== false) {
-    try {
+    const mod = await loadOptionalPlugin('unplugin-vue-components/vite')
+    const Components = mod?.default ?? mod
+    if (Components) {
       plugins.push(
-        createSvgIconsPlugin({
-          iconDirs: svgIconDirs,
-          symbolId: 'icon-[dir]-[name]',
-          inject: 'body-last',
-          customDomId: '__svg__icons__dom__',
-          svgoOptions: {
-            plugins: [
-              { name: 'removeAttrs', params: { attrs: '(fill|stroke)' } },
-              { name: 'cleanupListOfValues' },
-              { name: 'removeUselessStrokeAndFill' },
-              { name: 'removeViewBox', active: false }
-            ]
-          }
+        Components({
+          dirs: componentDirs,
+          extensions: ['vue', 'md'],
+          include: [/\.vue$/, /\.vue\?vue/, /\.md$/],
+          // 同 autoImport，排除 node_modules 下除 vitepress-theme-ninc 外的其他包
+          exclude: [
+            /[\\/]node_modules[\\/](?!.*vitepress-theme-ninc)/,
+            /[\\/]\.git[\\/]/,
+            /[\\/]\.nuxt[\\/]/
+          ],
+          dts: componentsDtsPath
         })
       )
-    } catch (e) {
-      // svg-icons 可选
     }
-  } else {
-    // 主题入口硬编码 import 'virtual:svg-icons-register'，关闭插件时需提供空 stub
+  }
+
+  // svgIcons（包缺失或构造失败时按关闭处理，走下方 stub 兜底）
+  let svgIconsActive = switches.svgIcons !== false
+  if (svgIconsActive) {
+    const mod = await loadOptionalPlugin('vite-plugin-svg-icons')
+    if (mod?.createSvgIconsPlugin) {
+      try {
+        plugins.push(
+          mod.createSvgIconsPlugin({
+            iconDirs: svgIconDirs,
+            symbolId: 'icon-[dir]-[name]',
+            inject: 'body-last',
+            customDomId: '__svg__icons__dom__',
+            svgoOptions: {
+              plugins: [
+                { name: 'removeAttrs', params: { attrs: '(fill|stroke)' } },
+                { name: 'cleanupListOfValues' },
+                { name: 'removeUselessStrokeAndFill' },
+                { name: 'removeViewBox', active: false }
+              ]
+            }
+          })
+        )
+      } catch (e) {
+        svgIconsActive = false
+      }
+    } else {
+      svgIconsActive = false
+    }
+  }
+  if (!svgIconsActive) {
+    // 主题入口硬编码 import 'virtual:svg-icons-register'，关闭/缺失插件时需提供空 stub
     // 否则 Rollup 解析阶段会报 "failed to resolve import virtual:svg-icons-register"
     plugins.push({
       name: 'vitepress-theme-ninc:svg-icons-stub',
@@ -243,8 +284,8 @@ export async function createVitePlugins(options: CreateVitePluginsOptions = {}):
     })
   }
 
-  // groupIcons 关闭时，主题入口 import 'virtual:group-icons.css' 同样需要 stub
-  if (switches.groupIcons === false) {
+  // groupIcons 关闭或包缺失时，主题入口 import 'virtual:group-icons.css' 同样需要 stub
+  if (!groupIconsActive) {
     plugins.push({
       name: 'vitepress-theme-ninc:group-icons-stub',
       enforce: 'pre',
